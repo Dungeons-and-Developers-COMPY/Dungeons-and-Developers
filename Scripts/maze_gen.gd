@@ -78,6 +78,7 @@ func _ready() -> void:
 			if grid[x][y] == 1:
 				print(x, " ", y)
 				set_wall_tile(x, y)
+	place_border()
 	
 
 func _input(event: InputEvent) -> void:
@@ -87,15 +88,19 @@ func _input(event: InputEvent) -> void:
 	
 	
 func place_border():
-	for y in range(-1, y_dim):
-		place_wall(Vector2(-1, y))
-	for x in range(-1, x_dim):
-		place_wall(Vector2(x, -1))
-	for y in range(-1, y_dim + 1):
-		place_wall(Vector2(x_dim, y))
-	for x in range(-1, x_dim + 1):
-		place_wall(Vector2(x, y_dim))
-
+	# left and right borders
+	for y in range(0, y_dim):
+		set_wall_tile(-1, y)
+		set_wall_tile(Globals.grid_size, y)
+	# top and bottom borders
+	for x in range(0, x_dim):
+		set_wall_tile(x, -1)
+		set_wall_tile(x, Globals.grid_size)
+	# corners
+	set_cell(Vector2i(-1, -1), SOURCE_ID, Vector2i(1, 0)) # top left
+	set_cell(Vector2i(Globals.grid_size, -1), SOURCE_ID, Vector2i(3, 0)) # top right
+	set_cell(Vector2i(-1, Globals.grid_size), SOURCE_ID, Vector2i(1, 2)) # bottom left
+	set_cell(Vector2i(Globals.grid_size, Globals.grid_size), SOURCE_ID, Vector2i(3, 2)) # bottom right
 
 func delete_cell_at(pos: Vector2):
 	set_cell(pos)
@@ -218,6 +223,39 @@ func set_wall_tile(x: int, y: int):
 	var right: bool = false
 	var up: bool = false
 	var down: bool = false
+	# handles left border
+	if x == -1:
+		up = true
+		down = true
+		if grid[x+1][y] == 1:
+			right = true
+		place_wall_texture(left, right, up, down, Vector2i(x, y))
+		return
+	# handles right border
+	if x == Globals.grid_size:
+		up = true
+		down = true
+		if grid[x-1][y] == 1:
+			left = true
+		place_wall_texture(left, right, up, down, Vector2i(x, y))
+		return
+	# handles top border
+	if y == -1:
+		left = true
+		right = true
+		if grid[x][y+1] == 1:
+			down = true
+		place_wall_texture(left, right, up, down, Vector2i(x, y))
+		return
+	# handles bottom border
+	if y == Globals.grid_size:
+		left = true
+		right = true
+		if grid[x][y-1] == 1:
+			up = true
+		place_wall_texture(left, right, up, down, Vector2i(x, y))
+		return
+	# handling walls within maze
 	if x == 0:
 		left = true
 		if grid[x+1][y] == 1:

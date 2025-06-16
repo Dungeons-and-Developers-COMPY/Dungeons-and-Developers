@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://vgugvcu014fx" path="res://Scenes/floor.gd" id="5_qwv30"]
 
 [node name="Tile Layers" type="Node2D"]
+position = Vector2(70, 70)
 scale = Vector2(3, 3)
 script = ExtResource("1_4lq1w")
 
