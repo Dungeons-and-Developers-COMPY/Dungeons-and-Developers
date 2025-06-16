@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://kd8t7lk57n5w"]
+
+[ext_resource type="Script" uid="uid://cq3p810gmjquh" path="res://Scenes/maze_controller.gd" id="1_4lq1w"]
+[ext_resource type="Script" uid="uid://damwmf44fgpmx" path="res://Scripts/maze_gen.gd" id="1_31kh1"]
+[ext_resource type="TileSet" uid="uid://b3csn3ccogf4m" path="res://TileSets/maze_tile_set.tres" id="1_bbt2e"]
+[ext_resource type="Script" uid="uid://vgugvcu014fx" path="res://Scenes/floor.gd" id="5_qwv30"]
+
+[node name="Tile Layers" type="Node2D"]
+scale = Vector2(3, 3)
+script = ExtResource("1_4lq1w")
+
+[node name="Floor" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_bbt2e")
+script = ExtResource("5_qwv30")
+
+[node name="Walls" type="TileMapLayer" parent="."]
+z_index = 2
+tile_set = ExtResource("1_bbt2e")
+script = ExtResource("1_31kh1")
