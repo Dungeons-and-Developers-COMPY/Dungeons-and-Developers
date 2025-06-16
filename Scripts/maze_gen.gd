@@ -48,7 +48,7 @@ var adj4 = [
 	Vector2i(0, -1),
 ]
 
-var grid = []
+var grid = [] 
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_released("ui_accept"):
@@ -212,6 +212,7 @@ func get_exit(row: int, col: int):
 	grid[result["row"]][result["col"]] = 3
 	
 
+# function to determine which type of wall to use 
 func set_wall_tile(x: int, y: int):
 	var left: bool = false
 	var right: bool = false
@@ -247,6 +248,7 @@ func set_wall_tile(x: int, y: int):
 	
 	place_wall_texture(left, right, up, down, Vector2i(x, y))
 
+# get atlas coords of wall tile and place it
 func place_wall_texture(left: bool, right: bool, up: bool, down: bool, coord: Vector2i):
 	var index = 0
 	if left:
