@@ -101,6 +101,8 @@ func place_border():
 	set_cell(Vector2i(Globals.grid_size, -1), SOURCE_ID, Vector2i(3, 0)) # top right
 	set_cell(Vector2i(-1, Globals.grid_size), SOURCE_ID, Vector2i(1, 2)) # bottom left
 	set_cell(Vector2i(Globals.grid_size, Globals.grid_size), SOURCE_ID, Vector2i(3, 2)) # bottom right
+	
+	make_exit(exit_coord["row"], exit_coord["col"])
 
 func delete_cell_at(pos: Vector2):
 	set_cell(pos)
@@ -300,6 +302,27 @@ func place_wall_texture(left: bool, right: bool, up: bool, down: bool, coord: Ve
 		
 	var atlas_coord = wall_type_atlas_coords.get(index, normal_wall_atlas_coords) 
 	set_cell(coord, SOURCE_ID, atlas_coord)
+
+# function to remove walls surrounding exit square
+func make_exit(x: int, y: int):
+	if x == 0:
+		delete_cell_at(Vector2i(x-1, y))
+		# corners
+		if y == 0:
+			delete_cell_at(Vector2i(x-1, y-1))
+		elif y == Globals.grid_size - 1:
+			delete_cell_at(Vector2i(x-1, Globals.grid_size))
+	if x == Globals.grid_size - 1:
+		delete_cell_at(Vector2i(Globals.grid_size, y))
+		# corners
+		if y == 0:
+			delete_cell_at(Vector2i( Globals.grid_size, y-1))
+		elif y == Globals.grid_size - 1:
+			delete_cell_at(Vector2i( Globals.grid_size, Globals.grid_size))
+	if y == 0:
+		delete_cell_at(Vector2i(x, y-1))
+	if y == Globals.grid_size - 1:
+		delete_cell_at(Vector2i(x, Globals.grid_size))
 
 func print_grid():
 	var row: String = ""
