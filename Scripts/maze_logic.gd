@@ -61,3 +61,4 @@ static func find_furthest_edge_square(grid: Array, start_row: int, start_col: in
 					queue.append({"row": nr, "col": nc, "dist": dist + 1})
 	
 	return furthest  # Return a Dictionary or null if no edge reachable
+	

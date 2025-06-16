@@ -126,6 +126,8 @@ func is_wall(pos):
 	#]
 	return (grid[pos.x][pos.y] == 1)
 
+func is_floor(x: int, y: int):
+	return (grid[x][y] == 0)
 
 func can_move_to(current: Vector2i):
 	return (
