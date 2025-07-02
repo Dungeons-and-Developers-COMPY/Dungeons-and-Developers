@@ -30,6 +30,10 @@ func try_move(x: int, y: int):
 	# TODO: else stun player
 
 func can_move(x: int, y: int):
+	if (x >= Globals.grid_size) or (x < 0):
+		return false
+	if (y >= Globals.grid_size) or (y < 0):
+		return false
 	if grid[x][y] == 1:
 		return false
 	else:
