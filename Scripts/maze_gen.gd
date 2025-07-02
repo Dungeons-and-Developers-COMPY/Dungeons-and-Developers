@@ -76,7 +76,7 @@ func _ready() -> void:
 	for y in range(Globals.grid_size):
 		for x in range(Globals.grid_size):
 			if grid[x][y] == 1:
-				print(x, " ", y)
+				#print(x, " ", y)
 				set_wall_tile(x, y)
 	place_border()
 	
@@ -208,9 +208,13 @@ func get_start():
 		print("No edge square reachable.")
 	set_cell(Vector2i(result["row"],result["col"]), SOURCE_ID, Vector2i(9, 0))
 	start_coord = result
+	
+	grid[result["row"]][result["col"]] = 3
 	get_exit(result["row"],result["col"])
 
 func get_exit(row: int, col: int):
+	print(row)
+	print(col)
 	var result = MazeLogic.find_furthest_edge_square(grid,row,col)
 	if result != null:
 		print("Furthest edge square at (", result["row"], ",", result["col"], ") with distance ", result["dist"])

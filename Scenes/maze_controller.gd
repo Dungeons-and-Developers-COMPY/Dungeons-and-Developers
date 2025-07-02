@@ -10,7 +10,6 @@ var rng = RandomNumberGenerator.new()
 func _ready() -> void:
 	walls.delete_cell_at(Vector2i(walls.start_coord["row"],walls.start_coord["col"]))
 	walls.delete_cell_at(Vector2i(walls.exit_coord["row"],walls.exit_coord["col"]))
-	
 	floor.gen_floor(walls.start_coord, walls.exit_coord)
 	var num_diff_tiles: int = (Globals.grid_size * Globals.grid_size) * (variance/100)
 	var x: int
