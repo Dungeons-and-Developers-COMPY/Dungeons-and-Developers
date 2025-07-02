@@ -338,4 +338,3 @@ func print_grid():
 		print(row)
 		row = ""
 		
-	#get_exit()
