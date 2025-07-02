@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://blnlwjvpf82my" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_death.png" id="2_fkybt"]
 [ext_resource type="Script" uid="uid://d0s8tf0qoc2e" path="res://Scripts/player_movement.gd" id="2_x3wgy"]
 [ext_resource type="Texture2D" uid="uid://bqg5pyxwpet87" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_idle.png" id="3_x3wgy"]
-[ext_resource type="Script" uid="uid://5icg51rua2pr" path="res://Scenes/animated_sprite_2d.gd" id="4_3smsa"]
+[ext_resource type="Script" uid="uid://5icg51rua2pr" path="res://Scripts/enemy_animations.gd" id="4_3smsa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rwpf0"]
 atlas = ExtResource("1_vgqql")
