@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://b434binq15kiq"]
+
+[ext_resource type="Theme" uid="uid://430hiudad3go" path="res://Themes/test_theme.tres" id="1_b6vbw"]
+[ext_resource type="Script" uid="uid://bc7pn5tenxx6x" path="res://Scripts/code_interface.gd" id="1_ygywk"]
+
+[node name="CodeInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -640.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ygywk")
+
+[node name="QuestionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 30.0
+theme = ExtResource("1_b6vbw")
+text = "  Question"
+
+[node name="QuestionText" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 28.0
+offset_right = 640.0
+offset_bottom = 194.0
+theme = ExtResource("1_b6vbw")
+
+[node name="CodeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 192.0
+offset_right = 640.0
+offset_bottom = 222.0
+theme = ExtResource("1_b6vbw")
+text = "  Code"
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+layout_mode = 0
+offset_top = 220.0
+offset_right = 640.0
+offset_bottom = 530.0
+theme = ExtResource("1_b6vbw")
+draw_tabs = true
+gutters_draw_line_numbers = true
+indent_automatic = true
+
+[node name="ConsoleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 528.0
+offset_right = 640.0
+offset_bottom = 558.0
+theme = ExtResource("1_b6vbw")
+text = "  Console"
+
+[node name="ConsoleText" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 556.0
+offset_right = 640.0
+offset_bottom = 720.0
+theme = ExtResource("1_b6vbw")
+
+[node name="RunButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 528.0
+offset_right = 608.0
+offset_bottom = 559.0
+text = "Run"
+
+[connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]

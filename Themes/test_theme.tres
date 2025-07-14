@@ -1,0 +1,29 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://430hiudad3go"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_immdk"]
+bg_color = Color(0.294118, 0.294118, 0.294118, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oejs1"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kv3xq"]
+bg_color = Color(0.29219, 0.29219, 0.29219, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[resource]
+CodeEdit/styles/normal = SubResource("StyleBoxFlat_immdk")
+Label/styles/normal = SubResource("StyleBoxFlat_oejs1")
+RichTextLabel/styles/normal = SubResource("StyleBoxFlat_kv3xq")
