@@ -8,7 +8,7 @@ var offset: Vector2 = Vector2(0, 0)
 var grid = []
 var valid_funcs = ["move_up", "move_down", "move_left", "move_right"]
 
-const SC = "extends Player\nfunc update_grid(new_grid): grid = new_grid\nfunc execute():\n"
+#const HEADER = "extends Player\nfunc update_grid(new_grid): grid = new_grid\nfunc execute():\n"
 
 @onready var char = $CharacterBody2D
 
@@ -106,3 +106,9 @@ func execute_move(code: String):
 		else:
 			print("Invalid syntax: %s" % line)
 	
+func on_monster_coord():
+	for i in range(Globals.monster_positions.size()):
+		if pos == Globals.monster_positions[i]:
+			return true
+			
+	return false

@@ -1,6 +1,5 @@
-[gd_scene load_steps=39 format=3 uid="uid://cmi5e8gknarwf"]
+[gd_scene load_steps=38 format=3 uid="uid://cmi5e8gknarwf"]
 
-[ext_resource type="Script" uid="uid://dlkx3m2lh1lse" path="res://Scripts/player.gd" id="1_5abox"]
 [ext_resource type="Texture2D" uid="uid://dhhv2wk0pngeo" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_attack.png" id="2_sv33q"]
 [ext_resource type="Texture2D" uid="uid://blnlwjvpf82my" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_death.png" id="3_uaaco"]
 [ext_resource type="Texture2D" uid="uid://bqg5pyxwpet87" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_idle.png" id="4_ymvsc"]
@@ -324,7 +323,6 @@ animations = [{
 }]
 
 [node name="Skeleton" type="Node2D"]
-script = ExtResource("1_5abox")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_sgdo7")

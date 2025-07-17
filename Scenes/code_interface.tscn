@@ -41,9 +41,15 @@ offset_top = 220.0
 offset_right = 640.0
 offset_bottom = 530.0
 theme = ExtResource("1_b6vbw")
+emoji_menu_enabled = false
+caret_blink = true
+caret_multiple = false
 draw_tabs = true
 gutters_draw_line_numbers = true
+indent_size = 6
 indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
 
 [node name="ConsoleLabel" type="Label" parent="."]
 layout_mode = 0
