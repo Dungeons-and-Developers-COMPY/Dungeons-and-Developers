@@ -19,3 +19,5 @@ scale = Vector2(2, 2)
 [node name="CodeInterface" parent="." instance=ExtResource("4_jjvhh")]
 offset_left = 640.0
 offset_right = 640.0
+
+[node name="MultiplayerManager" type="Node2D" parent="."]

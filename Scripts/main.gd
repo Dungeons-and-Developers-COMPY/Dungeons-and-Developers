@@ -6,9 +6,26 @@ extends Node2D
 
 var monster_positions = []
 var monsters = []
+var grid = []
+
+var maze_seed: int
+var connected_players: Array = []
+var is_server := OS.has_feature("dedicated_server")
 
 func _ready() -> void:
-	randomize()
+	#if is_server:
+		#MultiplayerManager.start_server()
+		#multiplayer.peer_connected.connect(_on_player_connected)
+		#maze.gen_maze()
+	#else:
+		#code_interface.run_button_pressed.connect(run_user_code)
+		#player.defeat_monster.connect(monster_defeated)
+		#player.reached_exit.connect(player_won)
+	spawn_maze_and_monsters()
+	
+func spawn_maze_and_monsters():
+	RandomNumberGenerator.new().seed = maze_seed
+	#randomize()
 	maze.gen_maze()
 	
 	code_interface.run_button_pressed.connect(run_user_code)

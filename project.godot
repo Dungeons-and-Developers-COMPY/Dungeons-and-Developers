@@ -15,6 +15,10 @@ run/main_scene="uid://hn54wuekrxdo"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://Assets/icon.svg"
 
+[autoload]
+
+MultiplayerManager="*res://Scripts/multiplayer_manager.gd"
+
 [display]
 
 window/size/viewport_width=1280

@@ -75,6 +75,10 @@ func gen_maze():
 	get_start()
 	print_grid()
 	
+	place_maze()
+	
+	
+func place_maze():
 	for y in range(Globals.grid_size):
 		for x in range(Globals.grid_size):
 			if grid[x][y] == 1:
