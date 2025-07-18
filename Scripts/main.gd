@@ -5,21 +5,24 @@ extends Node2D
 @onready var code_interface = $CodeInterface
 
 var monster_positions = []
+var monsters = []
 
 func _ready() -> void:
 	randomize()
 	code_interface.run_button_pressed.connect(run_user_code)
+	player.defeat_monster.connect(monster_defeated)
 	
 	Globals.offset = maze.position
 	Globals.maze_scale = maze.scale.x
 	
 	#player.set_maze_scale(maze.scale.x)
 	player.set_pos(maze.walls.start_coord["row"], maze.walls.start_coord["col"])
-	#player.set_offset(maze.position)
+	player.set_end_pos(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])
 	player.set_grid(maze.walls.grid)
 	player.teleport()
 	
 	spawn_all_monsters()
+	player.set_monster_positions(monster_positions)
 	
 func run_user_code():
 	print("SIGNAL RECEIVED")
@@ -37,8 +40,8 @@ func get_random_monster():
 	return randi_range(0, Globals.monsters.size() - 1)
 	
 func spawn_monster(pos: Vector2i, monster_type: int):
-	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + Globals.pixels)
-	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + Globals.pixels)
+	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
+	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	var actual_pos = Vector2i(x, y)
 	
 	var monster_scene = Globals.monsters[monster_type]
@@ -46,5 +49,24 @@ func spawn_monster(pos: Vector2i, monster_type: int):
 	monster.global_position = actual_pos
 	monster.scale = Vector2(Globals.monster_scales[monster_type], Globals.monster_scales[monster_type])
 	add_child(monster)
+	monsters.append(monster)
+	
+func monster_defeated():
+	print("received monster killed")
+	var player_pos = player.pos
+	print(player_pos)
+	print(Globals.monster_positions)
+	for i in range(Globals.monster_positions.size()):
+		print(i)
+		print(Globals.monster_positions[i])
+		if (Globals.monster_positions[i] == player_pos):
+			print("monster found")
+			var monster = monsters[i]
+			if monster.has_method("die"):
+				print("monster dead")
+				monster.die()
+				
+			break
+	
 	
 	

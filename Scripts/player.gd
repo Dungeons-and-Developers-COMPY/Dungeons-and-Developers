@@ -1,17 +1,23 @@
 extends Node2D
 class_name Player
 
-var pos: Vector2i = Vector2i(0, 0)
-#var maze_scale = 1
-#var pixels = 16
-#var offset: Vector2 = Vector2(0, 0)
-var grid = []
+var end_pos: Vector2i = Vector2i(0, 0) # position of exit
+var pos: Vector2i = Vector2i(0, 0) # player's current position
+var grid = [] 
 var valid_funcs = ["move_up", "move_down", "move_left", "move_right"]
 var should_stop: bool = false
+var monster_positions = []
+var monsters_status = []
 
-#const HEADER = "extends Player\nfunc update_grid(new_grid): grid = new_grid\nfunc execute():\n"
+signal hit_monster
+signal defeat_monster
+signal reached_exit
 
 @onready var char = $CharacterBody2D
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_released("attack") and should_stop == true:
+		on_monster_defeated()
 
 # functions to move that player can type
 func move_left(n: int = 1):
@@ -40,8 +46,8 @@ func move_down(n: int = 1):
 
 # function to move player to the grid coordinate
 func move():
-	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + Globals.pixels)
-	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + Globals.pixels)
+	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
+	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	char.set_target_pos(x, y)
 	await char.stopped_moving
 
@@ -52,6 +58,10 @@ func try_move(x: int, y: int):
 		pos.y = y
 		if (on_monster_coord()):
 			should_stop = true
+			emit_signal("hit_monster")
+		if (has_reached_exit()):
+			should_stop = true
+			emit_signal("reached_exit")
 		await move()
 	# TODO: else stun player
 
@@ -68,8 +78,8 @@ func can_move(x: int, y: int):
 
 # function to move player to its current position without movement 
 func teleport():
-	var x_pos = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + Globals.pixels)
-	var y_pos = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + Globals.pixels)
+	var x_pos = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
+	var y_pos = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	char.global_position = Vector2(x_pos, y_pos)
 
 # set fuctions for variables
@@ -77,14 +87,16 @@ func set_pos(x: int, y: int):
 	pos.x = x
 	pos.y = y
 	
-#func set_offset(pos: Vector2):
-	#offset = pos
-	#
-#func set_maze_scale(s):
-	#maze_scale = s
-	
 func set_grid(g):
 	grid = g
+
+func set_end_pos(x: int, y: int):
+	end_pos = Vector2i(x, y)
+	
+func set_monster_positions(array):
+	monster_positions = array
+	for i in range(monster_positions.size()):
+		monsters_status.append(1)
 	
 # function to execute player-typed movement
 func execute_move(code: String):
@@ -121,8 +133,22 @@ func execute_move(code: String):
 			print("Invalid syntax: %s" % line)
 	
 func on_monster_coord():
-	for i in range(Globals.monster_positions.size()):
-		if pos == Globals.monster_positions[i]:
+	for i in range(monster_positions.size()):
+		if pos == monster_positions[i] and monsters_status[i] == 1:
 			return true
 			
 	return false
+	
+func on_monster_defeated():
+	for i in range(monster_positions.size()):
+		if pos == monster_positions[i]:
+			monsters_status[i] = 0
+	#monster_positions.pop_front()
+	should_stop = false
+	emit_signal("defeat_monster")
+	
+func has_reached_exit():
+	if pos == end_pos:
+		return true
+	else:
+		return false

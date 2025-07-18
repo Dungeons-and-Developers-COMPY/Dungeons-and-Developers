@@ -1,10 +1,13 @@
-[gd_scene load_steps=40 format=3 uid="uid://diu6qtlkhxxyc"]
+[gd_scene load_steps=37 format=3 uid="uid://diu6qtlkhxxyc"]
 
 [ext_resource type="Script" uid="uid://dlkx3m2lh1lse" path="res://Scripts/player.gd" id="1_fkybt"]
 [ext_resource type="Texture2D" uid="uid://dhhv2wk0pngeo" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_attack.png" id="1_vgqql"]
 [ext_resource type="Texture2D" uid="uid://blnlwjvpf82my" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_death.png" id="2_fkybt"]
 [ext_resource type="Script" uid="uid://d0s8tf0qoc2e" path="res://Scripts/player_movement.gd" id="2_x3wgy"]
-[ext_resource type="Texture2D" uid="uid://bqg5pyxwpet87" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_idle.png" id="3_x3wgy"]
+[ext_resource type="Texture2D" uid="uid://e1d7vdt8nmjg" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png" id="5_8erm5"]
+[ext_resource type="Texture2D" uid="uid://cotvj87gypy80" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_2.png" id="6_f1ek2"]
+[ext_resource type="Texture2D" uid="uid://44obasttqi7g" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_3.png" id="7_tx1dd"]
+[ext_resource type="Texture2D" uid="uid://dtfybnhckdt7p" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_4.png" id="8_gymyn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rwpf0"]
 atlas = ExtResource("1_vgqql")
@@ -109,30 +112,6 @@ region = Rect2(480, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_s0cfw"]
 atlas = ExtResource("2_fkybt")
 region = Rect2(512, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5nrdo"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_g15cv"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rkdin"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8abc2"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tt6ae"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ogqsf"]
-atlas = ExtResource("3_x3wgy")
-region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_8erm5"]
 animations = [{
@@ -301,31 +280,24 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5nrdo")
+"texture": ExtResource("5_8erm5")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_g15cv")
+"texture": ExtResource("6_f1ek2")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_rkdin")
+"texture": ExtResource("7_tx1dd")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8abc2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tt6ae")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ogqsf")
+"texture": ExtResource("8_gymyn")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 10.0
+"speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fkybt"]
-radius = 8.0
-height = 22.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8erm5"]
+size = Vector2(15, 14)
 
 [node name="Player" type="Node2D"]
 script = ExtResource("1_fkybt")
@@ -343,7 +315,7 @@ autoplay = "idle"
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
-position = Vector2(2, 5)
-shape = SubResource("CapsuleShape2D_fkybt")
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_8erm5")
 
 [connection signal="animation_finished" from="CharacterBody2D/AnimatedSprite2D" to="CharacterBody2D/AnimatedSprite2D" method="_on_animation_finished"]

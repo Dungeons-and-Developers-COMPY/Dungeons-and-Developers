@@ -18,7 +18,7 @@ func _physics_process(delta):
 			print("STOPPED")
 		else:
 			velocity = direction * speed
-			move_and_slide()  # Or move_and_collide()
+			move_and_slide()
 	else:
 		velocity = Vector2.ZERO
 		
