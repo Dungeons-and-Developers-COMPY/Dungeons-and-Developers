@@ -132,6 +132,7 @@ func execute_move(code: String):
 		else:
 			print("Invalid syntax: %s" % line)
 	
+# checks if player is on same block as a monster
 func on_monster_coord():
 	for i in range(monster_positions.size()):
 		if pos == monster_positions[i] and monsters_status[i] == 1:
@@ -139,6 +140,7 @@ func on_monster_coord():
 			
 	return false
 	
+# called when monster gets killed
 func on_monster_defeated():
 	for i in range(monster_positions.size()):
 		if pos == monster_positions[i]:
@@ -147,6 +149,7 @@ func on_monster_defeated():
 	should_stop = false
 	emit_signal("defeat_monster")
 	
+# check if player is on exit block
 func has_reached_exit():
 	if pos == end_pos:
 		return true

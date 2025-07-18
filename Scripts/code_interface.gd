@@ -17,3 +17,8 @@ func _on_run_button_pressed() -> void:
 	print("Run button pressed")
 	emit_signal("run_button_pressed")
 	
+func disable_code():
+	code_edit.editable = false
+	
+func enable_code():
+	code_edit.editable = true

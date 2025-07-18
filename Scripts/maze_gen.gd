@@ -55,10 +55,12 @@ func _process(delta: float) -> void:
 		print_grid()
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+#func _ready() -> void:
 	# init grid
-	#grid.resize(Globals.grid_size * Globals.grid_size)
-	#grid.fill(0)
+	#gen_maze()
+	
+
+func gen_maze():
 	for i in range(Globals.grid_size):
 		grid.append([])
 		for j in range(Globals.grid_size):
@@ -79,13 +81,6 @@ func _ready() -> void:
 				#print(x, " ", y)
 				set_wall_tile(x, y)
 	place_border()
-	
-
-func _input(event: InputEvent) -> void:
-	pass
-#	if Input.is_action_just_pressed("reset"):
-#		get_tree().reload_current_scene()
-	
 	
 func place_border():
 	# left and right borders

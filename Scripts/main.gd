@@ -9,8 +9,11 @@ var monsters = []
 
 func _ready() -> void:
 	randomize()
+	maze.gen_maze()
+	
 	code_interface.run_button_pressed.connect(run_user_code)
 	player.defeat_monster.connect(monster_defeated)
+	player.reached_exit.connect(player_won)
 	
 	Globals.offset = maze.position
 	Globals.maze_scale = maze.scale.x
@@ -67,6 +70,10 @@ func monster_defeated():
 				monster.die()
 				
 			break
+
+func player_won():
+	print("PLAYER WINS")
+	code_interface.disable_code()
 	
 	
 	
