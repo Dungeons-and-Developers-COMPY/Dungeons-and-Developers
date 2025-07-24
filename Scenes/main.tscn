@@ -12,12 +12,6 @@ script = ExtResource("1_8gbba")
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 
-[node name="Player" parent="." instance=ExtResource("3_8gbba")]
-scale = Vector2(2, 2)
-
-[node name="GhostPlayer" parent="." instance=ExtResource("5_kry3j")]
-scale = Vector2(2, 2)
-
 [node name="Maze" parent="." instance=ExtResource("1_jjgbg")]
 
 [node name="CodeInterface" parent="." instance=ExtResource("4_jjvhh")]
@@ -25,3 +19,21 @@ offset_left = 640.0
 offset_right = 640.0
 
 [node name="MultiplayerManager" type="Node2D" parent="."]
+
+[node name="EndLabel" type="Label" parent="."]
+visible = false
+z_index = 4
+offset_left = 128.0
+offset_top = 200.0
+offset_right = 1162.0
+offset_bottom = 473.0
+theme_override_font_sizes/font_size = 200
+text = "YOU WON!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player" parent="." instance=ExtResource("3_8gbba")]
+scale = Vector2(2, 2)
+
+[node name="GhostPlayer" parent="." instance=ExtResource("5_kry3j")]
+scale = Vector2(2, 2)

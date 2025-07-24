@@ -16,7 +16,7 @@ signal moving
 
 @onready var char = $CharacterBody2D
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_released("attack") and should_stop == true:
 		on_monster_defeated()
 
@@ -157,7 +157,3 @@ func has_reached_exit():
 		return true
 	else:
 		return false
-		
-#@rpc("any_peer", "call_remote")
-#func sync_position(pos: Vector2i):
-	#MultiplayerManager.rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", pos)

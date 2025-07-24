@@ -4,6 +4,7 @@ extends Node2D
 @onready var player = $Player
 @onready var code_interface = $CodeInterface
 @onready var opponent = $GhostPlayer
+@onready var end_label = $EndLabel
 
 var monster_positions = []
 var monsters = []
@@ -12,6 +13,7 @@ var grid = []
 var maze_seed: int
 var connected_players: Array = []
 var is_server := OS.has_feature("dedicated_server")
+var is_game_over: bool = false
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
@@ -92,11 +94,6 @@ func monster_defeated():
 				
 			break
 
-# function called when a player wins (reaches exit and defeats the boss)
-func player_won():
-	print("PLAYER WINS")
-	code_interface.disable_code()
-
 # function that triggers when a player joins the server
 func _on_player_connected(id: int):
 	print("Player connected: ", id)
@@ -131,3 +128,30 @@ func opponent_moving():
 	print("received signal")
 	print(MultiplayerManager.get_other_peer())
 	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
+
+# function called when a player wins (reaches exit and defeats the boss)
+func player_won():
+	#print("PLAYER WINS")
+	rpc_id(1, "game_over", multiplayer.get_unique_id())
+	#code_interface.disable_code()
+
+@rpc("any_peer")
+func game_over(peer_id: int):
+	if not is_game_over:
+		is_game_over = true
+		rpc("announce_winner", peer_id)
+	
+@rpc("any_peer")
+func announce_winner(peer_id: int):
+	if multiplayer.get_unique_id() == peer_id:
+		print("YOU WON!")
+		show_end("YOU WON!")
+	else:
+		print("YOU LOST.")
+		show_end("YOU LOST.")
+	
+func show_end(text):
+	code_interface.disable_code()
+	player.should_stop = true
+	end_label.text = text
+	end_label.show()

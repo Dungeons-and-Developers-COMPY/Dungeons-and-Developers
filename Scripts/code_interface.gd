@@ -19,6 +19,7 @@ func _on_run_button_pressed() -> void:
 	
 func disable_code():
 	code_edit.editable = false
+	run_button.disabled = true
 	
 func enable_code():
 	code_edit.editable = true

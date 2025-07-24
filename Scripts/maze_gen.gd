@@ -50,10 +50,6 @@ var adj4 = [
 
 var grid = [] 
 
-func _process(delta: float) -> void:
-	if Input.is_action_just_released("ui_accept"):
-		print_grid()
-
 func gen_maze():
 	for i in range(Globals.grid_size):
 		grid.append([])

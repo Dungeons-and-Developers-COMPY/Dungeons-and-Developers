@@ -304,6 +304,7 @@ animations = [{
 size = Vector2(15, 14)
 
 [node name="Player" type="Node2D"]
+z_index = 2
 script = ExtResource("1_fkybt")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="."]
@@ -313,6 +314,7 @@ motion_mode = 1
 script = ExtResource("2_x3wgy")
 
 [node name="Label" type="Label" parent="CharacterBody2D"]
+z_index = 1
 offset_left = -10.0
 offset_top = -19.0
 offset_right = 12.0

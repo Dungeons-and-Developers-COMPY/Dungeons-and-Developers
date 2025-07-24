@@ -6,7 +6,7 @@ var target_position = null
 var speed = 100
 var arrived_threshold = 1.0
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if target_position:
 		var direction = global_position.direction_to(target_position)
 		var distance = global_position.distance_to(target_position)
