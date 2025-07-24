@@ -1,3 +1,5 @@
+# https://github.com/Goldenlion5648/GodotMazeGenerationVisualizer
+
 extends TileMapLayer
 class_name MazeGen
 
@@ -180,16 +182,6 @@ func dfs(start: Vector2i):
 		#if we hit a dead end or are at a cross section
 		if not found_new_path:
 			place_wall(current)
-
-#func place_label(pos: Vector2i, text: String):
-	#var current_label: Label = label.instantiate()
-	#current_label.text = text
-	#current_label.name = text
-	#add_child.call_deferred(current_label)
-	#if pos not in spot_to_label:
-		#spot_to_label[pos] = []
-	#spot_to_label[pos].append(current_label)
-	#current_label.position = map_to_local(pos) - (Vector2i(64, 50)  / 2.0)
 	
 
 func get_start():
