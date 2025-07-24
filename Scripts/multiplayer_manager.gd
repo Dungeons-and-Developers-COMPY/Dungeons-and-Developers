@@ -17,3 +17,10 @@ func connect_to_server(ip: String, port: int = 12345):
 		return
 	multiplayer.multiplayer_peer = peer
 	print("Connected to server")
+	
+func get_other_peer():
+	print(multiplayer.get_peers())
+	for peer_id in multiplayer.get_peers():
+		if peer_id != multiplayer.get_unique_id() and peer_id != 1:
+			return peer_id
+	return 1

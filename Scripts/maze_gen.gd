@@ -54,12 +54,6 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_released("ui_accept"):
 		print_grid()
 
-# Called when the node enters the scene tree for the first time.
-#func _ready() -> void:
-	# init grid
-	#gen_maze()
-	
-
 func gen_maze():
 	for i in range(Globals.grid_size):
 		grid.append([])
@@ -68,27 +62,27 @@ func gen_maze():
 	
 	y_dim = Globals.grid_size
 	x_dim = Globals.grid_size
-	#starting_coords = Vector2i(x_dim/2,y_dim/2)
 	Globals.letters_to_show.clear()
-	#place_border()
+
 	dfs(starting_coords)
 	get_start()
 	print_grid()
 	
 	return grid
-	#place_maze()
 	
 func set_maze(maze, start, exit):
 	grid = maze
 	start_coord = start
 	exit_coord = exit
+	y_dim = Globals.grid_size
+	x_dim = Globals.grid_size
+	
 	place_maze()
 	
 func place_maze():
 	for y in range(Globals.grid_size):
 		for x in range(Globals.grid_size):
 			if grid[x][y] == 1:
-				#print(x, " ", y)
 				set_wall_tile(x, y)
 	place_border()
 	
@@ -126,9 +120,6 @@ func will_be_converted_to_wall(spot: Vector2i):
 	
 	
 func is_wall(pos):
-	#return get_cell_atlas_coords(main_layer, pos) in [
-		#normal_wall_atlas_coords
-	#]
 	return (grid[pos.x][pos.y] == 1)
 
 func is_floor(x: int, y: int):

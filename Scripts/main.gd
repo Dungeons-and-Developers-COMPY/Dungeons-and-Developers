@@ -3,6 +3,7 @@ extends Node2D
 @onready var maze = $Maze
 @onready var player = $Player
 @onready var code_interface = $CodeInterface
+@onready var opponent = $GhostPlayer
 
 var monster_positions = []
 var monsters = []
@@ -12,58 +13,55 @@ var maze_seed: int
 var connected_players: Array = []
 var is_server := OS.has_feature("dedicated_server")
 
+# called when the node enters the scene tree for the first time
+# checks if server or not and starts game 
 func _ready() -> void:
 	if is_server:
 		MultiplayerManager.start_server()
 		multiplayer.peer_connected.connect(_on_player_connected)
-		#maze.gen_maze()
 	else:
 		code_interface.run_button_pressed.connect(run_user_code)
 		player.defeat_monster.connect(monster_defeated)
 		player.reached_exit.connect(player_won)
+		player.moving.connect(opponent_moving)
 		MultiplayerManager.connect_to_server("127.0.0.1")
-	#spawn_maze_and_monsters()
 	
+# function used by clients to setup the maze
 func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
-	#RandomNumberGenerator.new().seed = maze_seed
-	#randomize()
-	#maze.gen_maze()
 	maze.set_maze(grid, start_coord, exit_coord)
 	monster_positions = monster_pos
 	Globals.monster_positions = monster_positions
 	Globals.monster_types = monster_types
-	
-	code_interface.run_button_pressed.connect(run_user_code)
-	player.defeat_monster.connect(monster_defeated)
-	player.reached_exit.connect(player_won)
-	
 	Globals.offset = maze.position
 	Globals.maze_scale = maze.scale.x
 	
-	#player.set_maze_scale(maze.scale.x)
 	player.set_pos(maze.walls.start_coord["row"], maze.walls.start_coord["col"])
 	player.set_end_pos(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])
 	player.set_grid(maze.walls.grid)
 	player.teleport()
 	
+	opponent.set_pos(maze.walls.start_coord["row"], maze.walls.start_coord["col"])
+	opponent.teleport()
+	
 	spawn_all_monsters()
 	player.set_monster_positions(monster_positions)
 	
+# function used by clients to execute the code entered by the user
 func run_user_code():
 	print("SIGNAL RECEIVED")
 	player.execute_move(code_interface.code)
 	
-	
+# function used by clients to spawn all the monsters in
 func spawn_all_monsters():
-	#monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
-	#Globals.monster_positions = monster_positions
 	print(monster_positions)
 	for i in range(Globals.num_monsters):
 		spawn_monster(monster_positions[i], Globals.monster_types[i])
 	
+# function used by server to randomise the monsters spawned
 func get_random_monster():
 	return randi_range(0, Globals.monsters.size() - 1)
 	
+# function used by clients to set a monster to its correct position
 func spawn_monster(pos: Vector2i, monster_type: int):
 	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
 	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
@@ -76,6 +74,7 @@ func spawn_monster(pos: Vector2i, monster_type: int):
 	add_child(monster)
 	monsters.append(monster)
 	
+# function to kill off a monster defeated by a player
 func monster_defeated():
 	print("received monster killed")
 	var player_pos = player.pos
@@ -93,16 +92,19 @@ func monster_defeated():
 				
 			break
 
+# function called when a player wins (reaches exit and defeats the boss)
 func player_won():
 	print("PLAYER WINS")
 	code_interface.disable_code()
 
+# function that triggers when a player joins the server
 func _on_player_connected(id: int):
 	print("Player connected: ", id)
 	connected_players.append(id)
 	if connected_players.size() == 2:
 		start_game()
 		
+# function called by server when 2 players have entered the server to start the game
 func start_game():
 	var maze_grid = maze.get_maze()
 	var start_coord = maze.get_start()
@@ -115,9 +117,17 @@ func start_game():
 	for peer_id in connected_players:
 		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord)
 		
+# rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord):
-	#maze_seed = seed
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord)
 	
-	
+@rpc("any_peer", "call_remote")
+func update_opponent_position(pos: Vector2i):
+	print("updating opponent position")
+	opponent.update_position(pos)
+
+func opponent_moving():
+	print("received signal")
+	print(MultiplayerManager.get_other_peer())
+	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)

@@ -12,6 +12,7 @@ var monsters_status = []
 signal hit_monster
 signal defeat_monster
 signal reached_exit
+signal moving
 
 @onready var char = $CharacterBody2D
 
@@ -46,6 +47,7 @@ func move_down(n: int = 1):
 
 # function to move player to the grid coordinate
 func move():
+	emit_signal("moving")
 	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
 	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	char.set_target_pos(x, y)
@@ -155,3 +157,7 @@ func has_reached_exit():
 		return true
 	else:
 		return false
+		
+#@rpc("any_peer", "call_remote")
+#func sync_position(pos: Vector2i):
+	#MultiplayerManager.rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", pos)

@@ -1,120 +1,116 @@
-[gd_scene load_steps=38 format=3 uid="uid://diu6qtlkhxxyc"]
+[gd_scene load_steps=38 format=3 uid="uid://kjngx0pr6xeh"]
 
-[ext_resource type="Script" uid="uid://dlkx3m2lh1lse" path="res://Scripts/player.gd" id="1_fkybt"]
-[ext_resource type="Texture2D" uid="uid://dhhv2wk0pngeo" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_attack.png" id="1_vgqql"]
-[ext_resource type="Texture2D" uid="uid://blnlwjvpf82my" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_death.png" id="2_fkybt"]
-[ext_resource type="Script" uid="uid://d0s8tf0qoc2e" path="res://Scripts/player_movement.gd" id="2_x3wgy"]
-[ext_resource type="Texture2D" uid="uid://e1d7vdt8nmjg" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png" id="5_8erm5"]
-[ext_resource type="Texture2D" uid="uid://cotvj87gypy80" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_2.png" id="6_f1ek2"]
-[ext_resource type="Texture2D" uid="uid://44obasttqi7g" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_3.png" id="7_tx1dd"]
-[ext_resource type="Texture2D" uid="uid://dtfybnhckdt7p" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_4.png" id="8_gymyn"]
-
-[sub_resource type="Theme" id="Theme_8erm5"]
-Label/colors/font_color = Color(0, 0.85098, 0.25098, 1)
-Label/font_sizes/font_size = 10
+[ext_resource type="Script" uid="uid://b2q0e3s513bwf" path="res://Scenes/ghost_player.gd" id="1_tf5bf"]
+[ext_resource type="Script" uid="uid://d0s8tf0qoc2e" path="res://Scripts/player_movement.gd" id="2_jb6gq"]
+[ext_resource type="Texture2D" uid="uid://dhhv2wk0pngeo" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_attack.png" id="3_abo8n"]
+[ext_resource type="Texture2D" uid="uid://blnlwjvpf82my" path="res://Assets/2D Pixel Dungeon Asset Pack/Enemy_Animations_Set/enemies-skeleton1_death.png" id="4_uw08q"]
+[ext_resource type="Texture2D" uid="uid://e1d7vdt8nmjg" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png" id="5_ote46"]
+[ext_resource type="Texture2D" uid="uid://cotvj87gypy80" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_2.png" id="6_43vw3"]
+[ext_resource type="Texture2D" uid="uid://44obasttqi7g" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_3.png" id="7_y23w2"]
+[ext_resource type="Texture2D" uid="uid://dtfybnhckdt7p" path="res://Assets/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_4.png" id="8_dm50n"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rwpf0"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ew5mc"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vqc8v"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ft6oh"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x6jny"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v8jiy"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sh88d"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d56fl"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_obgqe"]
-atlas = ExtResource("1_vgqql")
+atlas = ExtResource("3_abo8n")
 region = Rect2(256, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pyp1f"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4ixog"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gku70"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c6pi8"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qv3qp"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yvw1e"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iyyii"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nnwmq"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y4d17"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(256, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_26xvq"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(288, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7wgj3"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(320, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qg42q"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(352, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vgq1"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(384, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x3r4y"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(416, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dmq2e"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(448, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_srww6"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(480, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s0cfw"]
-atlas = ExtResource("2_fkybt")
+atlas = ExtResource("4_uw08q")
 region = Rect2(512, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_8erm5"]
@@ -284,16 +280,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("5_8erm5")
+"texture": ExtResource("5_ote46")
 }, {
 "duration": 1.0,
-"texture": ExtResource("6_f1ek2")
+"texture": ExtResource("6_43vw3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("7_tx1dd")
+"texture": ExtResource("7_y23w2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_gymyn")
+"texture": ExtResource("8_dm50n")
 }],
 "loop": true,
 "name": &"idle",
@@ -303,22 +299,18 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8erm5"]
 size = Vector2(15, 14)
 
-[node name="Player" type="Node2D"]
-script = ExtResource("1_fkybt")
+[sub_resource type="Theme" id="Theme_8erm5"]
+Label/colors/font_color = Color(0, 0.85098, 0.25098, 1)
+Label/font_sizes/font_size = 10
+
+[node name="GhostPlayer" type="Node2D"]
+script = ExtResource("1_tf5bf")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="."]
 collision_layer = 0
 collision_mask = 0
 motion_mode = 1
-script = ExtResource("2_x3wgy")
-
-[node name="Label" type="Label" parent="CharacterBody2D"]
-offset_left = -10.0
-offset_top = -19.0
-offset_right = 12.0
-offset_bottom = -5.0
-theme = SubResource("Theme_8erm5")
-text = "YOU"
+script = ExtResource("2_jb6gq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
 sprite_frames = SubResource("SpriteFrames_8erm5")
@@ -329,5 +321,14 @@ flip_h = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_8erm5")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = -10.0
+offset_top = -19.0
+offset_right = 12.0
+offset_bottom = -5.0
+theme = SubResource("Theme_8erm5")
+text = "YOU"
 
 [connection signal="animation_finished" from="CharacterBody2D/AnimatedSprite2D" to="CharacterBody2D/AnimatedSprite2D" method="_on_animation_finished"]
