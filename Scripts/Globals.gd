@@ -15,5 +15,6 @@ static var num_monsters = 3
 static var monster_positions = []
 static var monsters = [preload("res://Scenes/skeleton.tscn")]
 static var monster_scales = [2]
+static var monster_types = []
 
 signal fringe_changed

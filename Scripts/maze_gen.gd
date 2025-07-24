@@ -75,8 +75,14 @@ func gen_maze():
 	get_start()
 	print_grid()
 	
-	place_maze()
+	return grid
+	#place_maze()
 	
+func set_maze(maze, start, exit):
+	grid = maze
+	start_coord = start
+	exit_coord = exit
+	place_maze()
 	
 func place_maze():
 	for y in range(Globals.grid_size):
@@ -88,11 +94,11 @@ func place_maze():
 	
 func place_border():
 	# left and right borders
-	for y in range(0, y_dim):
+	for y in range(0, Globals.grid_size):
 		set_wall_tile(-1, y)
 		set_wall_tile(Globals.grid_size, y)
 	# top and bottom borders
-	for x in range(0, x_dim):
+	for x in range(0, Globals.grid_size):
 		set_wall_tile(x, -1)
 		set_wall_tile(x, Globals.grid_size)
 	# corners

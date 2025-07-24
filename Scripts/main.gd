@@ -13,20 +13,25 @@ var connected_players: Array = []
 var is_server := OS.has_feature("dedicated_server")
 
 func _ready() -> void:
-	#if is_server:
-		#MultiplayerManager.start_server()
-		#multiplayer.peer_connected.connect(_on_player_connected)
+	if is_server:
+		MultiplayerManager.start_server()
+		multiplayer.peer_connected.connect(_on_player_connected)
 		#maze.gen_maze()
-	#else:
-		#code_interface.run_button_pressed.connect(run_user_code)
-		#player.defeat_monster.connect(monster_defeated)
-		#player.reached_exit.connect(player_won)
-	spawn_maze_and_monsters()
+	else:
+		code_interface.run_button_pressed.connect(run_user_code)
+		player.defeat_monster.connect(monster_defeated)
+		player.reached_exit.connect(player_won)
+		MultiplayerManager.connect_to_server("127.0.0.1")
+	#spawn_maze_and_monsters()
 	
-func spawn_maze_and_monsters():
-	RandomNumberGenerator.new().seed = maze_seed
+func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
+	#RandomNumberGenerator.new().seed = maze_seed
 	#randomize()
-	maze.gen_maze()
+	#maze.gen_maze()
+	maze.set_maze(grid, start_coord, exit_coord)
+	monster_positions = monster_pos
+	Globals.monster_positions = monster_positions
+	Globals.monster_types = monster_types
 	
 	code_interface.run_button_pressed.connect(run_user_code)
 	player.defeat_monster.connect(monster_defeated)
@@ -50,11 +55,11 @@ func run_user_code():
 	
 	
 func spawn_all_monsters():
-	monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
-	Globals.monster_positions = monster_positions
+	#monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
+	#Globals.monster_positions = monster_positions
 	print(monster_positions)
 	for i in range(Globals.num_monsters):
-		spawn_monster(monster_positions[i], get_random_monster())
+		spawn_monster(monster_positions[i], Globals.monster_types[i])
 	
 func get_random_monster():
 	return randi_range(0, Globals.monsters.size() - 1)
@@ -91,6 +96,28 @@ func monster_defeated():
 func player_won():
 	print("PLAYER WINS")
 	code_interface.disable_code()
-	
+
+func _on_player_connected(id: int):
+	print("Player connected: ", id)
+	connected_players.append(id)
+	if connected_players.size() == 2:
+		start_game()
+		
+func start_game():
+	var maze_grid = maze.get_maze()
+	var start_coord = maze.get_start()
+	var exit_coord = maze.get_exit()
+	monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
+	Globals.monster_positions = monster_positions
+	for i in range(Globals.num_monsters):
+		Globals.monster_types.append(get_random_monster())
+	var monster_types = Globals.monster_types
+	for peer_id in connected_players:
+		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord)
+		
+@rpc("authority")
+func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord):
+	#maze_seed = seed
+	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord)
 	
 	

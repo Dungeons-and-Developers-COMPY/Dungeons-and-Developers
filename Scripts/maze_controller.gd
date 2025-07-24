@@ -22,7 +22,19 @@ var rng = RandomNumberGenerator.new()
 			#x = rng.randi_range(0, Globals.grid_size - 1)
 			#y = rng.randi_range(0, Globals.grid_size - 1)
 		#floor.randomise_tile(x, y)
-		
+func set_maze(maze, start_coord, exit_coord):
+	walls.set_maze(maze, start_coord, exit_coord)
+	gen_floor()
+
+func get_maze():
+	return walls.gen_maze()
+
+func get_start():
+	return walls.start_coord
+
+func get_exit():
+	return walls.exit_coord
+
 func gen_maze():
 	walls.gen_maze()
 	
@@ -40,3 +52,5 @@ func gen_maze():
 			y = rng.randi_range(0, Globals.grid_size - 1)
 		floor.randomise_tile(x, y)
 	
+func gen_floor():
+	floor.gen_floor(walls.start_coord, walls.exit_coord)

@@ -7,7 +7,7 @@ func start_server(port: int = 12345):
 		push_error("Server failed to start.")
 		return
 	multiplayer.multiplayer_peer = peer
-	print("Dedicated server started on port", port)
+	print("Dedicated server started on port: ", port)
 
 func connect_to_server(ip: String, port: int = 12345):
 	var peer = ENetMultiplayerPeer.new()
