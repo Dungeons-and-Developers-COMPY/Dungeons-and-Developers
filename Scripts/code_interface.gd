@@ -5,12 +5,16 @@ signal run_button_pressed
 var code: String = ""
 var question: String = ""
 var console_text: String = ""
+var moving_code: String = ""
 
 @onready var question_box = $QuestionText
 @onready var console = $ConsoleText
 @onready var run_button = $RunButton
 @onready var code_edit = $CodeEdit
 
+func set_moving():
+	question_box.text = Globals.MOVING_TEXT
+	code_edit.text = moving_code
 
 func _on_run_button_pressed() -> void:
 	code = code_edit.text
@@ -23,3 +27,10 @@ func disable_code():
 	
 func enable_code():
 	code_edit.editable = true
+	run_button.disabled = false
+	
+func output_to_console(text: String):
+	if console.text == "":
+		console.text = text
+	else:
+		console.text = console.text + "\n" + text

@@ -4,6 +4,9 @@ var pos: Vector2i = Vector2i(0, 0) # player's current position
 
 @onready var char = $CharacterBody2D
 
+func _ready() -> void:
+	modulate = Color(1.5, 0.5, 0.5)
+
 func update_position(grid_pos: Vector2i):
 	pos = grid_pos
 	move()

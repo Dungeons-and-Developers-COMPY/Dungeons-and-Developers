@@ -22,14 +22,21 @@ func _ready() -> void:
 		MultiplayerManager.start_server()
 		multiplayer.peer_connected.connect(_on_player_connected)
 	else:
-		code_interface.run_button_pressed.connect(run_user_code)
-		player.defeat_monster.connect(monster_defeated)
-		player.reached_exit.connect(player_won)
-		player.moving.connect(opponent_moving)
+		connect_player_signals()
 		MultiplayerManager.connect_to_server("127.0.0.1")
+	
+func connect_player_signals():
+	code_interface.run_button_pressed.connect(run_user_code)
+	player.defeat_monster.connect(monster_defeated)
+	player.reached_exit.connect(player_won)
+	player.moving.connect(opponent_moving)
+	player.console.connect(output_to_console)
+	player.stunned.connect(stun_player)
+	player.end_stun.connect(unstun_player)
 	
 # function used by clients to setup the maze
 func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
+	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
 	monster_positions = monster_pos
 	Globals.monster_positions = monster_positions
@@ -103,10 +110,13 @@ func _on_player_connected(id: int):
 		
 # function called by server when 2 players have entered the server to start the game
 func start_game():
+	print()
+	print("Starting game...")
 	var maze_grid = maze.get_maze()
 	var start_coord = maze.get_start()
 	var exit_coord = maze.get_exit()
 	monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
+	print("Monsters at positions: " + str(monster_positions))
 	Globals.monster_positions = monster_positions
 	for i in range(Globals.num_monsters):
 		Globals.monster_types.append(get_random_monster())
@@ -155,3 +165,12 @@ func show_end(text):
 	player.should_stop = true
 	end_label.text = text
 	end_label.show()
+
+func output_to_console(text: String):
+	code_interface.output_to_console(text)
+	
+func stun_player():
+	code_interface.disable_code()
+	
+func unstun_player():
+	code_interface.enable_code()

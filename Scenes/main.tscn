@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://kd8t7lk57n5w" path="res://Scenes/maze.tscn" id="1_jjgbg"]
 [ext_resource type="PackedScene" uid="uid://diu6qtlkhxxyc" path="res://Scenes/player.tscn" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://b434binq15kiq" path="res://Scenes/code_interface.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://kjngx0pr6xeh" path="res://Scenes/ghost_player.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="5_kry3j"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")

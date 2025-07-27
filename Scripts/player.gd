@@ -13,6 +13,9 @@ signal hit_monster
 signal defeat_monster
 signal reached_exit
 signal moving
+signal console(text: String)
+signal stunned
+signal end_stun
 
 @onready var char = $CharacterBody2D
 
@@ -52,6 +55,8 @@ func move():
 	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	char.set_target_pos(x, y)
 	await char.stopped_moving
+	var string = "Moved to position " + str(pos)
+	emit_signal("console", string)
 
 # function that attempts to move player, if player can't move, player must get stunned
 func try_move(x: int, y: int):
@@ -61,10 +66,15 @@ func try_move(x: int, y: int):
 		if (on_monster_coord()):
 			should_stop = true
 			emit_signal("hit_monster")
+			emit_signal("console", "There's a monster blocking your path... Stopping movement")
 		if (has_reached_exit()):
 			should_stop = true
 			emit_signal("reached_exit")
 		await move()
+	else:
+		emit_signal("console", "Wall hit! Stunning for " + str(Globals.stun_time) + " seconds")
+		await stun()
+		#await get_tree().create_timer(Globals.stun_time).timeout
 	# TODO: else stun player
 
 # function to check if the player can move to that position
@@ -157,3 +167,9 @@ func has_reached_exit():
 		return true
 	else:
 		return false
+		
+func stun():
+	emit_signal("stunned")
+	char.stun()
+	await get_tree().create_timer(Globals.stun_time).timeout
+	emit_signal("end_stun")

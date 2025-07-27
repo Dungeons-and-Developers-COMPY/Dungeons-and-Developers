@@ -62,9 +62,11 @@ func gen_maze():
 	x_dim = Globals.grid_size
 	Globals.letters_to_show.clear()
 
+	print("Generating maze...")
 	dfs(starting_coords)
 	get_start()
 	print_grid()
+	print("Maze generated.")
 	
 	return grid
 	
@@ -197,8 +199,6 @@ func get_start():
 	get_exit(result["row"],result["col"])
 
 func get_exit(row: int, col: int):
-	print(row)
-	print(col)
 	var result = MazeLogic.find_furthest_edge_square(grid,row,col)
 	if result != null:
 		print("Furthest edge square at (", result["row"], ",", result["col"], ") with distance ", result["dist"])
