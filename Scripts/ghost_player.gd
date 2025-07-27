@@ -1,13 +1,16 @@
 extends Node2D
 
 var pos: Vector2i = Vector2i(0, 0) # player's current position
-
 @onready var char = $CharacterBody2D
+
+signal moved
+signal recentre(player_num: int)
 
 func _ready() -> void:
 	modulate = Color(1.5, 0.5, 0.5)
 
 func update_position(grid_pos: Vector2i):
+	emit_signal("recentre", 1)
 	pos = grid_pos
 	move()
 
@@ -27,3 +30,4 @@ func move():
 	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	char.set_target_pos(x, y)
 	await char.stopped_moving
+	emit_signal("moved")

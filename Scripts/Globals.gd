@@ -6,6 +6,8 @@ static var step_delay = 0
 static var allow_loops = false
 static var letters_to_show = []
 static var show_labels = false
+
+static var player_offset = 4
 static var stun_time = 3
 
 static var maze_scale = 3

@@ -33,7 +33,12 @@ func connect_player_signals():
 	player.console.connect(output_to_console)
 	player.stunned.connect(stun_player)
 	player.end_stun.connect(unstun_player)
-	
+	player.moved.connect(check_overlap)
+	player.adjust_monster.connect(adjust_monster)
+	player.recentre.connect(unspace_player)
+	opponent.moved.connect(check_overlap)
+	opponent.recentre.connect(unspace_player)
+
 # function used by clients to setup the maze
 func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
 	code_interface.set_moving()
@@ -54,22 +59,23 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	
 	spawn_all_monsters()
 	player.set_monster_positions(monster_positions)
-	
+	space_players()
+
 # function used by clients to execute the code entered by the user
 func run_user_code():
 	print("SIGNAL RECEIVED")
 	player.execute_move(code_interface.code)
-	
+
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
 	print(monster_positions)
 	for i in range(Globals.num_monsters):
 		spawn_monster(monster_positions[i], Globals.monster_types[i])
-	
+
 # function used by server to randomise the monsters spawned
 func get_random_monster():
 	return randi_range(0, Globals.monsters.size() - 1)
-	
+
 # function used by clients to set a monster to its correct position
 func spawn_monster(pos: Vector2i, monster_type: int):
 	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
@@ -82,7 +88,7 @@ func spawn_monster(pos: Vector2i, monster_type: int):
 	monster.scale = Vector2(Globals.monster_scales[monster_type], Globals.monster_scales[monster_type])
 	add_child(monster)
 	monsters.append(monster)
-	
+
 # function to kill off a monster defeated by a player
 func monster_defeated():
 	print("received monster killed")
@@ -107,7 +113,7 @@ func _on_player_connected(id: int):
 	connected_players.append(id)
 	if connected_players.size() == 2:
 		start_game()
-		
+
 # function called by server when 2 players have entered the server to start the game
 func start_game():
 	print()
@@ -123,12 +129,12 @@ func start_game():
 	var monster_types = Globals.monster_types
 	for peer_id in connected_players:
 		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord)
-		
+
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord):
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord)
-	
+
 @rpc("any_peer", "call_remote")
 func update_opponent_position(pos: Vector2i):
 	print("updating opponent position")
@@ -150,7 +156,7 @@ func game_over(peer_id: int):
 	if not is_game_over:
 		is_game_over = true
 		rpc("announce_winner", peer_id)
-	
+
 @rpc("any_peer")
 func announce_winner(peer_id: int):
 	if multiplayer.get_unique_id() == peer_id:
@@ -159,7 +165,7 @@ func announce_winner(peer_id: int):
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
-	
+
 func show_end(text):
 	code_interface.disable_code()
 	player.should_stop = true
@@ -168,9 +174,34 @@ func show_end(text):
 
 func output_to_console(text: String):
 	code_interface.output_to_console(text)
-	
+
 func stun_player():
 	code_interface.disable_code()
-	
+
 func unstun_player():
 	code_interface.enable_code()
+
+func check_overlap():
+	if player.pos == opponent.pos:
+		space_players()
+
+func unspace_player(player_num: int):
+	if player.pos == opponent.pos:
+		if (player_num == 1):
+			player.move()
+		else:
+			opponent.move()
+
+func space_players():
+	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
+	player.char.set_target_pos(x, player.char.global_position.y)
+	x = opponent.char.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	opponent.char.set_target_pos(x, opponent.char.global_position.y)
+
+func adjust_monster(index: int):
+	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
+	player.char.set_target_pos(x, player.char.global_position.y)
+	var monster = monsters[index]
+	monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	await player.char.stopped_moving
+	player.char.animator.flip_h = false

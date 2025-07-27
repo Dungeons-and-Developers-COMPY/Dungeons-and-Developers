@@ -16,6 +16,9 @@ signal moving
 signal console(text: String)
 signal stunned
 signal end_stun
+signal adjust_monster(index: int)
+signal moved
+signal recentre(player_num: int)
 
 @onready var char = $CharacterBody2D
 
@@ -61,16 +64,19 @@ func move():
 # function that attempts to move player, if player can't move, player must get stunned
 func try_move(x: int, y: int):
 	if (can_move(x, y)):
+		emit_signal("recentre", 2)
 		pos.x = x
 		pos.y = y
+		await move()
+		emit_signal("moved")
 		if (on_monster_coord()):
 			should_stop = true
 			emit_signal("hit_monster")
 			emit_signal("console", "There's a monster blocking your path... Stopping movement")
+			adjust_positions()
 		if (has_reached_exit()):
 			should_stop = true
 			emit_signal("reached_exit")
-		await move()
 	else:
 		emit_signal("console", "Wall hit! Stunning for " + str(Globals.stun_time) + " seconds")
 		await stun()
@@ -173,3 +179,8 @@ func stun():
 	char.stun()
 	await get_tree().create_timer(Globals.stun_time).timeout
 	emit_signal("end_stun")
+
+func adjust_positions():
+	for i in range(monster_positions.size()):
+		if (monster_positions[i] == pos) and (monsters_status[i] == 1):
+			emit_signal("adjust_monster", i)
