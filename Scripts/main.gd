@@ -23,6 +23,7 @@ func _ready() -> void:
 		multiplayer.peer_connected.connect(_on_player_connected)
 	else:
 		connect_player_signals()
+		show_end("Waiting for player 2...")
 		MultiplayerManager.connect_to_server("127.0.0.1")
 	
 func connect_player_signals():
@@ -41,6 +42,7 @@ func connect_player_signals():
 
 # function used by clients to setup the maze
 func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
+	hide_end()
 	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
 	monster_positions = monster_pos
@@ -171,6 +173,11 @@ func show_end(text):
 	player.should_stop = true
 	end_label.text = text
 	end_label.show()
+	
+func hide_end():
+	code_interface.enable_code()
+	player.should_stop = false
+	end_label.hide()
 
 func output_to_console(text: String):
 	code_interface.output_to_console(text)

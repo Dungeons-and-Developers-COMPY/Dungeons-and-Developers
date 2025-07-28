@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://hn54wuekrxdo"]
+[gd_scene load_steps=7 format=3 uid="uid://hn54wuekrxdo"]
 
 [ext_resource type="Script" uid="uid://bf5de21o43wqk" path="res://Scripts/main.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://kd8t7lk57n5w" path="res://Scenes/maze.tscn" id="1_jjgbg"]
 [ext_resource type="PackedScene" uid="uid://diu6qtlkhxxyc" path="res://Scenes/player.tscn" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://b434binq15kiq" path="res://Scenes/code_interface.tscn" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://d2fs6llkx5lnk" path="res://Scenes/main_menu.tscn" id="6_21xkr"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
@@ -23,17 +24,21 @@ offset_right = 640.0
 [node name="EndLabel" type="Label" parent="."]
 visible = false
 z_index = 4
-offset_left = 128.0
-offset_top = 200.0
-offset_right = 1162.0
-offset_bottom = 473.0
+offset_right = 1280.0
+offset_bottom = 720.0
 theme_override_font_sizes/font_size = 200
 text = "YOU WON!"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Player" parent="." instance=ExtResource("3_8gbba")]
 scale = Vector2(2, 2)
 
 [node name="GhostPlayer" parent="." instance=ExtResource("5_kry3j")]
 scale = Vector2(2, 2)
+
+[node name="MainMenu" parent="." instance=ExtResource("6_21xkr")]
+visible = false
+position = Vector2(640, 360)
+scale = Vector2(2.49, 2.49)

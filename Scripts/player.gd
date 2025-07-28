@@ -119,8 +119,10 @@ func set_monster_positions(array):
 # function to execute player-typed movement
 func execute_move(code: String):
 	var lines = code.split("\n")
+	var line_num: int = 0
 	
 	for line in lines:
+		line_num += 1
 		if should_stop:
 			break
 			
@@ -143,12 +145,17 @@ func execute_move(code: String):
 				arg = int(arg_str)
 			
 			if function_name in valid_funcs: # only allows the move functions to be called
-				print(function_name)
+				#print(function_name)
 				await call(function_name, arg)
 			else:
-				print("Unknown function: %s" % function_name)
+				#print("Unknown function: %s" % function_name)
+				var string = "ERROR on line " + str(line_num) + ". Unknown function call: " + function_name
+				emit_signal("console", string)
+				
 		else:
-			print("Invalid syntax: %s" % line)
+			#print("Invalid syntax: %s" % line)
+			var string = "ERROR on line " + str(line_num) + ". Invalid syntax: " + str(line)
+			emit_signal("console", string)
 	
 # checks if player is on same block as a monster
 func on_monster_coord():
