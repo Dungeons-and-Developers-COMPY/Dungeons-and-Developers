@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5dnemdv61kly"]
+
+[ext_resource type="Script" uid="uid://dva8lcdy4bv4o" path="res://Scripts/question_handler.gd" id="1_8k4r8"]
+
+[node name="QuestionHandler" type="Node2D"]
+script = ExtResource("1_8k4r8")
+
+[node name="HTTPRequestQuestion" type="HTTPRequest" parent="."]
+
+[node name="HTTPTestCode" type="HTTPRequest" parent="."]
+
+[node name="HTTPSumbitCode" type="HTTPRequest" parent="."]
+
+[connection signal="request_completed" from="HTTPRequestQuestion" to="." method="_on_request_completed"]
+[connection signal="request_completed" from="HTTPTestCode" to="." method="_on_test_code_request_completed"]
+[connection signal="request_completed" from="HTTPSumbitCode" to="." method="_on_sumbit_code_request_completed"]

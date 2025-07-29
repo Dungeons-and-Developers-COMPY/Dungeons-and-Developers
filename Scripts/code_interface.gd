@@ -34,3 +34,8 @@ func output_to_console(text: String):
 		console.text = text
 	else:
 		console.text = console.text + "\n" + text
+
+func show_question(title: String, promt: String):
+	moving_code = code_edit.text
+	question_box.text = promt
+	

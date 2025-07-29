@@ -20,6 +20,8 @@ static var monsters = [preload("res://Scenes/skeleton.tscn")]
 static var monster_scales = [2]
 static var monster_types = []
 
+static var questions = []
+
 static var MOVING_TEXT = "Move around using: move_left(int steps), move_right(int steps), move_up(int steps), move_down(int steps)\nReach the exit before your opponent!"
 
 signal fringe_changed

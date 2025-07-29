@@ -9,7 +9,7 @@ var should_stop: bool = false
 var monster_positions = []
 var monsters_status = []
 
-signal hit_monster
+signal hit_monster(question_num: int)
 signal defeat_monster
 signal reached_exit
 signal moving
@@ -71,7 +71,6 @@ func try_move(x: int, y: int):
 		emit_signal("moved")
 		if (on_monster_coord()):
 			should_stop = true
-			emit_signal("hit_monster")
 			emit_signal("console", "There's a monster blocking your path... Stopping movement")
 			adjust_positions()
 		if (has_reached_exit()):
@@ -190,4 +189,5 @@ func stun():
 func adjust_positions():
 	for i in range(monster_positions.size()):
 		if (monster_positions[i] == pos) and (monsters_status[i] == 1):
+			emit_signal("hit_monster", i)
 			emit_signal("adjust_monster", i)

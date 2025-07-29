@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://hn54wuekrxdo"]
+[gd_scene load_steps=8 format=3 uid="uid://hn54wuekrxdo"]
 
 [ext_resource type="Script" uid="uid://bf5de21o43wqk" path="res://Scripts/main.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://kd8t7lk57n5w" path="res://Scenes/maze.tscn" id="1_jjgbg"]
+[ext_resource type="PackedScene" uid="uid://b5dnemdv61kly" path="res://Scenes/question_handler.tscn" id="2_6bp64"]
 [ext_resource type="PackedScene" uid="uid://diu6qtlkhxxyc" path="res://Scenes/player.tscn" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://b434binq15kiq" path="res://Scenes/code_interface.tscn" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="5_kry3j"]
@@ -9,6 +10,8 @@
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
+
+[node name="QuestionHandler" parent="." instance=ExtResource("2_6bp64")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0

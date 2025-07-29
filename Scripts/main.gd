@@ -5,6 +5,7 @@ extends Node2D
 @onready var code_interface = $CodeInterface
 @onready var opponent = $GhostPlayer
 @onready var end_label = $EndLabel
+@onready var question_handler = $QuestionHandler
 
 var monster_positions = []
 var monsters = []
@@ -14,13 +15,14 @@ var maze_seed: int
 var connected_players: Array = []
 var is_server := OS.has_feature("dedicated_server")
 var is_game_over: bool = false
+var difficulties = ["Easy", "Medium", "Hard"]
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
 	if is_server:
 		MultiplayerManager.start_server()
-		multiplayer.peer_connected.connect(_on_player_connected)
+		connect_server_signals()
 	else:
 		connect_player_signals()
 		show_end("Waiting for player 2...")
@@ -29,6 +31,7 @@ func _ready() -> void:
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
 	player.defeat_monster.connect(monster_defeated)
+	player.hit_monster.connect(show_question)
 	player.reached_exit.connect(player_won)
 	player.moving.connect(opponent_moving)
 	player.console.connect(output_to_console)
@@ -40,8 +43,12 @@ func connect_player_signals():
 	opponent.moved.connect(check_overlap)
 	opponent.recentre.connect(unspace_player)
 
+func connect_server_signals():
+	multiplayer.peer_connected.connect(_on_player_connected)
+	question_handler.question.connect(receive_question)
+
 # function used by clients to setup the maze
-func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord):
+func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions):
 	hide_end()
 	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
@@ -50,6 +57,7 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	Globals.monster_types = monster_types
 	Globals.offset = maze.position
 	Globals.maze_scale = maze.scale.x
+	Globals.questions = questions
 	
 	player.set_pos(maze.walls.start_coord["row"], maze.walls.start_coord["col"])
 	player.set_end_pos(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])
@@ -93,10 +101,8 @@ func spawn_monster(pos: Vector2i, monster_type: int):
 
 # function to kill off a monster defeated by a player
 func monster_defeated():
-	print("received monster killed")
+	code_interface.set_moving()
 	var player_pos = player.pos
-	print(player_pos)
-	print(Globals.monster_positions)
 	for i in range(Globals.monster_positions.size()):
 		print(i)
 		print(Globals.monster_positions[i])
@@ -120,6 +126,9 @@ func _on_player_connected(id: int):
 func start_game():
 	print()
 	print("Starting game...")
+	question_handler.get_all_questions()
+	await question_handler.all_received
+	
 	var maze_grid = maze.get_maze()
 	var start_coord = maze.get_start()
 	var exit_coord = maze.get_exit()
@@ -129,13 +138,15 @@ func start_game():
 	for i in range(Globals.num_monsters):
 		Globals.monster_types.append(get_random_monster())
 	var monster_types = Globals.monster_types
+	
 	for peer_id in connected_players:
-		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord)
+		print(Globals.questions.size())
+		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions)
 
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority")
-func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord):
-	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord)
+func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions):
+	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions)
 
 @rpc("any_peer", "call_remote")
 func update_opponent_position(pos: Vector2i):
@@ -212,3 +223,12 @@ func adjust_monster(index: int):
 	monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
 	await player.char.stopped_moving
 	player.char.animator.flip_h = false
+
+func receive_question(q):
+	Globals.questions.append(q)
+	print(q[0])
+	print(q[1])
+
+func show_question(question_num: int):
+	var question_data = Globals.questions[question_num]
+	code_interface.show_question(question_data[0], question_data[1])
