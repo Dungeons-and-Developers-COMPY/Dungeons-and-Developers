@@ -11,6 +11,9 @@ script = ExtResource("1_8k4r8")
 
 [node name="HTTPSumbitCode" type="HTTPRequest" parent="."]
 
+[node name="HTTPLogin" type="HTTPRequest" parent="."]
+
 [connection signal="request_completed" from="HTTPRequestQuestion" to="." method="_on_request_completed"]
 [connection signal="request_completed" from="HTTPTestCode" to="." method="_on_test_code_request_completed"]
 [connection signal="request_completed" from="HTTPSumbitCode" to="." method="_on_sumbit_code_request_completed"]
+[connection signal="request_completed" from="HTTPLogin" to="." method="_on_login_completed"]

@@ -16,6 +16,7 @@ var connected_players: Array = []
 var is_server := OS.has_feature("dedicated_server")
 var is_game_over: bool = false
 var difficulties = ["Easy", "Medium", "Hard"]
+var current_question: int = 0
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
@@ -23,13 +24,17 @@ func _ready() -> void:
 	if is_server:
 		MultiplayerManager.start_server()
 		connect_server_signals()
+		#var code_submission = "def func(word):\n\treturn word[::-1]"
+		#question_handler.submit_answer(4, code_submission)
 	else:
 		connect_player_signals()
+		question_handler.login()
 		show_end("Waiting for player 2...")
 		MultiplayerManager.connect_to_server("127.0.0.1")
 	
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
+	code_interface.submit.connect(submit_code)
 	player.defeat_monster.connect(monster_defeated)
 	player.hit_monster.connect(show_question)
 	player.reached_exit.connect(player_won)
@@ -42,6 +47,7 @@ func connect_player_signals():
 	player.recentre.connect(unspace_player)
 	opponent.moved.connect(check_overlap)
 	opponent.recentre.connect(unspace_player)
+	question_handler.submission_result.connect(receive_submission_feedback)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -230,5 +236,18 @@ func receive_question(q):
 	print(q[1])
 
 func show_question(question_num: int):
+	print("Current question set to ", current_question)
+	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
+	current_question = question_data[2]
 	code_interface.show_question(question_data[0], question_data[1])
+
+func submit_code():
+	question_handler.submit_answer(current_question, code_interface.code)
+
+func receive_submission_feedback(output: String, passed: bool):
+	code_interface.output_to_console(output)
+	if passed:
+		player.on_monster_defeated()
+		code_interface.defeated_monster()
+	# TODO: stun player

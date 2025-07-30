@@ -1,11 +1,13 @@
 extends Control
 
 signal run_button_pressed
+signal submit
 
 var code: String = ""
 var question: String = ""
 var console_text: String = ""
 var moving_code: String = ""
+var on_monster: bool = false
 
 @onready var question_box = $QuestionText
 @onready var console = $ConsoleText
@@ -19,7 +21,10 @@ func set_moving():
 func _on_run_button_pressed() -> void:
 	code = code_edit.text
 	print("Run button pressed")
-	emit_signal("run_button_pressed")
+	if on_monster:
+		emit_signal("submit")
+	else:
+		emit_signal("run_button_pressed")
 	
 func disable_code():
 	code_edit.editable = false
@@ -39,3 +44,8 @@ func show_question(title: String, promt: String):
 	moving_code = code_edit.text
 	question_box.text = promt
 	
+func hit_monster():
+	on_monster = true
+	
+func defeated_monster():
+	on_monster = false
