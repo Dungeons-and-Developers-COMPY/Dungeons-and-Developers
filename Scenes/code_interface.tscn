@@ -74,9 +74,52 @@ scroll_following = true
 [node name="RunButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 544.0
-offset_top = 528.0
+offset_top = 530.0
 offset_right = 608.0
-offset_bottom = 559.0
+offset_bottom = 556.0
+theme = ExtResource("1_b6vbw")
 text = "Run"
 
+[node name="SubmitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 392.0
+offset_top = 530.0
+offset_right = 456.0
+offset_bottom = 556.0
+theme = ExtResource("1_b6vbw")
+text = "Submit"
+
+[node name="InputPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 224.0
+offset_top = 390.0
+offset_right = 536.0
+offset_bottom = 558.0
+
+[node name="TextEdit" type="TextEdit" parent="InputPanel"]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 312.0
+offset_bottom = 168.0
+theme = ExtResource("1_b6vbw")
+
+[node name="Label" type="Label" parent="InputPanel"]
+layout_mode = 0
+offset_right = 312.0
+offset_bottom = 30.0
+theme = ExtResource("1_b6vbw")
+text = "Enter Input:"
+
+[node name="ConfirmButton" type="Button" parent="InputPanel"]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 136.0
+offset_right = 306.0
+offset_bottom = 162.0
+theme = ExtResource("1_b6vbw")
+text = "Confirm"
+
 [connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
+[connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
+[connection signal="pressed" from="InputPanel/ConfirmButton" to="." method="_on_confirm_button_pressed"]

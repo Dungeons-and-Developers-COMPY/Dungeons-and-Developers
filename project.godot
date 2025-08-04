@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Dungeons and Developers"
-run/main_scene="uid://hn54wuekrxdo"
+run/main_scene="uid://c6os2mfxru68w"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://Assets/icon.svg"
 

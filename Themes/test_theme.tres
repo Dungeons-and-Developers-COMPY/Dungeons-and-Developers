@@ -1,12 +1,25 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://430hiudad3go"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://430hiudad3go"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_immdk"]
-bg_color = Color(0.294118, 0.294118, 0.294118, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
+[ext_resource type="Texture2D" uid="uid://bbau0bhh8dqlw" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x26.png" id="1_kv3xq"]
+[ext_resource type="StyleBox" uid="uid://u2usqaqqrqph" path="res://Themes/new_style_box_flat.tres" id="2_immdk"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_immdk"]
+texture = ExtResource("1_kv3xq")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 8.0
+region_rect = Rect2(59, 13, 26, 26)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o1x1i"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ki2my"]
+texture = ExtResource("1_kv3xq")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 8.0
+region_rect = Rect2(11, 11, 26, 28)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oejs1"]
 border_width_left = 2
@@ -23,7 +36,23 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ki2my"]
+
 [resource]
-CodeEdit/styles/normal = SubResource("StyleBoxFlat_immdk")
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_disabled_color = Color(0, 0, 0, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+Button/colors/font_pressed_color = Color(0, 0, 0, 1)
+Button/font_sizes/font_size = 10
+Button/styles/disabled = SubResource("StyleBoxTexture_immdk")
+Button/styles/focus = SubResource("StyleBoxEmpty_o1x1i")
+Button/styles/hover = SubResource("StyleBoxTexture_ki2my")
+Button/styles/normal = SubResource("StyleBoxTexture_ki2my")
+Button/styles/pressed = SubResource("StyleBoxTexture_immdk")
+CodeEdit/styles/normal = ExtResource("2_immdk")
 Label/styles/normal = SubResource("StyleBoxFlat_oejs1")
 RichTextLabel/styles/normal = SubResource("StyleBoxFlat_kv3xq")
+TextEdit/styles/focus = SubResource("StyleBoxEmpty_ki2my")
+TextEdit/styles/normal = ExtResource("2_immdk")

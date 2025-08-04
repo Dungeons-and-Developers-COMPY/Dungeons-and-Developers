@@ -1,47 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://hn54wuekrxdo"]
+[gd_scene load_steps=4 format=3 uid="uid://c6os2mfxru68w"]
 
-[ext_resource type="Script" uid="uid://bf5de21o43wqk" path="res://Scripts/main.gd" id="1_8gbba"]
-[ext_resource type="PackedScene" uid="uid://kd8t7lk57n5w" path="res://Scenes/maze.tscn" id="1_jjgbg"]
-[ext_resource type="PackedScene" uid="uid://b5dnemdv61kly" path="res://Scenes/question_handler.tscn" id="2_6bp64"]
-[ext_resource type="PackedScene" uid="uid://diu6qtlkhxxyc" path="res://Scenes/player.tscn" id="3_8gbba"]
-[ext_resource type="PackedScene" uid="uid://b434binq15kiq" path="res://Scenes/code_interface.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="5_kry3j"]
+[ext_resource type="Script" uid="uid://c5w2g3jgv7ge6" path="res://Scripts/manager.gd" id="1_8gbba"]
+[ext_resource type="PackedScene" uid="uid://hn54wuekrxdo" path="res://Scenes/game.tscn" id="1_bo1nx"]
 [ext_resource type="PackedScene" uid="uid://d2fs6llkx5lnk" path="res://Scenes/main_menu.tscn" id="6_21xkr"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
 
-[node name="QuestionHandler" parent="." instance=ExtResource("2_6bp64")]
-
-[node name="Camera2D" type="Camera2D" parent="."]
-anchor_mode = 0
-
-[node name="Maze" parent="." instance=ExtResource("1_jjgbg")]
-
-[node name="CodeInterface" parent="." instance=ExtResource("4_jjvhh")]
-offset_left = 640.0
-offset_right = 640.0
-
-[node name="MultiplayerManager" type="Node2D" parent="."]
-
-[node name="EndLabel" type="Label" parent="."]
-visible = false
-z_index = 4
-offset_right = 1280.0
-offset_bottom = 720.0
-theme_override_font_sizes/font_size = 200
-text = "YOU WON!"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="Player" parent="." instance=ExtResource("3_8gbba")]
-scale = Vector2(2, 2)
-
-[node name="GhostPlayer" parent="." instance=ExtResource("5_kry3j")]
-scale = Vector2(2, 2)
+[node name="Game" parent="." instance=ExtResource("1_bo1nx")]
 
 [node name="MainMenu" parent="." instance=ExtResource("6_21xkr")]
-visible = false
 position = Vector2(640, 360)
-scale = Vector2(2.49, 2.49)
+scale = Vector2(2.5, 2.5)

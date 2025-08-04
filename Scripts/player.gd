@@ -22,9 +22,9 @@ signal recentre(player_num: int)
 
 @onready var char = $CharacterBody2D
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_released("attack") and should_stop == true:
-		on_monster_defeated()
+#func _process(_delta: float) -> void:
+	#if Input.is_action_just_released("attack") and should_stop == true:
+		#on_monster_defeated()
 
 # functions to move that player can type
 func move_left(n: int = 1):
@@ -75,7 +75,8 @@ func try_move(x: int, y: int):
 			adjust_positions()
 		if (has_reached_exit()):
 			should_stop = true
-			emit_signal("reached_exit")
+			adjust_positions(true)
+			#emit_signal("reached_exit")
 	else:
 		emit_signal("console", "Wall hit! Stunning for " + str(Globals.stun_time) + " seconds")
 		await stun()
@@ -161,17 +162,23 @@ func on_monster_coord():
 	for i in range(monster_positions.size()):
 		if pos == monster_positions[i] and monsters_status[i] == 1:
 			return true
-			
+	
 	return false
 	
 # called when monster gets killed
 func on_monster_defeated():
+	if has_reached_exit():
+		should_stop = true
+		emit_signal("defeat_monster")
+		emit_signal("reached_exit")
+	
 	for i in range(monster_positions.size()):
 		if pos == monster_positions[i]:
 			monsters_status[i] = 0
 	#monster_positions.pop_front()
-	should_stop = false
-	emit_signal("defeat_monster")
+		should_stop = false
+		emit_signal("defeat_monster")
+		return
 	
 # check if player is on exit block
 func has_reached_exit():
@@ -186,7 +193,11 @@ func stun():
 	await get_tree().create_timer(Globals.stun_time).timeout
 	emit_signal("end_stun")
 
-func adjust_positions():
+func adjust_positions(boss: bool = false):
+	if boss:
+		emit_signal("hit_monster", Globals.num_monsters)
+		emit_signal("adjust_monster", Globals.num_monsters)
+	
 	for i in range(monster_positions.size()):
 		if (monster_positions[i] == pos) and (monsters_status[i] == 1):
 			emit_signal("hit_monster", i)

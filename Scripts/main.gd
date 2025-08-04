@@ -18,11 +18,12 @@ var is_game_over: bool = false
 var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
 
+
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
 	if is_server:
-		MultiplayerManager.start_server()
+		MultiplayerManager.start_1v1_server()
 		connect_server_signals()
 		#var code_submission = "def func(word):\n\treturn word[::-1]"
 		#question_handler.submit_answer(4, code_submission)
@@ -30,11 +31,12 @@ func _ready() -> void:
 		connect_player_signals()
 		question_handler.login()
 		show_end("Waiting for player 2...")
-		MultiplayerManager.connect_to_server("127.0.0.1")
+		#MultiplayerManager.connect_to_server("127.0.0.1")
 	
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
-	code_interface.submit.connect(submit_code)
+	code_interface.test.connect(test_user_code)
+	code_interface.submit_button_pressed.connect(submit_code)
 	player.defeat_monster.connect(monster_defeated)
 	player.hit_monster.connect(show_question)
 	player.reached_exit.connect(player_won)
@@ -48,6 +50,7 @@ func connect_player_signals():
 	opponent.moved.connect(check_overlap)
 	opponent.recentre.connect(unspace_player)
 	question_handler.submission_result.connect(receive_submission_feedback)
+	question_handler.test_result.connect(receive_test_feedback)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -74,6 +77,8 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	opponent.teleport()
 	
 	spawn_all_monsters()
+	var boss_pos: Vector2i = Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"]) 
+	spawn_boss(boss_pos)
 	player.set_monster_positions(monster_positions)
 	space_players()
 
@@ -105,10 +110,30 @@ func spawn_monster(pos: Vector2i, monster_type: int):
 	add_child(monster)
 	monsters.append(monster)
 
+func spawn_boss(pos: Vector2i, boss_type: int = 0):
+	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
+	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
+	var actual_pos = Vector2i(x, y)
+	
+	var boss_scene = Globals.boss
+	var boss = boss_scene.instantiate()
+	boss.global_position = actual_pos
+	boss.scale = Vector2(Globals.bosses_scales[boss_type], Globals.bosses_scales[boss_type])
+	add_child(boss)
+	monsters.append(boss)
+
 # function to kill off a monster defeated by a player
 func monster_defeated():
 	code_interface.set_moving()
 	var player_pos = player.pos
+	
+	var boss = monsters[Globals.monster_positions.size()]
+	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
+		if boss.has_method("die"):
+			print("boss dead")
+			boss.die()
+		return
+	
 	for i in range(Globals.monster_positions.size()):
 		print(i)
 		print(Globals.monster_positions[i])
@@ -123,10 +148,21 @@ func monster_defeated():
 
 # function that triggers when a player joins the server
 func _on_player_connected(id: int):
+	#if connected_players.size() >= 2:
+		#rpc_id(id, "reject_connection", "Server Full")
+		#return
 	print("Player connected: ", id)
-	connected_players.append(id)
-	if connected_players.size() == 2:
-		start_game()
+	if (connected_players.size() < 2):
+		connected_players.append(id)
+		if connected_players.size() == 2:
+			start_game()
+
+@rpc("any_peer")
+func reject_connection(reason: String):
+	print("Connection rejected: ", reason)
+	multiplayer.multiplayer_peer = null
+	Globals.connection_result = false
+	Globals.connection_done = true
 
 # function called by server when 2 players have entered the server to start the game
 func start_game():
@@ -142,7 +178,7 @@ func start_game():
 	print("Monsters at positions: " + str(monster_positions))
 	Globals.monster_positions = monster_positions
 	for i in range(Globals.num_monsters):
-		Globals.monster_types.append(get_random_monster())
+		Globals.monster_types.append(i)
 	var monster_types = Globals.monster_types
 	
 	for peer_id in connected_players:
@@ -223,10 +259,17 @@ func space_players():
 	opponent.char.set_target_pos(x, opponent.char.global_position.y)
 
 func adjust_monster(index: int):
-	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
-	player.char.set_target_pos(x, player.char.global_position.y)
-	var monster = monsters[index]
-	monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	if index == Globals.num_monsters: 
+		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale)
+		player.char.set_target_pos(x, player.char.global_position.y)
+		var monster = monsters[index]
+		monster.global_position.x = monster.global_position.x + (Globals.boss_offset * Globals.maze_scale)
+	else:
+		var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
+		player.char.set_target_pos(x, player.char.global_position.y)
+		var monster = monsters[index]
+		monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	
 	await player.char.stopped_moving
 	player.char.animator.flip_h = false
 
@@ -242,6 +285,9 @@ func show_question(question_num: int):
 	current_question = question_data[2]
 	code_interface.show_question(question_data[0], question_data[1])
 
+func test_user_code():
+	question_handler.test_code(code_interface.code, code_interface.input)
+
 func submit_code():
 	question_handler.submit_answer(current_question, code_interface.code)
 
@@ -250,4 +296,23 @@ func receive_submission_feedback(output: String, passed: bool):
 	if passed:
 		player.on_monster_defeated()
 		code_interface.defeated_monster()
+		code_interface.output_to_console("Monster defeated! Moving enabled.")
+		code_interface.output_to_console(Globals.break_string)
 	# TODO: stun player
+
+func receive_test_feedback(output: String, passed: bool):
+	if passed:
+		code_interface.output_to_console("Compilation finished with no errors!\nOutput of function:")
+		code_interface.output_to_console(output)
+		code_interface.output_to_console(Globals.break_string)
+	else:
+		code_interface.output_to_console("Compilation failed! Error:")
+		code_interface.output_to_console(output)     
+		code_interface.output_to_console(Globals.break_string)      
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_released("attack") and player.should_stop == true:
+		player.on_monster_defeated()
+		code_interface.defeated_monster()
+		code_interface.output_to_console("Monster defeated! Moving enabled.")
+		code_interface.output_to_console(Globals.break_string)

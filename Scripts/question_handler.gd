@@ -9,21 +9,24 @@ var login_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/login"
 var random_q_url = "https://dungeonsanddevelopers.cs.uct.ac.za/questions/random/"
 var submission_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/submit/"
 var test_code_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/run-code"
+var register_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/register"
+var find_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/find-available?type="
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
 
 var request_queue = []
+var current_server_request = "Register"
 
 signal question(q)
 signal all_received
 signal submission_result(output: String, passed: bool)
-signal test_result
+signal test_result(output: String, passed: bool)
 
 @onready var question_request = $HTTPRequestQuestion
 @onready var submit_answer_http = $HTTPSumbitCode
 @onready var test_answer_http = $HTTPTestCode
 @onready var login_http = $HTTPLogin
-
+@onready var server_http = $HTTPServer
 func get_auth(questions: bool):
 	var login_details = ""
 	if question:
@@ -53,7 +56,7 @@ func add_to_queue(url):
 func get_all_questions():
 	var url = random_q_url + difficulties[0]
 	add_to_queue(url)
-	url = random_q_url + difficulties[0]
+	url = random_q_url + difficulties[1]
 	add_to_queue(url)
 	url = random_q_url + difficulties[2]
 	add_to_queue(url)
@@ -87,7 +90,7 @@ func test_code(code: String, input):
 	
 	var err = test_answer_http.request(url, headers, HTTPClient.METHOD_POST, json_payload)
 	if err != OK:
-		print("Failed to send request:", err)
+		print("Failed to send request: ", err)
 	else:
 		print("Request sent.")
 
@@ -106,6 +109,38 @@ func get_question():
 	var err = question_request.request(url, headers)
 	if err != OK:
 		print("Failed to send request:", err)
+
+func register_server(ip: String, port: int, type: String, max_players: int):
+	if not is_server:
+		return
+	
+	var payload = {
+		"ip": ip,
+		"port": port,
+		"type": type,
+		"max_players": max_players,
+		"current_players": 0
+	}
+	var json_payload = JSON.stringify(payload)
+	
+	var url = register_server_url
+	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
+	
+	var err = server_http.request(url, headers, HTTPClient.METHOD_POST, json_payload)
+	if err != OK:
+		print("Failed to register server: ", err)
+	else:
+		print("Register request sent.")
+
+func find_server(type: String):
+	var url = find_server_url + type
+	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
+	
+	var err = server_http.request(url, headers)
+	if err != OK:
+		print("Failed to register server: ", err)
+	else:
+		print("Register request sent.")
 
 # called when request for a question is completed
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -142,9 +177,13 @@ func _on_test_code_request_completed(result: int, response_code: int, headers: P
 	if parse_result == OK:
 		print("JSON response:")
 		print(json.data)
-		var response = json.data.get("message")
+		var response
 		var passed = json.data.get("success")
-		emit_signal("submission_result", response, passed)
+		if passed:
+			response = json.data.get("result")
+		else:
+			response = json.data.get("error")
+		emit_signal("test_result", str(response), passed)
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
@@ -159,9 +198,9 @@ func _on_sumbit_code_request_completed(result: int, response_code: int, headers:
 	if parse_result == OK:
 		print("JSON response:")
 		print(json.data)
-		#var response = json.data.get("message")
-		#var passed = json.data.get("success")
-		#emit_signal("submission_result", response, passed)
+		var response = json.data.get("message")
+		var passed = json.data.get("success")
+		emit_signal("submission_result", response, passed)
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
@@ -187,3 +226,7 @@ func _on_login_completed(result: int, response_code: int, headers: PackedStringA
 		#submit_code()
 	else:
 		print("No session cookie found... Login failed.")
+
+
+func _on_http_server_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	pass # Replace with function body.
