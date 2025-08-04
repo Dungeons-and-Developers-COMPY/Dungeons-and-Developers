@@ -4,7 +4,7 @@ func start_1v1_server(starting_port: int = 12345, max_servers: int = 5):
 	for i in range(max_servers):
 		var success = start_server(starting_port + i)
 		if success:
-			return
+			return (starting_port + i)
 	push_error("1v1 server could not start on any ports")
 
 func start_2v2_server(starting_port: int = 12345, max_servers: int = 5):
@@ -51,3 +51,21 @@ func get_other_peer():
 		if peer_id != multiplayer.get_unique_id() and peer_id != 1:
 			return peer_id
 	return 1
+	
+func get_public_ip():
+	var http = HTTPRequest.new()
+	add_child(http)
+	#http.request("https://api.ipify.org?format=text")
+	http.request("https://ifconfig.me/ip")
+	
+	var result = await http.request_completed
+	print(result)
+	if result[0] == OK:
+		var ip = result[3]
+		var decoded = ip.get_string_from_utf8()
+		print("Public IP: ", decoded)
+		return decoded
+	else:
+		print("Failed to get public IP")
+		#print("Public IP:", result[3])
+		return ""

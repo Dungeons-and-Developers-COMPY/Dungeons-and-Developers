@@ -10,17 +10,21 @@ var random_q_url = "https://dungeonsanddevelopers.cs.uct.ac.za/questions/random/
 var submission_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/submit/"
 var test_code_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/run-code"
 var register_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/register"
+var deregister_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/deregister"
 var find_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/find-available?type="
+var update_player_count_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-players"
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
 
 var request_queue = []
-var current_server_request = "Register"
+var current_server_request = "REGISTER"
 
 signal question(q)
 signal all_received
 signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
+signal server(found: bool, message: String, ip: String, port: int)
+signal shutdown
 
 @onready var question_request = $HTTPRequestQuestion
 @onready var submit_answer_http = $HTTPSumbitCode
@@ -114,6 +118,8 @@ func register_server(ip: String, port: int, type: String, max_players: int):
 	if not is_server:
 		return
 	
+	current_server_request = "REGISTER"
+	
 	var payload = {
 		"ip": ip,
 		"port": port,
@@ -132,15 +138,60 @@ func register_server(ip: String, port: int, type: String, max_players: int):
 	else:
 		print("Register request sent.")
 
+func deregister_server(ip: String, port: int):
+	if not is_server:
+		return
+	
+	current_server_request = "DEREGISTER"
+	
+	var payload = {
+		"ip": ip,
+		"port": port,
+	}
+	var json_payload = JSON.stringify(payload)
+	
+	var url = deregister_server_url
+	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
+	
+	var err = server_http.request(url, headers, HTTPClient.METHOD_POST, json_payload)
+	if err != OK:
+		print("Failed to deregister server: ", err)
+	else:
+		print("Deregister request sent.")
+
+func update_player_count(ip: String, port: int, num_players: int):
+	if not is_server:
+		return
+	
+	current_server_request = "UPDATE"
+	
+	var payload = {
+		"ip": ip,
+		"port": port,
+		"current_players": num_players
+	}
+	var json_payload = JSON.stringify(payload)
+	
+	var url = update_player_count_url
+	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
+	
+	var err = server_http.request(url, headers, HTTPClient.METHOD_POST, json_payload)
+	if err != OK:
+		print("Failed to updated player count: ", err)
+	else:
+		print("Request sent.")
+
 func find_server(type: String):
+	current_server_request = "FIND"
+	
 	var url = find_server_url + type
 	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
 	
 	var err = server_http.request(url, headers)
 	if err != OK:
-		print("Failed to register server: ", err)
+		print("Failed to find server: ", err)
 	else:
-		print("Register request sent.")
+		print("Request sent.")
 
 # called when request for a question is completed
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -227,6 +278,63 @@ func _on_login_completed(result: int, response_code: int, headers: PackedStringA
 	else:
 		print("No session cookie found... Login failed.")
 
-
 func _on_http_server_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
-	pass # Replace with function body.
+	match current_server_request:
+		"REGISTER":
+			print("Status code:", response_code)
+			var response_text := body.get_string_from_utf8()
+			var json = JSON.new()
+			var parse_result = json.parse(response_text)
+			
+			if parse_result == OK:
+				print("JSON response:")
+				print(json.data)
+				if response_code == 201:
+					var response = json.data.get("message")
+					print(response)
+				else:
+					var response = json.data.get("error")
+					print(response)
+			else:
+				print("Non-JSON response received:")
+				print("Raw response:", response_text)
+		"DEREGISTER", "UPDATE":
+			print("Status code:", response_code)
+			var response_text := body.get_string_from_utf8()
+			var json = JSON.new()
+			var parse_result = json.parse(response_text)
+			
+			if parse_result == OK:
+				print("JSON response:")
+				print(json.data)
+				if response_code == 200:
+					var response = json.data.get("message")
+					print(response)
+					emit_signal("shutdown")
+				else:
+					var response = json.data.get("error")
+					print(response)
+			else:
+				print("Non-JSON response received:")
+				print("Raw response:", response_text)
+		"FIND":
+			print("Status code:", response_code)
+			var response_text := body.get_string_from_utf8()
+			var json = JSON.new()
+			var parse_result = json.parse(response_text)
+			
+			if parse_result == OK:
+				print("JSON response:")
+				print(json.data)
+				if response_code == 200:
+					var response = json.data.get("message")
+					var server_data = json.data.get("server")
+					print(response)
+					emit_signal("server", true, response, server_data["ip"], server_data["port"])
+				else:
+					var response = json.data.get("error")
+					print(response)
+					emit_signal("server", false, response, "", 0)
+			else:
+				print("Non-JSON response received:")
+				print("Raw response:", response_text)

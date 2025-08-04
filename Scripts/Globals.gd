@@ -32,6 +32,7 @@ static var break_string = "----------------------------------"
 
 static var local_ip = "127.0.0.1"
 static var server_ip = ""
+static var server_port = 0
 static var ports_1v1 = [12345, 12346]
 static var ports_2v2 = [12347, 12348]
 static var MAX_PLAYERS_1v1 = 2

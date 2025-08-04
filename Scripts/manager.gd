@@ -12,7 +12,8 @@ func start1v1():
 	menu.hide()
 	game.show()
 	game.show_end("Connecting to 1v1 server...")
-	MultiplayerManager.connect_to_server("127.0.0.1")
+	game.find_avail_server("1v1")
+	#MultiplayerManager.connect_to_server("127.0.0.1")
 	#var success = MultiplayerManager.connect_to_1v1_server()
 	#if success:
 		#game.show_end("Waiting for player 2...")

@@ -18,13 +18,17 @@ var is_game_over: bool = false
 var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
 
+var shutdown_check_timer = 0.0
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
 	if is_server:
-		MultiplayerManager.start_1v1_server()
+		question_handler.login()
+		Globals.server_ip = await MultiplayerManager.get_public_ip()
+		Globals.server_port = MultiplayerManager.start_1v1_server()
 		connect_server_signals()
+		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 		#var code_submission = "def func(word):\n\treturn word[::-1]"
 		#question_handler.submit_answer(4, code_submission)
 	else:
@@ -32,7 +36,21 @@ func _ready() -> void:
 		question_handler.login()
 		show_end("Waiting for player 2...")
 		#MultiplayerManager.connect_to_server("127.0.0.1")
-	
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
+		await question_handler.shutdown
+
+func find_avail_server(type: String):
+	question_handler.find_server(type)
+
+func server_found(found: bool, message: String, ip: String, port: int):
+	if found:
+		MultiplayerManager.connect_to_server(ip, port)
+	else:
+		pass
+
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
 	code_interface.test.connect(test_user_code)
@@ -51,6 +69,7 @@ func connect_player_signals():
 	opponent.recentre.connect(unspace_player)
 	question_handler.submission_result.connect(receive_submission_feedback)
 	question_handler.test_result.connect(receive_test_feedback)
+	question_handler.server.connect(server_found)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -310,9 +329,19 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if Input.is_action_just_released("attack") and player.should_stop == true:
 		player.on_monster_defeated()
 		code_interface.defeated_monster()
 		code_interface.output_to_console("Monster defeated! Moving enabled.")
 		code_interface.output_to_console(Globals.break_string)
+	# temp way to shutdown server
+	if (is_server):
+		shutdown_check_timer += delta
+		if shutdown_check_timer >= 2.0:
+			shutdown_check_timer = 0
+			if FileAccess.file_exists("shutdown.txt"):
+				print("Shutdown signal file found.")
+				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
+				await question_handler.shutdown
+				get_tree().quit()
