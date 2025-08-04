@@ -41,7 +41,7 @@ func connect_to_server(ip: String, port: int = 12345):
 	#var peer = ENetMultiplayerPeer.new()
 	#var result = peer.create_client(ip, port)
 	var peer = WebSocketMultiplayerPeer.new()
-	var url = "ws://%s:%d" % [ip, port]
+	var url = "wss://%s:%d" % [ip, port]
 	var result = peer.create_client(url)
 	if result != OK:
 		push_error("Client failed to connect.")
