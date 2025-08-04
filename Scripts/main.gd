@@ -48,6 +48,7 @@ func find_avail_server(type: String):
 func server_found(found: bool, message: String, ip: String, port: int):
 	if found:
 		MultiplayerManager.connect_to_server(ip, port)
+		show_end("Waiting for player 2...")
 	else:
 		pass
 
@@ -173,6 +174,7 @@ func _on_player_connected(id: int):
 	print("Player connected: ", id)
 	if (connected_players.size() < 2):
 		connected_players.append(id)
+		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
 		if connected_players.size() == 2:
 			start_game()
 
