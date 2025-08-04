@@ -77,7 +77,7 @@ func connect_server_signals():
 	question_handler.question.connect(receive_question)
 
 # function used by clients to setup the maze
-func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions):
+func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
 	hide_end()
 	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
@@ -87,6 +87,7 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	Globals.offset = maze.position
 	Globals.maze_scale = maze.scale.x
 	Globals.questions = questions
+	Globals.boss = boss
 	
 	player.set_pos(maze.walls.start_coord["row"], maze.walls.start_coord["col"])
 	player.set_end_pos(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])
@@ -117,6 +118,9 @@ func spawn_all_monsters():
 func get_random_monster():
 	return randi_range(0, Globals.monsters.size() - 1)
 
+func get_random_boss():
+	return randi_range(0, Globals.bosses.size() - 1)
+
 # function used by clients to set a monster to its correct position
 func spawn_monster(pos: Vector2i, monster_type: int):
 	var x = (pos.x * Globals.maze_scale * Globals.pixels) + (Globals.offset.x + (Globals.pixels / 2 * Globals.maze_scale))
@@ -135,7 +139,7 @@ func spawn_boss(pos: Vector2i, boss_type: int = 0):
 	var y = (pos.y * Globals.maze_scale * Globals.pixels) + (Globals.offset.y + (Globals.pixels / 2 * Globals.maze_scale))
 	var actual_pos = Vector2i(x, y)
 	
-	var boss_scene = Globals.boss
+	var boss_scene = Globals.bosses[Globals.boss]
 	var boss = boss_scene.instantiate()
 	boss.global_position = actual_pos
 	boss.scale = Vector2(Globals.bosses_scales[boss_type], Globals.bosses_scales[boss_type])
@@ -144,6 +148,7 @@ func spawn_boss(pos: Vector2i, boss_type: int = 0):
 
 # function to kill off a monster defeated by a player
 func monster_defeated():
+	player.attack()
 	code_interface.set_moving()
 	var player_pos = player.pos
 	
@@ -199,17 +204,22 @@ func start_game():
 	print("Monsters at positions: " + str(monster_positions))
 	Globals.monster_positions = monster_positions
 	for i in range(Globals.num_monsters):
-		Globals.monster_types.append(i)
+		var type = get_random_monster()
+		if i > 0:
+			while (type == Globals.monster_types[i - 1]):
+				type = get_random_monster()
+		Globals.monster_types.append(type)
 	var monster_types = Globals.monster_types
+	Globals.boss = get_random_boss()
 	
 	for peer_id in connected_players:
 		print(Globals.questions.size())
-		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions)
+		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss)
 
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority")
-func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions):
-	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions)
+func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
+	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
 
 @rpc("any_peer", "call_remote")
 func update_opponent_position(pos: Vector2i):
@@ -319,7 +329,29 @@ func receive_submission_feedback(output: String, passed: bool):
 		code_interface.defeated_monster()
 		code_interface.output_to_console("Monster defeated! Moving enabled.")
 		code_interface.output_to_console(Globals.break_string)
-	# TODO: stun player
+	else:
+		monster_attack()
+		player.stun()
+
+func monster_attack():
+	var player_pos = player.pos
+	
+	var boss = monsters[Globals.monster_positions.size()]
+	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
+		if boss.has_method("attack"):
+			boss.attack()
+		return
+	
+	for i in range(Globals.monster_positions.size()):
+		print(i)
+		print(Globals.monster_positions[i])
+		if (Globals.monster_positions[i] == player_pos):
+			print("monster found")
+			var monster = monsters[i]
+			if monster.has_method("attack"):
+				monster.attack()
+				
+			break
 
 func receive_test_feedback(output: String, passed: bool):
 	if passed:

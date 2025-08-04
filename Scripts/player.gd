@@ -193,6 +193,9 @@ func stun():
 	await get_tree().create_timer(Globals.stun_time).timeout
 	emit_signal("end_stun")
 
+func attack():
+	char.attack()
+
 func adjust_positions(boss: bool = false):
 	if boss:
 		emit_signal("hit_monster", Globals.num_monsters)

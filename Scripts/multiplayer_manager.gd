@@ -15,10 +15,10 @@ func start_2v2_server(starting_port: int = 12345, max_servers: int = 5):
 	push_error("2v2 server could not start on any ports")
 
 func start_server(port: int = 12345):
-	#var peer = ENetMultiplayerPeer.new()
-	#var result = peer.create_server(port, 2)
-	var peer = WebSocketMultiplayerPeer.new()
-	var result = peer.create_server(port)
+	var peer = ENetMultiplayerPeer.new()
+	var result = peer.create_server(port, 2)
+	#var peer = WebSocketMultiplayerPeer.new()
+	#var result = peer.create_server(port)
 	if result != OK:
 		if result == ERR_ALREADY_IN_USE:
 			print("Port ", port, " already in use. Trying different port...")
@@ -38,11 +38,11 @@ func connect_to_1v1_server():
 	return false
 
 func connect_to_server(ip: String, port: int = 12345):
-	#var peer = ENetMultiplayerPeer.new()
-	#var result = peer.create_client(ip, port)
-	var peer = WebSocketMultiplayerPeer.new()
-	var url = "wss://%s:%d" % [ip, port]
-	var result = peer.create_client(url)
+	var peer = ENetMultiplayerPeer.new()
+	var result = peer.create_client(ip, port)
+	#var peer = WebSocketMultiplayerPeer.new()
+	#var url = "wss://%s:%d" % [ip, port]
+	#var result = peer.create_client(url)
 	if result != OK:
 		push_error("Client failed to connect.")
 		return false

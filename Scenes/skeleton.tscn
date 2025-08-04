@@ -178,7 +178,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack",
-"speed": 10.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -297,7 +297,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"die",
-"speed": 10.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -329,8 +329,10 @@ script = ExtResource("1_5abox")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-2, -6)
 sprite_frames = SubResource("SpriteFrames_sgdo7")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
+frame = 12
+frame_progress = 1.0
 flip_h = true
 script = ExtResource("5_uaaco")
 

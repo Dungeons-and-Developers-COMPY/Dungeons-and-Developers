@@ -4,3 +4,6 @@ extends Node2D
 
 func die():
 	animator.die()
+	
+func attack():
+	animator.attack()

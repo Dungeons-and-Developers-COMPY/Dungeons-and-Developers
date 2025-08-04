@@ -6,10 +6,14 @@ signal console(text: String)
 var target_position = null
 var speed = 100
 var arrived_threshold = 1.0
+var is_stunned = false
 
 @onready var animator = $AnimatedSprite2D 
 
 func _physics_process(_delta):
+	if is_stunned:
+		return
+	
 	if target_position:
 		var direction = global_position.direction_to(target_position)
 		var distance = global_position.distance_to(target_position)
@@ -40,10 +44,18 @@ func _physics_process(_delta):
 func set_target_pos(x, y):
 	target_position = Vector2(x, y)
 
+func attack():
+	is_stunned = true
+	animator.play("attack")
 
 func _on_animation_finished() -> void:
-	if animator.animation == "damage":
+	if animator.animation == "attack":
+		is_stunned = false
 		animator.play("idle")
 		
 func stun():
+	is_stunned = true
 	animator.play("damage")
+	await get_tree().create_timer(Globals.stun_time).timeout
+	is_stunned = false
+	animator.play("idle")

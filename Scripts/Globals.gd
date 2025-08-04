@@ -17,11 +17,11 @@ static var offset: Vector2 = Vector2(0, 0)
 
 static var num_monsters = 2
 static var monster_positions = []
-static var monsters = [preload("res://Scenes/skeleton.tscn"), preload("res://Scenes/orc.tscn")]
-static var monster_scales = [2, 2]
+static var monsters = [preload("res://Scenes/skeleton.tscn"), preload("res://Scenes/orc.tscn"), preload("res://Scenes/slime.tscn")]
+static var monster_scales = [2, 2, 1.25]
 static var monster_types = []
-static var bosses = [preload("res://Scenes/golem.tscn")]
-static var bosses_scales = [1.5]
+static var bosses = [preload("res://Scenes/golem.tscn"), preload("res://Scenes/dragon_lord.tscn")]
+static var bosses_scales = [1.5, 1.5]
 static var boss = bosses[0]
 
 static var questions = []
