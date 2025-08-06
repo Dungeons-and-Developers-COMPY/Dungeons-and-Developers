@@ -74,6 +74,7 @@ func connect_player_signals():
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
+	multiplayer.peer_disconnected.disconnect(_on_player_disconnected)
 	question_handler.question.connect(receive_question)
 
 # function used by clients to setup the maze
@@ -182,6 +183,10 @@ func _on_player_connected(id: int):
 		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
 		if connected_players.size() == 2:
 			start_game()
+
+func _on_player_disconnected(id: int):
+	#TODO: end/pause game, call decrease player count on server & remove player from server
+	pass
 
 @rpc("any_peer")
 func reject_connection(reason: String):

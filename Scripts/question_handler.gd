@@ -31,6 +31,7 @@ signal shutdown
 @onready var test_answer_http = $HTTPTestCode
 @onready var login_http = $HTTPLogin
 @onready var server_http = $HTTPServer
+
 func get_auth(questions: bool):
 	var login_details = ""
 	if question:
