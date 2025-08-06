@@ -42,7 +42,7 @@ func connect_to_server(ip: String, port: int = 12345):
 	#var result = peer.create_client(ip, port)
 	var peer = WebSocketMultiplayerPeer.new()
 	var url = "wss://%s:%d" % [ip, port]
-	var result = peer.create_client(url)
+	var result = peer.create_client("wss://dungeonsanddevelopers.cs.uct.ac.za/ws/")
 	if result != OK:
 		push_error("Client failed to connect.")
 		return false
