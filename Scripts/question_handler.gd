@@ -25,6 +25,7 @@ signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
 signal server(found: bool, message: String, ip: String, port: int)
 signal shutdown
+signal login_completed
 
 @onready var question_request = $HTTPRequestQuestion
 @onready var submit_answer_http = $HTTPSumbitCode
@@ -116,6 +117,7 @@ func get_question():
 
 func register_server(ip: String, port: int, type: String, max_players: int):
 	if not is_server:
+		print("NOT SERVER! CANNOT REGISTER")
 		return
 	
 	current_server_request = "REGISTER"
@@ -277,6 +279,8 @@ func _on_login_completed(result: int, response_code: int, headers: PackedStringA
 		#submit_code()
 	else:
 		print("No session cookie found... Login failed.")
+		
+	emit_signal("login_completed")
 
 func _on_http_server_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	match current_server_request:

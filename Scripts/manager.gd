@@ -5,8 +5,15 @@ extends Node2D
 
 func _ready() -> void:
 	menu.start1v1.connect(start1v1)
+	menu.start2v2.connect(start2v2)
 	game.hide()
 	menu.show()
+	
+func start2v2():
+	menu.hide()
+	game.show()
+	game.show_end("Connecting to 2v2 server...")
+	game.find_avail_server("2v2")
 	
 func start1v1():
 	menu.hide()

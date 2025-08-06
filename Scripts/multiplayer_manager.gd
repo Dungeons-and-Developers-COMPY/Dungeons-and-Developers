@@ -7,16 +7,19 @@ func start_1v1_server(starting_port: int = 12345, max_servers: int = 5):
 			return (starting_port + i)
 	push_error("1v1 server could not start on any ports")
 
-func start_2v2_server(starting_port: int = 12345, max_servers: int = 5):
+func start_2v2_server(starting_port: int = 12351, max_servers: int = 5):
 	for i in range(max_servers):
-		var success = start_server(starting_port + i)
+		var success = start_server(starting_port + i, true)
 		if success:
-			return
+			return (starting_port + i)
 	push_error("2v2 server could not start on any ports")
 
-func start_server(port: int = 12345):
+func start_server(port: int = 12345, is_2v2 = false):
 	var peer = ENetMultiplayerPeer.new()
-	var result = peer.create_server(port, 2)
+	var max = 2
+	if is_2v2:
+		max = 4
+	var result = peer.create_server(port, max)
 	#var peer = WebSocketMultiplayerPeer.new()
 	#var result = peer.create_server(port)
 	if result != OK:

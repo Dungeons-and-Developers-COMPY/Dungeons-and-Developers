@@ -19,16 +19,26 @@ var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
 
 var shutdown_check_timer = 0.0
+var is_2v2 = true
+
+#region godot built-in calls
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
 	if is_server:
 		question_handler.login()
+		await question_handler.login_completed
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
-		Globals.server_port = MultiplayerManager.start_1v1_server()
+		if is_2v2:
+			Globals.server_port = MultiplayerManager.start_2v2_server()
+		else:
+			Globals.server_port = MultiplayerManager.start_1v1_server()
 		connect_server_signals()
-		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
+		if is_2v2:
+			question_handler.register_server(Globals.server_ip, Globals.server_port, "2v2", 4)
+		else:
+			question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 		#var code_submission = "def func(word):\n\treturn word[::-1]"
 		#question_handler.submit_answer(4, code_submission)
 	else:
@@ -41,6 +51,42 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
 		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 		await question_handler.shutdown
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_released("attack") and player.should_stop == true:
+		player.on_monster_defeated()
+		code_interface.defeated_monster()
+		code_interface.output_to_console("Monster defeated! Moving enabled.")
+		code_interface.output_to_console(Globals.break_string)
+	# temp way to shutdown server
+	if (is_server):
+		shutdown_check_timer += delta
+		if shutdown_check_timer >= 2.0:
+			shutdown_check_timer = 0
+			if FileAccess.file_exists("shutdown.txt"):
+				print("Shutdown signal file found.")
+				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
+				await question_handler.shutdown
+				get_tree().quit()
+
+#endregion
+
+#region server and setup
+
+# function that triggers when a player joins the server
+func _on_player_connected(id: int):
+	#if connected_players.size() >= 2:
+		#rpc_id(id, "reject_connection", "Server Full")
+		#return
+	print("Player connected: ", id)
+	var max_players = 2
+	if Globals.is_2v2:
+		max_players = 4
+	if (connected_players.size() < max_players):
+		connected_players.append(id)
+		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
+		if connected_players.size() == max_players:
+			start_game()
 
 func find_avail_server(type: String):
 	question_handler.find_server(type)
@@ -71,13 +117,46 @@ func connect_player_signals():
 	question_handler.submission_result.connect(receive_submission_feedback)
 	question_handler.test_result.connect(receive_test_feedback)
 	question_handler.server.connect(server_found)
+	
+	if Globals.is_2v2:
+		code_interface.update_text.connect(update_teammate_text)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
 	question_handler.question.connect(receive_question)
 
+# function called by server when 2 players have entered the server to start the game
+func start_game():
+	print()
+	print("Starting game...")
+	question_handler.get_all_questions()
+	await question_handler.all_received
+	
+	var maze_grid = maze.get_maze()
+	var start_coord = maze.get_start()
+	var exit_coord = maze.get_exit()
+	monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
+	print("Monsters at positions: " + str(monster_positions))
+	Globals.monster_positions = monster_positions
+	for i in range(Globals.num_monsters):
+		var type = get_random_monster()
+		if i > 0:
+			while (type == Globals.monster_types[i - 1]):
+				type = get_random_monster()
+		Globals.monster_types.append(type)
+	var monster_types = Globals.monster_types
+	Globals.boss = get_random_boss()
+	
+	for peer_id in connected_players:
+		print(Globals.questions.size())
+		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss, connected_players)
+
 # function used by clients to setup the maze
-func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
+func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions, boss, players):
+	connected_players = players
+	if Globals.is_2v2:
+		determine_role_and_team()
+	
 	hide_end()
 	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
@@ -102,11 +181,10 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	spawn_boss(boss_pos)
 	player.set_monster_positions(monster_positions)
 	space_players()
-
-# function used by clients to execute the code entered by the user
-func run_user_code():
-	print("SIGNAL RECEIVED")
-	player.execute_move(code_interface.code)
+	
+	if Globals.is_2v2:
+		if Globals.role == 0:
+			code_interface.disable_code()
 
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
@@ -146,6 +224,163 @@ func spawn_boss(pos: Vector2i, boss_type: int = 0):
 	add_child(boss)
 	monsters.append(boss)
 
+#endregion
+
+#region rpcs
+
+@rpc("any_peer")
+func reject_connection(reason: String):
+	print("Connection rejected: ", reason)
+	multiplayer.multiplayer_peer = null
+	Globals.connection_result = false
+	Globals.connection_done = true
+
+# rpc function called by server to pass the variables needed by clients to setup the maze
+@rpc("authority")
+func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss, connected_players):
+	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss, connected_players)
+
+@rpc("any_peer", "call_remote")
+func update_opponent_position(pos: Vector2i):
+	print("updating opponent position")
+	opponent.update_position(pos)
+
+@rpc("any_peer")
+func game_over(peer_id: int):
+	if not is_game_over:
+		is_game_over = true
+		rpc("announce_winner", peer_id)
+
+@rpc("any_peer")
+func announce_winner(peer_id: int):
+	if multiplayer.get_unique_id() == peer_id:
+		print("YOU WON!")
+		show_end("YOU WON!")
+	else:
+		print("YOU LOST.")
+		show_end("YOU LOST.")
+
+#@rpc("any_peer", "call_remote")
+#func update_teammate_pos(pos: Vector2i):
+	#player.try_move(pos.x, pos.y)
+	
+@rpc("any_peer", "call_remote")
+func update_text(text: String):
+	code_interface.update_code_text(text)
+
+@rpc("any_peer", "call_remote")
+func submit_teammate_code(output: String, passed: bool):
+	receive_submission_feedback(output, passed)
+
+@rpc("any_peer", "call_remote")
+func run_teammate_code():
+	code_interface.set_code()
+	run_user_code()
+
+#endregion
+
+#region helpers
+
+func show_end(text):
+	code_interface.disable_code()
+	player.should_stop = true
+	end_label.text = text
+	end_label.show()
+	
+func hide_end():
+	code_interface.enable_code()
+	player.should_stop = false
+	end_label.hide()
+
+func output_to_console(text: String):
+	code_interface.output_to_console(text)
+	
+func update_teammate_text(text: String):
+	rpc_id(get_teammate_id(), "update_text", text)
+
+#endregion
+
+#region player functions
+
+func opponent_moving():
+	print("received signal")
+	print(MultiplayerManager.get_other_peer())
+	if not Globals.is_2v2:
+		rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		#rpc_id(get_teammate_id(), "update_teammate_pos", player.pos)
+		var opp_ids = get_opponent_ids()
+		for id in opp_ids:
+			rpc_id(id, "update_opponent_position", player.pos)
+
+# function called when a player wins (reaches exit and defeats the boss)
+func player_won():
+	#print("PLAYER WINS")
+	rpc_id(1, "game_over", multiplayer.get_unique_id())
+	#code_interface.disable_code()
+
+func stun_player():
+	code_interface.disable_code()
+
+func unstun_player():
+	code_interface.enable_code()
+
+func check_overlap():
+	if player.pos == opponent.pos:
+		space_players()
+
+func unspace_player(player_num: int):
+	if player.pos == opponent.pos:
+		if (player_num == 1):
+			player.move()
+		else:
+			opponent.move()
+
+func space_players():
+	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
+	player.char.set_target_pos(x, player.char.global_position.y)
+	x = opponent.char.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	opponent.char.set_target_pos(x, opponent.char.global_position.y)
+
+#endregion
+
+#region monster functions
+
+func adjust_monster(index: int):
+	if index == Globals.num_monsters: 
+		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale)
+		player.char.set_target_pos(x, player.char.global_position.y)
+		var monster = monsters[index]
+		monster.global_position.x = monster.global_position.x + (Globals.boss_offset * Globals.maze_scale)
+	else:
+		var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
+		player.char.set_target_pos(x, player.char.global_position.y)
+		var monster = monsters[index]
+		monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
+	
+	await player.char.stopped_moving
+	player.char.animator.flip_h = false
+
+func monster_attack():
+	var player_pos = player.pos
+	
+	var boss = monsters[Globals.monster_positions.size()]
+	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
+		if boss.has_method("attack"):
+			boss.attack()
+		return
+	
+	for i in range(Globals.monster_positions.size()):
+		print(i)
+		print(Globals.monster_positions[i])
+		if (Globals.monster_positions[i] == player_pos):
+			print("monster found")
+			var monster = monsters[i]
+			if monster.has_method("attack"):
+				monster.attack()
+				
+			break
+
 # function to kill off a monster defeated by a player
 func monster_defeated():
 	player.attack()
@@ -171,138 +406,16 @@ func monster_defeated():
 				
 			break
 
-# function that triggers when a player joins the server
-func _on_player_connected(id: int):
-	#if connected_players.size() >= 2:
-		#rpc_id(id, "reject_connection", "Server Full")
-		#return
-	print("Player connected: ", id)
-	if (connected_players.size() < 2):
-		connected_players.append(id)
-		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
-		if connected_players.size() == 2:
-			start_game()
+#endregion
 
-@rpc("any_peer")
-func reject_connection(reason: String):
-	print("Connection rejected: ", reason)
-	multiplayer.multiplayer_peer = null
-	Globals.connection_result = false
-	Globals.connection_done = true
+#region user code execution
 
-# function called by server when 2 players have entered the server to start the game
-func start_game():
-	print()
-	print("Starting game...")
-	question_handler.get_all_questions()
-	await question_handler.all_received
-	
-	var maze_grid = maze.get_maze()
-	var start_coord = maze.get_start()
-	var exit_coord = maze.get_exit()
-	monster_positions = MazeLogic.get_monster_positions(Globals.num_monsters)
-	print("Monsters at positions: " + str(monster_positions))
-	Globals.monster_positions = monster_positions
-	for i in range(Globals.num_monsters):
-		var type = get_random_monster()
-		if i > 0:
-			while (type == Globals.monster_types[i - 1]):
-				type = get_random_monster()
-		Globals.monster_types.append(type)
-	var monster_types = Globals.monster_types
-	Globals.boss = get_random_boss()
-	
-	for peer_id in connected_players:
-		print(Globals.questions.size())
-		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss)
-
-# rpc function called by server to pass the variables needed by clients to setup the maze
-@rpc("authority")
-func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
-	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
-
-@rpc("any_peer", "call_remote")
-func update_opponent_position(pos: Vector2i):
-	print("updating opponent position")
-	opponent.update_position(pos)
-
-func opponent_moving():
-	print("received signal")
-	print(MultiplayerManager.get_other_peer())
-	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
-
-# function called when a player wins (reaches exit and defeats the boss)
-func player_won():
-	#print("PLAYER WINS")
-	rpc_id(1, "game_over", multiplayer.get_unique_id())
-	#code_interface.disable_code()
-
-@rpc("any_peer")
-func game_over(peer_id: int):
-	if not is_game_over:
-		is_game_over = true
-		rpc("announce_winner", peer_id)
-
-@rpc("any_peer")
-func announce_winner(peer_id: int):
-	if multiplayer.get_unique_id() == peer_id:
-		print("YOU WON!")
-		show_end("YOU WON!")
-	else:
-		print("YOU LOST.")
-		show_end("YOU LOST.")
-
-func show_end(text):
-	code_interface.disable_code()
-	player.should_stop = true
-	end_label.text = text
-	end_label.show()
-	
-func hide_end():
-	code_interface.enable_code()
-	player.should_stop = false
-	end_label.hide()
-
-func output_to_console(text: String):
-	code_interface.output_to_console(text)
-
-func stun_player():
-	code_interface.disable_code()
-
-func unstun_player():
-	code_interface.enable_code()
-
-func check_overlap():
-	if player.pos == opponent.pos:
-		space_players()
-
-func unspace_player(player_num: int):
-	if player.pos == opponent.pos:
-		if (player_num == 1):
-			player.move()
-		else:
-			opponent.move()
-
-func space_players():
-	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
-	player.char.set_target_pos(x, player.char.global_position.y)
-	x = opponent.char.global_position.x + (Globals.player_offset * Globals.maze_scale)
-	opponent.char.set_target_pos(x, opponent.char.global_position.y)
-
-func adjust_monster(index: int):
-	if index == Globals.num_monsters: 
-		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale)
-		player.char.set_target_pos(x, player.char.global_position.y)
-		var monster = monsters[index]
-		monster.global_position.x = monster.global_position.x + (Globals.boss_offset * Globals.maze_scale)
-	else:
-		var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
-		player.char.set_target_pos(x, player.char.global_position.y)
-		var monster = monsters[index]
-		monster.global_position.x = monster.global_position.x + (Globals.player_offset * Globals.maze_scale)
-	
-	await player.char.stopped_moving
-	player.char.animator.flip_h = false
+# function used by clients to execute the code entered by the user
+func run_user_code():
+	print("SIGNAL RECEIVED")
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		rpc_id(get_teammate_id(), "run_teammate_code")
+	player.execute_move(code_interface.code)
 
 func receive_question(q):
 	Globals.questions.append(q)
@@ -323,6 +436,8 @@ func submit_code():
 	question_handler.submit_answer(current_question, code_interface.code)
 
 func receive_submission_feedback(output: String, passed: bool):
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		rpc_id(get_teammate_id(), "submit_teammate_code", output, passed)
 	code_interface.output_to_console(output)
 	if passed:
 		player.on_monster_defeated()
@@ -332,26 +447,6 @@ func receive_submission_feedback(output: String, passed: bool):
 	else:
 		monster_attack()
 		player.stun()
-
-func monster_attack():
-	var player_pos = player.pos
-	
-	var boss = monsters[Globals.monster_positions.size()]
-	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
-		if boss.has_method("attack"):
-			boss.attack()
-		return
-	
-	for i in range(Globals.monster_positions.size()):
-		print(i)
-		print(Globals.monster_positions[i])
-		if (Globals.monster_positions[i] == player_pos):
-			print("monster found")
-			var monster = monsters[i]
-			if monster.has_method("attack"):
-				monster.attack()
-				
-			break
 
 func receive_test_feedback(output: String, passed: bool):
 	if passed:
@@ -363,19 +458,33 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
-func _process(delta: float) -> void:
-	if Input.is_action_just_released("attack") and player.should_stop == true:
-		player.on_monster_defeated()
-		code_interface.defeated_monster()
-		code_interface.output_to_console("Monster defeated! Moving enabled.")
-		code_interface.output_to_console(Globals.break_string)
-	# temp way to shutdown server
-	if (is_server):
-		shutdown_check_timer += delta
-		if shutdown_check_timer >= 2.0:
-			shutdown_check_timer = 0
-			if FileAccess.file_exists("shutdown.txt"):
-				print("Shutdown signal file found.")
-				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
-				await question_handler.shutdown
-				get_tree().quit()
+#endregion
+
+#region 2v2 funcs
+
+func determine_role_and_team():
+	var id = multiplayer.get_unique_id()
+	for i in range(connected_players.size()):
+		if connected_players[i] == id:
+			Globals.team = i / 2
+			Globals.role = i % 2
+	
+func get_teammate_id():
+	var teammate: int = 0
+	if Globals.role == 0:
+		teammate = 1 + (Globals.team * 2)
+	else:
+		teammate = 0 + (Globals.team * 2)
+		
+	return connected_players[teammate]
+
+func get_opponent_ids():
+	var ids = []
+	var teammate = get_teammate_id()
+	for id in connected_players:
+		if id != teammate and id != multiplayer.get_unique_id():
+			ids.append(id)
+	return ids
+	
+
+#endregion

@@ -3,6 +3,7 @@ extends Control
 signal run_button_pressed
 signal submit_button_pressed
 signal test
+signal update_text(text: String)
 
 var code: String = ""
 var question: String = ""
@@ -74,9 +75,19 @@ func show_input_panel():
 func hide_input_panel():
 	input_panel.hide()
 
+func set_code():
+	code = code_edit.text
+
 func _on_confirm_button_pressed() -> void:
 	input = input_edit.text
 	emit_signal("test")
 	output_to_console("Compiling code...")
 	hide_input_panel()
 	enable_code()
+
+func update_code_text(text: String):
+	code_edit.text = text
+
+func _on_code_edit_text_changed() -> void:
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		emit_signal("update_text", code_edit.text)

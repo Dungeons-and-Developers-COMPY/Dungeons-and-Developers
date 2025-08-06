@@ -120,6 +120,7 @@ offset_bottom = 162.0
 theme = ExtResource("1_b6vbw")
 text = "Confirm"
 
+[connection signal="text_changed" from="CodeEdit" to="." method="_on_code_edit_text_changed"]
 [connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
 [connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
 [connection signal="pressed" from="InputPanel/ConfirmButton" to="." method="_on_confirm_button_pressed"]
