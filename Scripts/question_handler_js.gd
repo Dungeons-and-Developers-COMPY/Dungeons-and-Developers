@@ -26,13 +26,8 @@ signal test_result(output: String, passed: bool)
 signal server(found: bool, message: String, ip: String, port: int)
 signal shutdown
 
-@onready var question_request = $HTTPRequestQuestion
-@onready var submit_answer_http = $HTTPSumbitCode
-@onready var test_answer_http = $HTTPTestCode
-@onready var login_http = $HTTPLogin
-@onready var server_http = $HTTPServer
-
 func login():
+	print("attempting to login via js")
 	var callback = JavaScriptBridge.create_callback(on_login_response)
 
 	var js_code := """
