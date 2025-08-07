@@ -28,7 +28,8 @@ signal shutdown
 
 func login():
 	print("attempting to login via js")
-	var callback = JavaScriptBridge.create_callback(on_login_response)
+	var callback := Callable(self, "on_login_response")
+	var js_callback = JavaScriptBridge.create_callback(callback)
 
 	var js_code := """
 	(function() {
@@ -54,8 +55,8 @@ func login():
 		login_url,
 		login_username,
 		login_password,
-		callback.get_as_string(),
-		callback.get_as_string()
+		js_callback.get_as_string(),
+		js_callback.get_as_string()
 	]
 
 	JavaScriptBridge.eval(js_code)
