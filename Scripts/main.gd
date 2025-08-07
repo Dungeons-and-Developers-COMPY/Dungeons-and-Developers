@@ -6,6 +6,7 @@ extends Node2D
 @onready var opponent = $GhostPlayer
 @onready var end_label = $EndLabel
 @onready var question_handler = $QuestionHandler
+@onready var js_handler = $JSHandler
 
 var monster_positions = []
 var monsters = []
@@ -32,7 +33,10 @@ func _ready() -> void:
 		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 	else:
 		connect_player_signals()
-		question_handler.login()
+		if DisplayServer.get_name() != "web":
+			question_handler.login()
+		else:
+			js_handler.login()
 		show_end("Waiting for player 2...")
 
 func _notification(what: int) -> void:

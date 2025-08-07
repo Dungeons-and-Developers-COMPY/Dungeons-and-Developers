@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://hn54wuekrxdo"]
+[gd_scene load_steps=9 format=3 uid="uid://hn54wuekrxdo"]
 
 [ext_resource type="Script" uid="uid://bf5de21o43wqk" path="res://Scripts/main.gd" id="1_1l0tm"]
 [ext_resource type="PackedScene" uid="uid://b5dnemdv61kly" path="res://Scenes/question_handler.tscn" id="2_v158k"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://diu6qtlkhxxyc" path="res://Scenes/player.tscn" id="5_o5yvi"]
 [ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="6_rku1e"]
 [ext_resource type="PackedScene" uid="uid://d2fs6llkx5lnk" path="res://Scenes/main_menu.tscn" id="7_rfjv2"]
+[ext_resource type="Script" uid="uid://ixvjpinrdnqo" path="res://Scripts/question_handler_js.gd" id="8_v158k"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_1l0tm")
@@ -45,3 +46,6 @@ scale = Vector2(2, 2)
 visible = false
 position = Vector2(640, 360)
 scale = Vector2(2.49, 2.49)
+
+[node name="JSHandler" type="Node2D" parent="."]
+script = ExtResource("8_v158k")
