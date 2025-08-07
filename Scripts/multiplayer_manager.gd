@@ -3,9 +3,9 @@ extends Node
 var auth_token: String = ""
 var is_authenticated: bool = false
 
-func _ready():
+#func _ready():
 	# uuthenticate to access the server list
-	await authenticate_with_api()
+	#await authenticate_with_api()
 
 #region auth functions
 

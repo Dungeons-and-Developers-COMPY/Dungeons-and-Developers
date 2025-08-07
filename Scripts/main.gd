@@ -33,10 +33,10 @@ func _ready() -> void:
 		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 	else:
 		connect_player_signals()
-		if DisplayServer.get_name() != "web":
-			question_handler.login()
-		else:
-			js_handler.login()
+		#if DisplayServer.get_name() != "web":
+			#question_handler.login()
+		#else:
+		js_handler.login()
 		show_end("Waiting for player 2...")
 
 func _notification(what: int) -> void:
