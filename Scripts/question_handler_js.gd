@@ -28,11 +28,15 @@ signal shutdown
 
 func login():
 	print("attempting to login via js")
-	var callback := Callable(self, "on_login_response")
-	var js_callback = JavaScriptBridge.create_callback(callback)
-
+	var callback_name = "godot_login_callback_" + str(Time.get_unix_time_from_system())
+	var callback := JavaScriptBridge.create_callback(on_login_response)
+	
+	# Store callback in window with unique name
+	var window = JavaScriptBridge.get_interface("window")
+	window[callback_name] = callback
+	
 	var js_code := """
-	(function() {
+	(function(callbackName) {
 		fetch('%s', {
 			method: 'POST',
 			headers: {
@@ -45,20 +49,22 @@ func login():
 			credentials: 'include'
 		})
 		.then(response => response.text())
-		.then(data => %s(data))
+		.then(data => {
+			window[callbackName](data);
+			delete window[callbackName]; // Clean up
+		})
 		.catch(error => {
 			console.error('Login error:', error);
-			%s('{"error": "Login failed"}');
+			window[callbackName]('{"error": "Login failed"}');
+			delete window[callbackName]; // Clean up
 		});
-	})();
+	})('%s');
 	""" % [
 		login_url,
 		login_username,
 		login_password,
-		js_callback.get_as_string(),
-		js_callback.get_as_string()
+		callback_name
 	]
-
 	JavaScriptBridge.eval(js_code)
 
 func on_login_response(response_text: String):
@@ -73,7 +79,7 @@ func on_login_response(response_text: String):
 		var success = json.data.get("success")
 		if success:
 			print("Login successful.")
-			emit_signal("login_successful")
+			#emit_signal("login_successful")
 		else:
 			print("Login failed:", json.data.get("error", "Unknown error"))
 			#emit_signal("login_failed", json.data.get("error", "Unknown error"))
