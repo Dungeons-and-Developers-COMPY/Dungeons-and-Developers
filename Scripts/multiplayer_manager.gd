@@ -307,3 +307,27 @@ func get_public_ip():
 	http.queue_free()
 	push_error("Failed to get public IP from any service.")
 	return ""
+	
+func dec_player_count(ip: String, port: int):
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var data = {
+		"ip": ip,
+		"port": port
+	}
+	
+	var json_string = JSON.stringify(data)
+	var headers = get_auth_headers()
+	
+	http.request("https://dungeonsanddevelopers.cs.uct.ac.za/server/decrement-players", headers, HTTPClient.METHOD_POST, json_string)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	print("Decrement player Response:")
+	print("Status Code: ", result[1])
+	print("Response Body: ", result[3].get_string_from_utf8())
+	print("Network Error: ", result[0])
+
+#endregion

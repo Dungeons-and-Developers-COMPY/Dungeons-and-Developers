@@ -19,6 +19,7 @@ var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
 
 var shutdown_check_timer = 0.0
+var game_started = false
 
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
@@ -29,13 +30,10 @@ func _ready() -> void:
 		Globals.server_port = MultiplayerManager.start_1v1_server()
 		connect_server_signals()
 		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
-		#var code_submission = "def func(word):\n\treturn word[::-1]"
-		#question_handler.submit_answer(4, code_submission)
 	else:
 		connect_player_signals()
 		question_handler.login()
 		show_end("Waiting for player 2...")
-		#MultiplayerManager.connect_to_server("127.0.0.1")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
@@ -74,7 +72,7 @@ func connect_player_signals():
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
-	multiplayer.peer_disconnected.disconnect(_on_player_disconnected)
+	multiplayer.peer_disconnected.connect(_on_player_disconnected)
 	question_handler.question.connect(receive_question)
 
 # function used by clients to setup the maze
@@ -186,7 +184,10 @@ func _on_player_connected(id: int):
 
 func _on_player_disconnected(id: int):
 	#TODO: end/pause game, call decrease player count on server & remove player from server
-	pass
+	connected_players.erase(id)
+	MultiplayerManager.dec_player_count(Globals.server_ip, Globals.server_port)
+	if game_started and connected_players.is_empty():
+		reset_server()
 
 @rpc("any_peer")
 func reject_connection(reason: String):
@@ -197,6 +198,7 @@ func reject_connection(reason: String):
 
 # function called by server when 2 players have entered the server to start the game
 func start_game():
+	game_started = true
 	print()
 	print("Starting game...")
 	question_handler.get_all_questions()
@@ -221,10 +223,35 @@ func start_game():
 		print(Globals.questions.size())
 		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss)
 
+func reset_server():
+	print("Server reset")
+	#for id in connected_players:
+		#rpc_id(id, "disconnect_from_server")
+	#connected_players.clear()
+	monster_positions = []
+	monsters = []
+	grid = []
+	Globals.questions = []
+	Globals.monster_positions = []
+	Globals.monster_types = []
+	game_started = false
+	is_game_over = false
+
+func disconnect_all_players():
+	print("Game over, disconnecting all players")
+	for id in connected_players:
+		rpc_id(id, "disconnect_from_server")
+
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
+
+@rpc("authority")
+func disconnect_from_server():
+	MultiplayerManager.disconnect_from_server()
+	if DisplayServer.get_name() == "web":
+		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
 
 @rpc("any_peer", "call_remote")
 func update_opponent_position(pos: Vector2i):
@@ -247,6 +274,9 @@ func game_over(peer_id: int):
 	if not is_game_over:
 		is_game_over = true
 		rpc("announce_winner", peer_id)
+		await get_tree().create_timer(2.0).timeout
+		if is_server:
+			disconnect_all_players()
 
 @rpc("any_peer")
 func announce_winner(peer_id: int):

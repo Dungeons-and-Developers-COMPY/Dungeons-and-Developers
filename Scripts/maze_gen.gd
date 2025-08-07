@@ -53,6 +53,7 @@ var adj4 = [
 var grid = [] 
 
 func gen_maze():
+	grid = []
 	for i in range(Globals.grid_size):
 		grid.append([])
 		for j in range(Globals.grid_size):
