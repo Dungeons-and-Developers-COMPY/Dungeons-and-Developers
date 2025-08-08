@@ -323,7 +323,12 @@ func stun_player():
 	code_interface.disable_code()
 
 func unstun_player():
-	code_interface.enable_code()
+	if Globals.is_2v2:
+		if Globals.role == Globals.DRIVER:
+			code_interface.enable_code()
+	else:
+		code_interface.enable_code()
+	
 
 func check_overlap():
 	if player.pos == opponent.pos:
