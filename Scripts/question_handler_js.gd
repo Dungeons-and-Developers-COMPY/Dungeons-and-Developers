@@ -28,6 +28,8 @@ signal shutdown
 
 signal login_successful
 
+var login_callback_ref
+
 #region login
 
 # Polling-based approach as fallback
@@ -84,33 +86,14 @@ func poll_for_login_result():
 func login():
 	print("attempting to login via js")
 	
-	# First try: Simple callback test
-	var callback := JavaScriptBridge.create_callback(on_login_response)
-	print("Testing callback...")
-	
-	# Test the callback first
-	#var test_js := """
-	#console.log('Testing Godot callback...');
-	#arguments[0]('{"test": "callback_working"}');
-	#"""
-	#
+	#var callback := JavaScriptBridge.create_callback(on_login_response)
+	#var window = JavaScriptBridge.get_interface("window")
+	login_callback_ref = JavaScriptBridge.create_callback(on_login_response)
 	var window = JavaScriptBridge.get_interface("window")
-	#window.godotTestCallback = callback
-	#
-	#JavaScriptBridge.eval("""
-	#console.log('Callback test...');
-	#if (window.godotTestCallback) {
-		#window.godotTestCallback('{"test": "callback_working"}');
-	#} else {
-		#console.error('Test callback not found');
-	#}
-	#""")
-	
-	# Wait a moment then do the actual login
-	await get_tree().create_timer(0.1).timeout
+	window.godotLoginCallback = login_callback_ref
 	
 	# Store callback for login
-	window.godotLoginCallback = callback
+	window.godotLoginCallback = login_callback_ref
 	print("Callback stored in window")
 	
 	var js_code := """
@@ -137,7 +120,7 @@ func login():
 		console.log('About to call Godot callback...');
 		if (window.godotLoginCallback) {
 			try {
-				window.godotLoginCallback(data);
+				window.godotLoginCallback([data]);
 				console.log('Godot callback called successfully');
 			} catch(e) {
 				console.error('Error calling Godot callback:', e);
