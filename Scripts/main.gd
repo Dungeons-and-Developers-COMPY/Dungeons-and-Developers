@@ -42,8 +42,12 @@ func _notification(what: int) -> void:
 		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 		await question_handler.shutdown
 
+func find_server():
+	find_avail_server("1v1")
+
 func find_avail_server(type: String):
-	question_handler.find_server(type)
+	#question_handler.find_server(type)
+	js_handler.find_server(type)
 
 func server_found(found: bool, message: String, ip: String, port: int):
 	if found:
@@ -71,6 +75,10 @@ func connect_player_signals():
 	question_handler.submission_result.connect(receive_submission_feedback)
 	question_handler.test_result.connect(receive_test_feedback)
 	question_handler.server.connect(server_found)
+	
+	if OS.get_name() == "Web":
+		js_handler.login_successful.connect(find_server)
+		js_handler.server.connect(server_found)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)

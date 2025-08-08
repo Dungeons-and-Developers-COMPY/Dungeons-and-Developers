@@ -142,7 +142,7 @@ func connect_to_server(ip: String, port: int):
 	ip = ip.strip_edges()
 	
 	# connect to the actual game server using discovered IP/port
-	var url = "ws://%s:%d" % [ip, port] 
+	var url = "wss://%s:%d" % [ip, port] 
 	print("Connecting to game server: ", url)
 	
 	var result = peer.create_client(url)

@@ -23,12 +23,14 @@ signal question(q)
 signal all_received
 signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
-signal server(found: bool, message: String, ip: String, port: int)
+#signal server(found: bool, message: String, ip: String, port: int)
 signal shutdown
 
 signal login_successful
+signal server(found: bool, message: String, ip: String, port: int)
 
 var login_callback_ref
+var server_callback_ref
 
 #region login
 
@@ -173,7 +175,6 @@ func on_login_response(args: Array):
 		else:
 			print("Login failed:", json.data.get("error", "Unknown error"))
 			#emit_signal("login_failed", json.data.get("error", "Unknown error"))
-		emit_signal("login_successful")
 	else:
 		print("Login response was not valid JSON.")
 		print("Raw response:", response_text)
@@ -186,9 +187,9 @@ func find_server(type: String):
 	current_server_request = "FIND"
 	
 	# Create callback for server response
-	var callback := JavaScriptBridge.create_callback(on_find_server_response)
+	server_callback_ref = JavaScriptBridge.create_callback(on_find_server_response)
 	var window = JavaScriptBridge.get_interface("window")
-	window.godotFindServerCallback = callback
+	window.godotFindServerCallback = server_callback_ref
 	
 	var url = find_server_url + type
 	var js_code := """
@@ -282,22 +283,33 @@ func poll_for_find_server_result():
 	if result != null:
 		print("Find server polling got result: ", result)
 		window.godotFindServerResult = null  # Clean up
-		on_find_server_response(str(result))
+		on_find_server_response([result])
 	else:
 		# Keep polling
 		await get_tree().create_timer(0.1).timeout
 		poll_for_find_server_result()
 
-func on_find_server_response(response_text: String):
+func on_find_server_response(args: Array):
 	print("=== FIND SERVER RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
 	print("Response text: ", response_text)
 	
 	var json = JSON.new()
 	var result = json.parse(response_text)
 	if result == OK:
 		print("Parsed JSON:", json.data)
-		# Handle your server response here
-		# Example: emit_signal("server_found", json.data)
+		#if response_code == 200:
+		var response = json.data.get("message")
+		var server_data = json.data.get("server")
+		print(response)
+		emit_signal("server", true, response, server_data["ip"], server_data["port"])
+		#else:
+			#var response = json.data.get("error")
+			#print(response)
+			#emit_signal("server", false, response, "", 0)
 	else:
 		print("Find server response was not valid JSON.")
 		print("Raw response:", response_text)
