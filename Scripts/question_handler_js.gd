@@ -75,7 +75,7 @@ func poll_for_login_result():
 	if result != null:
 		print("Polling got result: ", result)
 		window.godotLoginResult = null  # Clean up
-		on_login_response(str(result))
+		on_login_response(result)
 	else:
 		# Keep polling
 		await get_tree().create_timer(0.1).timeout
