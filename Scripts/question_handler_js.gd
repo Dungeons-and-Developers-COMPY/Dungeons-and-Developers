@@ -168,8 +168,9 @@ func login():
 	JavaScriptBridge.eval(js_code)
 	print("JavaScript executed")
 
-func on_login_response(response_text: String):
+func on_login_response(args: Array):
 	print("=== LOGIN RESPONSE RECEIVED ===")
+	var response_text = args[0]
 	print("Response text: ", response_text)
 	
 	var json = JSON.new()
@@ -185,6 +186,7 @@ func on_login_response(response_text: String):
 		else:
 			print("Login failed:", json.data.get("error", "Unknown error"))
 			#emit_signal("login_failed", json.data.get("error", "Unknown error"))
+		emit_signal("login_successful")
 	else:
 		print("Login response was not valid JSON.")
 		print("Raw response:", response_text)
