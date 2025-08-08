@@ -90,7 +90,6 @@ func login():
 	#var window = JavaScriptBridge.get_interface("window")
 	login_callback_ref = JavaScriptBridge.create_callback(on_login_response)
 	var window = JavaScriptBridge.get_interface("window")
-	window.godotLoginCallback = login_callback_ref
 	
 	# Store callback for login
 	window.godotLoginCallback = login_callback_ref
@@ -120,7 +119,9 @@ func login():
 		console.log('About to call Godot callback...');
 		if (window.godotLoginCallback) {
 			try {
-				window.godotLoginCallback([data]);
+				var dataToSend = typeof data === 'string' ? data : JSON.stringify(data);
+				console.log('Sending to Godot:', dataToSend);
+				window.godotLoginCallback(dataToSend);
 				console.log('Godot callback called successfully');
 			} catch(e) {
 				console.error('Error calling Godot callback:', e);
@@ -153,7 +154,10 @@ func login():
 
 func on_login_response(args: Array):
 	print("=== LOGIN RESPONSE RECEIVED ===")
+	print("Args: ", args)
 	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
 	print("Response text: ", response_text)
 	
 	var json = JSON.new()

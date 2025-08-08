@@ -11,7 +11,7 @@ func _ready() -> void:
 	
 func start2v2():
 	game.js_handler.login()
-	game.question_handler.login()
+	#game.question_handler.login()
 	#await game.js_handler.login_successful
 	#game.js_handler.find_server("1v1")
 func start1v1():
