@@ -89,22 +89,22 @@ func login():
 	print("Testing callback...")
 	
 	# Test the callback first
-	var test_js := """
-	console.log('Testing Godot callback...');
-	arguments[0]('{"test": "callback_working"}');
-	"""
-	
+	#var test_js := """
+	#console.log('Testing Godot callback...');
+	#arguments[0]('{"test": "callback_working"}');
+	#"""
+	#
 	var window = JavaScriptBridge.get_interface("window")
-	window.godotTestCallback = callback
-	
-	JavaScriptBridge.eval("""
-	console.log('Callback test...');
-	if (window.godotTestCallback) {
-		window.godotTestCallback('{"test": "callback_working"}');
-	} else {
-		console.error('Test callback not found');
-	}
-	""")
+	#window.godotTestCallback = callback
+	#
+	#JavaScriptBridge.eval("""
+	#console.log('Callback test...');
+	#if (window.godotTestCallback) {
+		#window.godotTestCallback('{"test": "callback_working"}');
+	#} else {
+		#console.error('Test callback not found');
+	#}
+	#""")
 	
 	# Wait a moment then do the actual login
 	await get_tree().create_timer(0.1).timeout
