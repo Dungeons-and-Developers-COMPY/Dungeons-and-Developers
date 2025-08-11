@@ -42,6 +42,18 @@ func _notification(what: int) -> void:
 		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 		await question_handler.shutdown
 
+func execute_next_step(next_step: String):
+	match next_step:
+		"FIND":
+			find_server()
+		"SUBMIT":
+			submit_code()
+		"TEST":
+			test_user_code()
+
+func login(next_step: String):
+	js_handler.login(next_step)
+
 func find_server():
 	find_avail_server("1v1")
 
@@ -58,8 +70,8 @@ func server_found(found: bool, message: String, ip: String, port: int):
 
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
-	code_interface.test.connect(test_user_code)
-	code_interface.submit_button_pressed.connect(submit_code)
+	code_interface.test.connect(login)
+	code_interface.submit_button_pressed.connect(login)
 	player.defeat_monster.connect(monster_defeated)
 	player.hit_monster.connect(show_question)
 	player.reached_exit.connect(player_won)
@@ -77,8 +89,10 @@ func connect_player_signals():
 	question_handler.server.connect(server_found)
 	
 	if OS.get_name() == "Web":
-		js_handler.login_successful.connect(find_server)
+		js_handler.login_successful.connect(execute_next_step)
 		js_handler.server.connect(server_found)
+		js_handler.submission_result.connect(receive_submission_feedback)
+		js_handler.test_result.connect(receive_test_feedback)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -253,17 +267,17 @@ func disconnect_all_players():
 		rpc_id(id, "disconnect_from_server")
 
 # rpc function called by server to pass the variables needed by clients to setup the maze
-@rpc("authority")
+@rpc("authority", "call_remote", "reliable")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
 
-@rpc("authority")
+@rpc("authority", "call_remote", "reliable")
 func disconnect_from_server():
 	MultiplayerManager.disconnect_from_server()
 	if DisplayServer.get_name() == "web":
 		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
 
-@rpc("any_peer", "call_remote")
+@rpc("any_peer", "call_remote", "reliable")
 func update_opponent_position(pos: Vector2i):
 	print("updating opponent position")
 	opponent.update_position(pos)
@@ -279,7 +293,7 @@ func player_won():
 	rpc_id(1, "game_over", multiplayer.get_unique_id())
 	#code_interface.disable_code()
 
-@rpc("any_peer")
+@rpc("any_peer", "call_remote", "reliable")
 func game_over(peer_id: int):
 	if not is_game_over:
 		is_game_over = true
@@ -288,7 +302,7 @@ func game_over(peer_id: int):
 		if is_server:
 			disconnect_all_players()
 
-@rpc("any_peer")
+@rpc("any_peer", "call_remote", "reliable")
 func announce_winner(peer_id: int):
 	if multiplayer.get_unique_id() == peer_id:
 		print("YOU WON!")
@@ -355,17 +369,23 @@ func receive_question(q):
 	print(q[1])
 
 func show_question(question_num: int):
-	print("Current question set to ", current_question)
 	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
 	current_question = question_data[2]
+	print("Current question set to ", current_question)
 	code_interface.show_question(question_data[0], question_data[1])
 
 func test_user_code():
-	question_handler.test_code(code_interface.code, code_interface.input)
+	if OS.get_name() == "Web":
+		js_handler.test_code(code_interface.code, code_interface.input)
+	else:
+		question_handler.test_code(code_interface.code, code_interface.input)
 
 func submit_code():
-	question_handler.submit_answer(current_question, code_interface.code)
+	if OS.get_name() == "Web":
+		js_handler.submit_code(current_question, code_interface.code)
+	else:
+		question_handler.submit_answer(current_question, code_interface.code)
 
 func receive_submission_feedback(output: String, passed: bool):
 	code_interface.output_to_console(output)

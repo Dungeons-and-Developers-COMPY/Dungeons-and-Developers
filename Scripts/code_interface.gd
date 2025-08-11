@@ -1,8 +1,8 @@
 extends Control
 
 signal run_button_pressed
-signal submit_button_pressed
-signal test
+signal submit_button_pressed(next_step: String)
+signal test(next_step: String)
 
 var code: String = ""
 var question: String = ""
@@ -66,7 +66,7 @@ func defeated_monster():
 
 func _on_submit_button_pressed() -> void:
 	code = code_edit.text
-	emit_signal("submit_button_pressed")
+	emit_signal("submit_button_pressed", "SUBMIT")
 
 func show_input_panel():
 	input_panel.show()
@@ -76,7 +76,7 @@ func hide_input_panel():
 
 func _on_confirm_button_pressed() -> void:
 	input = input_edit.text
-	emit_signal("test")
+	emit_signal("test", "TEST")
 	output_to_console("Compiling code...")
 	hide_input_panel()
 	enable_code()

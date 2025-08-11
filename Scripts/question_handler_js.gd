@@ -5,6 +5,7 @@ var username = "Admin_Username"
 var password = "Admin_Password!"
 var login_username = "Mahir"
 var login_password = "MrMoodles123!"
+var login_key = "4fIEjhIwkfIIPcU2m4vYDdLe0ZFkDgzh"
 var login_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/login"
 var random_q_url = "https://dungeonsanddevelopers.cs.uct.ac.za/questions/random/"
 var submission_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/submit/"
@@ -21,79 +22,29 @@ var current_server_request = "REGISTER"
 
 signal question(q)
 signal all_received
-signal submission_result(output: String, passed: bool)
-signal test_result(output: String, passed: bool)
-#signal server(found: bool, message: String, ip: String, port: int)
 signal shutdown
 
-signal login_successful
+signal login_successful(next_step: String)
 signal server(found: bool, message: String, ip: String, port: int)
+signal submission_result(output: String, passed: bool)
+signal test_result(output: String, passed: bool)
 
 var login_callback_ref
 var server_callback_ref
+var submit_callback_ref
+var test_callback_ref
+var next_step: String = "FIND"
 
 #region login
 
-# Polling-based approach as fallback
-func login_polling_fallback():
-	print("Using polling fallback approach")
+func login(next: String = "FIND"):
+	next_step = next
 	
-	var window = JavaScriptBridge.get_interface("window")
-	window.godotLoginResult = null
-	
-	var js_code := """
-	console.log('Starting login with polling approach...');
-	window.godotLoginResult = null;
-	
-	fetch('%s', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			username: '%s',
-			password: '%s'
-		}),
-		credentials: 'include'
-	})
-	.then(response => response.text())
-	.then(data => {
-		console.log('Login response:', data);
-		window.godotLoginResult = data;
-	})
-	.catch(error => {
-		console.error('Login error:', error);
-		window.godotLoginResult = '{"error": "' + error.message + '"}';
-	});
-	""" % [login_url, login_username, login_password]
-	
-	JavaScriptBridge.eval(js_code)
-	
-	# Poll for result
-	poll_for_login_result()
-
-func poll_for_login_result():
-	var window = JavaScriptBridge.get_interface("window")
-	var result = window.godotLoginResult
-	
-	if result != null:
-		print("Polling got result: ", result)
-		window.godotLoginResult = null  # Clean up
-		on_login_response(result)
-	else:
-		# Keep polling
-		await get_tree().create_timer(0.1).timeout
-		poll_for_login_result()
-
-func login():
 	print("attempting to login via js")
-	
-	#var callback := JavaScriptBridge.create_callback(on_login_response)
-	#var window = JavaScriptBridge.get_interface("window")
 	login_callback_ref = JavaScriptBridge.create_callback(on_login_response)
 	var window = JavaScriptBridge.get_interface("window")
 	
-	# Store callback for login
+	# store callback for login
 	window.godotLoginCallback = login_callback_ref
 	print("Callback stored in window")
 	
@@ -107,8 +58,7 @@ func login():
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			username: '%s',
-			password: '%s'
+			login_key: '%s'
 		}),
 		credentials: 'include'
 	})
@@ -146,8 +96,7 @@ func login():
 	});
 	""" % [
 		login_url,
-		login_username,
-		login_password
+		login_key
 	]
 	
 	print("About to execute JavaScript...")
@@ -171,7 +120,7 @@ func on_login_response(args: Array):
 		var success = json.data.get("success")
 		if message == "Logged in successfully":
 			print("Login successful.")
-			emit_signal("login_successful")
+			emit_signal("login_successful", next_step)
 		else:
 			print("Login failed:", json.data.get("error", "Unknown error"))
 			#emit_signal("login_failed", json.data.get("error", "Unknown error"))
@@ -181,6 +130,8 @@ func on_login_response(args: Array):
 		#emit_signal("login_failed", "Invalid JSON")
 
 #endregion
+
+#region find_server
 
 func find_server(type: String):
 	print("attempting to find server via js")
@@ -241,54 +192,6 @@ func find_server(type: String):
 	else:
 		print("Find server request sent.")
 
-# Polling fallback version
-func find_server_polling_fallback(type: String):
-	print("Using polling fallback for find server")
-	current_server_request = "FIND"
-	
-	var window = JavaScriptBridge.get_interface("window")
-	window.godotFindServerResult = null
-	
-	var url = find_server_url + type
-	var js_code := """
-	console.log('Starting find server with polling approach...');
-	window.godotFindServerResult = null;
-	
-	fetch('%s', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'Cookie': '%s'
-		},
-		credentials: 'include'
-	})
-	.then(response => response.text())
-	.then(data => {
-		console.log('Find server response:', data);
-		window.godotFindServerResult = data;
-	})
-	.catch(error => {
-		console.error('Find server error:', error);
-		window.godotFindServerResult = '{"error": "' + error.message + '"}';
-	});
-	""" % [url, session_cookie]
-	
-	JavaScriptBridge.eval(js_code)
-	poll_for_find_server_result()
-
-func poll_for_find_server_result():
-	var window = JavaScriptBridge.get_interface("window")
-	var result = window.godotFindServerResult
-	
-	if result != null:
-		print("Find server polling got result: ", result)
-		window.godotFindServerResult = null  # Clean up
-		on_find_server_response([result])
-	else:
-		# Keep polling
-		await get_tree().create_timer(0.1).timeout
-		poll_for_find_server_result()
-
 func on_find_server_response(args: Array):
 	print("=== FIND SERVER RESPONSE RECEIVED ===")
 	print("Args: ", args)
@@ -312,4 +215,188 @@ func on_find_server_response(args: Array):
 			#emit_signal("server", false, response, "", 0)
 	else:
 		print("Find server response was not valid JSON.")
+		print("Raw response:", response_text)
+
+#endregion
+
+func submit_code(question_num: int, code: String):
+	var payload = {
+		"code": code
+	}
+	var url = submission_url + str(question_num)
+	
+	print("attempting to submit code via js")
+	submit_callback_ref = JavaScriptBridge.create_callback(on_submit_response)
+	var window = JavaScriptBridge.get_interface("window")
+	
+	# store callback for submission
+	window.godotSubmissionCallback = submit_callback_ref
+	print("Callback stored in window")
+	
+	var js_code := """
+	console.log('Starting login fetch...');
+	console.log('Callback available:', typeof window.godotSubmissionCallback);
+	
+	var payload = %s;
+	fetch('%s', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(payload),
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Fetch response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Response data:', data);
+		console.log('About to call Godot callback...');
+		if (window.godotSubmissionCallback) {
+			try {
+				var dataToSend = typeof data === 'string' ? data : JSON.stringify(data);
+				console.log('Sending to Godot:', dataToSend);
+				window.godotSubmissionCallback(dataToSend);
+				console.log('Godot callback called successfully');
+			} catch(e) {
+				console.error('Error calling Godot callback:', e);
+			}
+		} else {
+			console.error('Godot callback not found!');
+		}
+		delete window.godotSubmissionCallback;
+	})
+	.catch(error => {
+		console.error('Login error:', error);
+		if (window.godotSubmissionCallback) {
+			try {
+				window.godotSubmissionCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in error callback:', e);
+			}
+		}
+		delete window.godotSubmissionCallback;
+	});
+	""" % [
+		JSON.stringify(payload),
+		url
+	]
+	
+	print("About to execute JavaScript...")
+	JavaScriptBridge.eval(js_code)
+	print("JavaScript executed")
+
+func on_submit_response(args: Array):
+	print("=== SUBMISSION RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+		var response = json.data.get("message")
+		var passed = json.data.get("success")
+		emit_signal("submission_result", response, passed)
+	else:
+		print("Non-JSON response received:")
+		print("Raw response:", response_text)
+
+func test_code(code: String, input):
+	var payload = {
+		"code": code,
+		"input": input
+	}
+	var url = test_code_url
+	
+	print("attempting to submit code via js")
+	test_callback_ref = JavaScriptBridge.create_callback(on_test_response)
+	var window = JavaScriptBridge.get_interface("window")
+	
+	# store callback for submission godotSubmissionCallback
+	window.godotTestCallback = test_callback_ref
+	print("Callback stored in window")
+	
+	var js_code := """
+	console.log('Starting login fetch...');
+	console.log('Callback available:', typeof window.godotTestCallback);
+	
+	var payload = %s;
+	fetch('%s', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(payload),
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Fetch response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Response data:', data);
+		console.log('About to call Godot callback...');
+		if (window.godotTestCallback) {
+			try {
+				var dataToSend = typeof data === 'string' ? data : JSON.stringify(data);
+				console.log('Sending to Godot:', dataToSend);
+				window.godotTestCallback(dataToSend);
+				console.log('Godot callback called successfully');
+			} catch(e) {
+				console.error('Error calling Godot callback:', e);
+			}
+		} else {
+			console.error('Godot callback not found!');
+		}
+		delete window.godotTestCallback;
+	})
+	.catch(error => {
+		console.error('Login error:', error);
+		if (window.godotTestCallback) {
+			try {
+				window.godotTestCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in error callback:', e);
+			}
+		}
+		delete window.godotTestCallback;
+	});
+	""" % [
+		JSON.stringify(payload),
+		url
+	]
+	
+	print("About to execute JavaScript...")
+	JavaScriptBridge.eval(js_code)
+	print("JavaScript executed")
+
+func on_test_response(args: Array):
+	print("=== TEST RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+		var response
+		var passed = json.data.get("success")
+		if passed != null:
+			response = json.data.get("result")
+		else:
+			passed = false
+			response = json.data.get("error")
+		emit_signal("test_result", str(response), passed)
+	else:
+		print("Non-JSON response received:")
 		print("Raw response:", response_text)
