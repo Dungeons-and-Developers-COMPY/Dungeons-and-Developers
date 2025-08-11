@@ -10,6 +10,7 @@ var console_text: String = ""
 var moving_code: String = ""
 var on_monster: bool = false
 var input: String = ""
+var num_submissions: int = 0
 
 @onready var question_box = $QuestionText
 @onready var console = $ConsoleText
@@ -19,6 +20,7 @@ var input: String = ""
 @onready var input_panel = $InputPanel
 @onready var input_edit = $InputPanel/TextEdit
 @onready var confirm_button = $InputPanel/ConfirmButton
+@onready var new_question_button = $NewQuestionButton
 
 func set_moving():
 	question_box.text = Globals.MOVING_TEXT
@@ -53,6 +55,8 @@ func output_to_console(text: String):
 		console.text = console.text + "\n" + text
 
 func show_question(title: String, promt: String):
+	num_submissions = 0
+	disable_new_question()
 	moving_code = code_edit.text
 	question_box.text = promt
 	code_edit.text = Globals.code_format
@@ -80,3 +84,9 @@ func _on_confirm_button_pressed() -> void:
 	output_to_console("Compiling code...")
 	hide_input_panel()
 	enable_code()
+
+func enable_new_question():
+	new_question_button.disabled = false
+	
+func disable_new_question():
+	new_question_button.disabled = true

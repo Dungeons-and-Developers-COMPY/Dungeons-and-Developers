@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://b434binq15kiq"]
+[gd_scene load_steps=6 format=3 uid="uid://b434binq15kiq"]
 
 [ext_resource type="Theme" uid="uid://430hiudad3go" path="res://Themes/test_theme.tres" id="1_b6vbw"]
 [ext_resource type="Script" uid="uid://bc7pn5tenxx6x" path="res://Scripts/code_interface.gd" id="1_ygywk"]
 [ext_resource type="CodeHighlighter" uid="uid://cpgvfqybar270" path="res://Themes/syntaxt_highlighting.tres" id="3_6uyrl"]
+[ext_resource type="Texture2D" uid="uid://00aegiro6ric" path="res://Assets/1bit 16px icons part-2.png" id="4_exiiw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ed4r"]
+atlas = ExtResource("4_exiiw")
+region = Rect2(466, 321, 13, 13)
 
 [node name="CodeInterface" type="Control"]
 layout_mode = 3
@@ -119,6 +124,16 @@ offset_right = 306.0
 offset_bottom = 162.0
 theme = ExtResource("1_b6vbw")
 text = "Confirm"
+
+[node name="NewQuestionButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 612.0
+offset_top = 3.0
+offset_right = 636.0
+offset_bottom = 27.0
+icon = SubResource("AtlasTexture_7ed4r")
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
 [connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]

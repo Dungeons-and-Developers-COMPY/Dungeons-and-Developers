@@ -22,6 +22,8 @@ var current_question: int = 0
 var shutdown_check_timer = 0.0
 var game_started = false
 
+#region built-in functions
+
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
@@ -42,14 +44,26 @@ func _notification(what: int) -> void:
 		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 		await question_handler.shutdown
 
-func execute_next_step(next_step: String):
-	match next_step:
-		"FIND":
-			find_server()
-		"SUBMIT":
-			submit_code()
-		"TEST":
-			test_user_code()
+func _process(delta: float) -> void:
+	if Input.is_action_just_released("attack") and player.should_stop == true:
+		player.on_monster_defeated()
+		code_interface.defeated_monster()
+		code_interface.output_to_console("Monster defeated! Moving enabled.")
+		code_interface.output_to_console(Globals.break_string)
+	# temp way to shutdown server
+	if (is_server):
+		shutdown_check_timer += delta
+		if shutdown_check_timer >= 2.0:
+			shutdown_check_timer = 0
+			if FileAccess.file_exists("shutdown.txt"):
+				print("Shutdown signal file found.")
+				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
+				await question_handler.shutdown
+				get_tree().quit()
+
+#endregion
+
+#region game setup
 
 func login(next_step: String):
 	js_handler.login(next_step)
@@ -126,11 +140,6 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	player.set_monster_positions(monster_positions)
 	space_players()
 
-# function used by clients to execute the code entered by the user
-func run_user_code():
-	print("SIGNAL RECEIVED")
-	player.execute_move(code_interface.code)
-
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
 	print(monster_positions)
@@ -169,57 +178,6 @@ func spawn_boss(pos: Vector2i, boss_type: int = 0):
 	add_child(boss)
 	monsters.append(boss)
 
-# function to kill off a monster defeated by a player
-func monster_defeated():
-	player.attack()
-	code_interface.set_moving()
-	var player_pos = player.pos
-	
-	var boss = monsters[Globals.monster_positions.size()]
-	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
-		if boss.has_method("die"):
-			print("boss dead")
-			boss.die()
-		return
-	
-	for i in range(Globals.monster_positions.size()):
-		print(i)
-		print(Globals.monster_positions[i])
-		if (Globals.monster_positions[i] == player_pos):
-			print("monster found")
-			var monster = monsters[i]
-			if monster.has_method("die"):
-				print("monster dead")
-				monster.die()
-				
-			break
-
-# function that triggers when a player joins the server
-func _on_player_connected(id: int):
-	#if connected_players.size() >= 2:
-		#rpc_id(id, "reject_connection", "Server Full")
-		#return
-	print("Player connected: ", id)
-	if (connected_players.size() < 2):
-		connected_players.append(id)
-		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
-		if connected_players.size() == 2:
-			start_game()
-
-func _on_player_disconnected(id: int):
-	#TODO: end/pause game, call decrease player count on server & remove player from server
-	connected_players.erase(id)
-	MultiplayerManager.dec_player_count(Globals.server_ip, Globals.server_port)
-	if game_started and connected_players.is_empty():
-		reset_server()
-
-@rpc("any_peer")
-func reject_connection(reason: String):
-	print("Connection rejected: ", reason)
-	multiplayer.multiplayer_peer = null
-	Globals.connection_result = false
-	Globals.connection_done = true
-
 # function called by server when 2 players have entered the server to start the game
 func start_game():
 	game_started = true
@@ -247,6 +205,29 @@ func start_game():
 		print(Globals.questions.size())
 		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss)
 
+#endregion
+
+#region server functions
+
+# function that triggers when a player joins the server
+func _on_player_connected(id: int):
+	#if connected_players.size() >= 2:
+		#rpc_id(id, "reject_connection", "Server Full")
+		#return
+	print("Player connected: ", id)
+	if (connected_players.size() < 2):
+		connected_players.append(id)
+		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
+		if connected_players.size() == 2:
+			start_game()
+
+func _on_player_disconnected(id: int):
+	#TODO: end/pause game, call decrease player count on server & remove player from server
+	connected_players.erase(id)
+	MultiplayerManager.dec_player_count(Globals.server_ip, Globals.server_port)
+	if game_started and connected_players.is_empty():
+		reset_server()
+
 func reset_server():
 	print("Server reset")
 	#for id in connected_players:
@@ -266,6 +247,10 @@ func disconnect_all_players():
 	for id in connected_players:
 		rpc_id(id, "disconnect_from_server")
 
+#endregion
+
+#region rpcs
+
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority", "call_remote", "reliable")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
@@ -281,17 +266,6 @@ func disconnect_from_server():
 func update_opponent_position(pos: Vector2i):
 	print("updating opponent position")
 	opponent.update_position(pos)
-
-func opponent_moving():
-	print("received signal")
-	print(MultiplayerManager.get_other_peer())
-	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
-
-# function called when a player wins (reaches exit and defeats the boss)
-func player_won():
-	#print("PLAYER WINS")
-	rpc_id(1, "game_over", multiplayer.get_unique_id())
-	#code_interface.disable_code()
 
 @rpc("any_peer", "call_remote", "reliable")
 func game_over(peer_id: int):
@@ -311,16 +285,20 @@ func announce_winner(peer_id: int):
 		print("YOU LOST.")
 		show_end("YOU LOST.")
 
-func show_end(text):
-	code_interface.disable_code()
-	player.should_stop = true
-	end_label.text = text
-	end_label.show()
-	
-func hide_end():
-	code_interface.enable_code()
-	player.should_stop = false
-	end_label.hide()
+#endregion
+
+#region player functions
+
+func opponent_moving():
+	print("received signal")
+	print(MultiplayerManager.get_other_peer())
+	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
+
+# function called when a player wins (reaches exit and defeats the boss)
+func player_won():
+	#print("PLAYER WINS")
+	rpc_id(1, "game_over", multiplayer.get_unique_id())
+	#code_interface.disable_code()
 
 func output_to_console(text: String):
 	code_interface.output_to_console(text)
@@ -348,6 +326,10 @@ func space_players():
 	x = opponent.char.global_position.x + (Globals.player_offset * Globals.maze_scale)
 	opponent.char.set_target_pos(x, opponent.char.global_position.y)
 
+#endregion
+
+#region monster functions
+
 func adjust_monster(index: int):
 	if index == Globals.num_monsters: 
 		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale)
@@ -362,6 +344,60 @@ func adjust_monster(index: int):
 	
 	await player.char.stopped_moving
 	player.char.animator.flip_h = false
+
+func monster_attack():
+	var player_pos = player.pos
+	
+	var boss = monsters[Globals.monster_positions.size()]
+	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
+		if boss.has_method("attack"):
+			boss.attack()
+		return
+	
+	for i in range(Globals.monster_positions.size()):
+		print(i)
+		print(Globals.monster_positions[i])
+		if (Globals.monster_positions[i] == player_pos):
+			print("monster found")
+			var monster = monsters[i]
+			if monster.has_method("attack"):
+				monster.attack()
+				
+			break
+
+# function to kill off a monster defeated by a player
+func monster_defeated():
+	player.attack()
+	code_interface.set_moving()
+	var player_pos = player.pos
+	
+	var boss = monsters[Globals.monster_positions.size()]
+	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
+		if boss.has_method("die"):
+			print("boss dead")
+			boss.die()
+		return
+	
+	for i in range(Globals.monster_positions.size()):
+		print(i)
+		print(Globals.monster_positions[i])
+		if (Globals.monster_positions[i] == player_pos):
+			print("monster found")
+			var monster = monsters[i]
+			if monster.has_method("die"):
+				print("monster dead")
+				monster.die()
+				
+			break
+
+#endregion
+
+#region question & code functions
+
+# function used by clients to execute the code entered by the user
+func run_user_code():
+	print("SIGNAL RECEIVED")
+	player.execute_move(code_interface.code)
 
 func receive_question(q):
 	Globals.questions.append(q)
@@ -395,28 +431,11 @@ func receive_submission_feedback(output: String, passed: bool):
 		code_interface.output_to_console("Monster defeated! Moving enabled.")
 		code_interface.output_to_console(Globals.break_string)
 	else:
+		code_interface.num_submissions += 1
+		if code_interface.num_submissions == 3:
+			code_interface.enable_new_question()
 		monster_attack()
 		player.stun()
-
-func monster_attack():
-	var player_pos = player.pos
-	
-	var boss = monsters[Globals.monster_positions.size()]
-	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
-		if boss.has_method("attack"):
-			boss.attack()
-		return
-	
-	for i in range(Globals.monster_positions.size()):
-		print(i)
-		print(Globals.monster_positions[i])
-		if (Globals.monster_positions[i] == player_pos):
-			print("monster found")
-			var monster = monsters[i]
-			if monster.has_method("attack"):
-				monster.attack()
-				
-			break
 
 func receive_test_feedback(output: String, passed: bool):
 	if passed:
@@ -428,19 +447,28 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
-func _process(delta: float) -> void:
-	if Input.is_action_just_released("attack") and player.should_stop == true:
-		player.on_monster_defeated()
-		code_interface.defeated_monster()
-		code_interface.output_to_console("Monster defeated! Moving enabled.")
-		code_interface.output_to_console(Globals.break_string)
-	# temp way to shutdown server
-	if (is_server):
-		shutdown_check_timer += delta
-		if shutdown_check_timer >= 2.0:
-			shutdown_check_timer = 0
-			if FileAccess.file_exists("shutdown.txt"):
-				print("Shutdown signal file found.")
-				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
-				await question_handler.shutdown
-				get_tree().quit()
+#endregion
+
+#region helpers
+
+func execute_next_step(next_step: String):
+	match next_step:
+		"FIND":
+			find_server()
+		"SUBMIT":
+			submit_code()
+		"TEST":
+			test_user_code()
+
+func show_end(text):
+	code_interface.disable_code()
+	player.should_stop = true
+	end_label.text = text
+	end_label.show()
+	
+func hide_end():
+	code_interface.enable_code()
+	player.should_stop = false
+	end_label.hide()
+
+#endregion

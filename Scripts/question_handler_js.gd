@@ -20,7 +20,7 @@ var is_server := OS.has_feature("dedicated_server")
 var request_queue = []
 var current_server_request = "REGISTER"
 
-signal question(q)
+
 signal all_received
 signal shutdown
 
@@ -28,11 +28,13 @@ signal login_successful(next_step: String)
 signal server(found: bool, message: String, ip: String, port: int)
 signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
+signal question(q)
 
 var login_callback_ref
 var server_callback_ref
 var submit_callback_ref
 var test_callback_ref
+var get_question_callback_ref
 var next_step: String = "FIND"
 
 #region login
@@ -131,7 +133,7 @@ func on_login_response(args: Array):
 
 #endregion
 
-#region find_server
+#region find server
 
 func find_server(type: String):
 	print("attempting to find server via js")
@@ -218,6 +220,89 @@ func on_find_server_response(args: Array):
 		print("Raw response:", response_text)
 
 #endregion
+
+func get_question(difficulty: String):
+	print("attempting to find server via js")
+	
+	# Create callback for server response godotFindServerCallback
+	get_question_callback_ref = JavaScriptBridge.create_callback(on_get_question_response)
+	var window = JavaScriptBridge.get_interface("window")
+	window.godotGetQuestionCallback = get_question_callback_ref
+	
+	var url = random_q_url + difficulty
+	var js_code := """
+	console.log('Starting find server request...');
+	console.log('URL:', '%s');
+	console.log('Session cookie:', '%s');
+	
+	fetch('%s', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Find server response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Find server response data:', data);
+		if (window.godotGetQuestionCallback) {
+			try {
+				window.godotGetQuestionCallback(data);
+				console.log('Find server callback called successfully');
+			} catch(e) {
+				console.error('Error calling find server callback:', e);
+			}
+		} else {
+			console.error('Find server callback not found!');
+		}
+		delete window.godotGetQuestionCallback;
+	})
+	.catch(error => {
+		console.error('Find server error:', error);
+		if (window.godotGetQuestionCallback) {
+			try {
+				window.godotGetQuestionCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in find server error callback:', e);
+			}
+		}
+		delete window.godotGetQuestionCallback;
+	});
+	""" % [url, session_cookie, url]
+	
+	var err = JavaScriptBridge.eval(js_code)
+	if err != null:
+		print("JavaScript execution failed: ", err)
+	else:
+		print("Find server request sent.")
+
+func on_get_question_response(args: Array):
+	print("=== GET QUESTION RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+		var prompt = json.data.get("prompt_md")
+		var title = json.data.get("title")
+		var question_num = json.data.get("question_number")
+		var res = [title, prompt, question_num]
+		emit_signal("question", res)
+		
+	else:
+		print("Non-JSON response received:")
+		print("Raw response:", response_text)
+
+#region submit code
 
 func submit_code(question_num: int, code: String):
 	var payload = {
@@ -306,6 +391,10 @@ func on_submit_response(args: Array):
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
+
+#endregion
+
+#region test code
 
 func test_code(code: String, input):
 	var payload = {
@@ -400,3 +489,5 @@ func on_test_response(args: Array):
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
+
+#endregion
