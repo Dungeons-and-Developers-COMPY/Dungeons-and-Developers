@@ -12,6 +12,7 @@ var on_monster: bool = false
 var input: String = ""
 var num_submissions: int = 0
 
+@onready var question_label = $QuestionLabel
 @onready var question_box = $QuestionText
 @onready var console = $ConsoleText
 @onready var run_button = $RunButton
@@ -58,6 +59,7 @@ func show_question(title: String, promt: String):
 	num_submissions = 0
 	disable_new_question()
 	moving_code = code_edit.text
+	question_label.text = "Question: " + title
 	question_box.text = promt
 	code_edit.text = Globals.code_format
 	submit_button.show()

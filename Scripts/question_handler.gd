@@ -5,6 +5,7 @@ var username = "Admin_Username"
 var password = "Admin_Password!"
 var login_username = "Mahir"
 var login_password = "MrMoodles123!"
+var login_key = "4fIEjhIwkfIIPcU2m4vYDdLe0ZFkDgzh"
 var login_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/login"
 var random_q_url = "https://dungeonsanddevelopers.cs.uct.ac.za/questions/random/"
 var submission_url = "https://dungeonsanddevelopers.cs.uct.ac.za/admin/submit/"
@@ -25,6 +26,7 @@ signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
 signal server(found: bool, message: String, ip: String, port: int)
 signal shutdown
+signal logged_in
 
 @onready var question_request = $HTTPRequestQuestion
 @onready var submit_answer_http = $HTTPSumbitCode
@@ -45,8 +47,7 @@ func get_auth(questions: bool):
 
 func login():
 	var payload = {
-		"username": login_username,
-		"password": login_password
+		"login_key": login_key
 	}
 	var body = JSON.stringify(payload)
 	var headers = ["Content-Type: application/json"]
@@ -275,6 +276,7 @@ func _on_login_completed(result: int, response_code: int, headers: PackedStringA
 			
 	if session_cookie != "":
 		print("Session Cookie: ", session_cookie)
+		emit_signal("logged_in")
 		#submit_code()
 	else:
 		print("No session cookie found... Login failed.")

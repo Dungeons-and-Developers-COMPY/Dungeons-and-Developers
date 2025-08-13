@@ -73,7 +73,10 @@ func find_server():
 
 func find_avail_server(type: String):
 	#question_handler.find_server(type)
-	js_handler.find_server(type)
+	if OS.get_name() == "Web":
+		js_handler.find_server(type)
+	else:
+		question_handler.find_server(type)
 
 func server_found(found: bool, message: String, ip: String, port: int):
 	if found:
@@ -101,6 +104,7 @@ func connect_player_signals():
 	question_handler.submission_result.connect(receive_submission_feedback)
 	question_handler.test_result.connect(receive_test_feedback)
 	question_handler.server.connect(server_found)
+	question_handler.logged_in.connect(find_server)
 	
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
@@ -447,9 +451,20 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
+func get_new_question(question_num: int):
+	var new_difficulty = difficulties[question_num]
+	if question_num > 0:
+		new_difficulty = difficulties[question_num - 1]
+		difficulties[question_num] = new_difficulty
+	js_handler.get_question(difficulties[question_num], question_num)
+
+func receive_new_question(q, question_num):
+	Globals.questions[question_num] = q
+	show_question(question_num)
+
 #endregion
 
-#region helpers
+#region helper functions
 
 func execute_next_step(next_step: String):
 	match next_step:

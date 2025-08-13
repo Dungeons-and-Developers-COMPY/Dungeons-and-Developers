@@ -15,4 +15,7 @@ func start1v1():
 	menu.hide()
 	game.show()
 	game.show_end("Connecting to 1v1 server...")
-	game.js_handler.login()
+	if OS.get_name() == "Web":
+		game.js_handler.login()
+	else:
+		game.question_handler.login()

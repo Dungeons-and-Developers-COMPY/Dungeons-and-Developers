@@ -231,9 +231,8 @@ func get_question(difficulty: String):
 	
 	var url = random_q_url + difficulty
 	var js_code := """
-	console.log('Starting find server request...');
-	console.log('URL:', '%s');
-	console.log('Session cookie:', '%s');
+	console.log('Starting get question request...');
+	console.log('URL: ', '%s');
 	
 	fetch('%s', {
 		method: 'GET',
@@ -243,20 +242,20 @@ func get_question(difficulty: String):
 		credentials: 'include'
 	})
 	.then(response => {
-		console.log('Find server response received, status:', response.status);
+		console.log('Get question response received, status:', response.status);
 		return response.text();
 	})
 	.then(data => {
-		console.log('Find server response data:', data);
+		console.log('Get question response data:', data);
 		if (window.godotGetQuestionCallback) {
 			try {
 				window.godotGetQuestionCallback(data);
-				console.log('Find server callback called successfully');
+				console.log('Get question callback called successfully');
 			} catch(e) {
 				console.error('Error calling find server callback:', e);
 			}
 		} else {
-			console.error('Find server callback not found!');
+			console.error('Get question callback not found!');
 		}
 		delete window.godotGetQuestionCallback;
 	})
@@ -266,12 +265,12 @@ func get_question(difficulty: String):
 			try {
 				window.godotGetQuestionCallback('{"error": "' + error.message + '"}');
 			} catch(e) {
-				console.error('Error in find server error callback:', e);
+				console.error('Error in get question error callback:', e);
 			}
 		}
 		delete window.godotGetQuestionCallback;
 	});
-	""" % [url, session_cookie, url]
+	""" % [url, url]
 	
 	var err = JavaScriptBridge.eval(js_code)
 	if err != null:
