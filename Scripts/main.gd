@@ -9,6 +9,8 @@ extends Node2D
 @onready var js_handler = $JSHandler
 @onready var menu_music_player = $MenuLoadingMusic
 @onready var monster_music_players = [$PreMonster1Music, $PostMonster1Music, $PostMonster2Music]
+@onready var victory_player = $Victory
+@onready var defeat_player = $Defeat
 
 var monster_positions = []
 var monsters = []
@@ -292,6 +294,7 @@ func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, que
 func disconnect_from_server():
 	MultiplayerManager.disconnect_from_server()
 	if DisplayServer.get_name() == "web":
+		await get_tree().create_timer(15.0).timeout 
 		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -310,12 +313,21 @@ func game_over(peer_id: int):
 
 @rpc("any_peer", "call_remote", "reliable")
 func announce_winner(peer_id: int):
+	# Stop any currently playing monster music to avoid conflict
+	for music_player in monster_music_players:
+		if music_player.playing:
+			music_player.stop()
+
 	if multiplayer.get_unique_id() == peer_id:
 		print("YOU WON!")
 		show_end("YOU WON!")
+		# Play the victory sound
+		victory_player.play()
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
+		# Play the defeat sound
+		defeat_player.play()
 
 #endregion
 
