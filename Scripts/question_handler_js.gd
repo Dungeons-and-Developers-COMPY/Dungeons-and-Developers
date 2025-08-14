@@ -28,7 +28,7 @@ signal login_successful(next_step: String)
 signal server(found: bool, message: String, ip: String, port: int)
 signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
-signal question(q)
+signal question(q, question_num: int)
 
 var login_callback_ref
 var server_callback_ref
@@ -36,6 +36,7 @@ var submit_callback_ref
 var test_callback_ref
 var get_question_callback_ref
 var next_step: String = "FIND"
+var question_to_replace = 0
 
 #region login
 
@@ -221,9 +222,10 @@ func on_find_server_response(args: Array):
 
 #endregion
 
-func get_question(difficulty: String):
+func get_question(difficulty: String, question_num: int):
 	print("attempting to find server via js")
 	
+	question_to_replace = question_num 
 	# Create callback for server response godotFindServerCallback
 	get_question_callback_ref = JavaScriptBridge.create_callback(on_get_question_response)
 	var window = JavaScriptBridge.get_interface("window")
@@ -295,7 +297,7 @@ func on_get_question_response(args: Array):
 		var title = json.data.get("title")
 		var question_num = json.data.get("question_number")
 		var res = [title, prompt, question_num]
-		emit_signal("question", res)
+		emit_signal("question", res, question_to_replace)
 		
 	else:
 		print("Non-JSON response received:")

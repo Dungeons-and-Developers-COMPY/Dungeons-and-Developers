@@ -126,11 +126,13 @@ theme = ExtResource("1_b6vbw")
 text = "Confirm"
 
 [node name="NewQuestionButton" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 612.0
 offset_top = 3.0
 offset_right = 636.0
 offset_bottom = 27.0
+tooltip_text = "Press here to get an easier question after 3 failed attempts"
 icon = SubResource("AtlasTexture_7ed4r")
 icon_alignment = 1
 expand_icon = true
@@ -138,3 +140,4 @@ expand_icon = true
 [connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
 [connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
 [connection signal="pressed" from="InputPanel/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="NewQuestionButton" to="." method="_on_new_question_button_pressed"]

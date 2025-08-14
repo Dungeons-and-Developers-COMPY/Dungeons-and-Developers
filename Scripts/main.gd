@@ -18,6 +18,7 @@ var is_server := OS.has_feature("dedicated_server")
 var is_game_over: bool = false
 var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
+var question_index: int = 0
 
 var shutdown_check_timer = 0.0
 var game_started = false
@@ -89,6 +90,7 @@ func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
 	code_interface.test.connect(login)
 	code_interface.submit_button_pressed.connect(login)
+	code_interface.new_question.connect(get_new_question)
 	player.defeat_monster.connect(monster_defeated)
 	player.hit_monster.connect(show_question)
 	player.reached_exit.connect(player_won)
@@ -111,6 +113,7 @@ func connect_player_signals():
 		js_handler.server.connect(server_found)
 		js_handler.submission_result.connect(receive_submission_feedback)
 		js_handler.test_result.connect(receive_test_feedback)
+		js_handler.question.connect(receive_new_question)
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -411,6 +414,7 @@ func receive_question(q):
 func show_question(question_num: int):
 	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
+	question_index = question_num 
 	current_question = question_data[2]
 	print("Current question set to ", current_question)
 	code_interface.show_question(question_data[0], question_data[1])
@@ -451,14 +455,15 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
-func get_new_question(question_num: int):
+func get_new_question():
+	var question_num = question_index
 	var new_difficulty = difficulties[question_num]
 	if question_num > 0:
 		new_difficulty = difficulties[question_num - 1]
 		difficulties[question_num] = new_difficulty
 	js_handler.get_question(difficulties[question_num], question_num)
 
-func receive_new_question(q, question_num):
+func receive_new_question(q, question_num: int):
 	Globals.questions[question_num] = q
 	show_question(question_num)
 

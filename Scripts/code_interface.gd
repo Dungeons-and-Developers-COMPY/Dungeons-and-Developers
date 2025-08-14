@@ -3,6 +3,7 @@ extends Control
 signal run_button_pressed
 signal submit_button_pressed(next_step: String)
 signal test(next_step: String)
+signal new_question
 
 var code: String = ""
 var question: String = ""
@@ -27,6 +28,7 @@ func set_moving():
 	question_box.text = Globals.MOVING_TEXT
 	code_edit.text = moving_code
 	submit_button.hide()
+	new_question_button.hide()
 
 func _on_run_button_pressed() -> void:
 	code = code_edit.text
@@ -63,6 +65,7 @@ func show_question(title: String, promt: String):
 	question_box.text = promt
 	code_edit.text = Globals.code_format
 	submit_button.show()
+	new_question_button.show()
 	
 func hit_monster():
 	on_monster = true
@@ -92,3 +95,7 @@ func enable_new_question():
 	
 func disable_new_question():
 	new_question_button.disabled = true
+
+
+func _on_new_question_button_pressed() -> void:
+	emit_signal("new_question")
