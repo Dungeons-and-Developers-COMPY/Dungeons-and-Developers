@@ -1,13 +1,78 @@
-[gd_scene load_steps=7 format=3 uid="uid://d2fs6llkx5lnk"]
+[gd_scene load_steps=17 format=3 uid="uid://d2fs6llkx5lnk"]
 
 [ext_resource type="Theme" uid="uid://uf0mr2qu6b5r" path="res://Themes/main_menu.tres" id="1_28flt"]
 [ext_resource type="Script" uid="uid://dov62fywflcd1" path="res://Scripts/main_menu.gd" id="1_ce3w2"]
 [ext_resource type="Texture2D" uid="uid://bufswsvxqljh7" path="res://Assets/logo.png" id="2_48xlc"]
 [ext_resource type="Texture2D" uid="uid://8oxonny0xwmp" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/RectangleBox_96x96.png" id="3_1ehe0"]
 [ext_resource type="Script" uid="uid://bbc3kq4i4rxul" path="res://Scenes/VolumeSlider.gd" id="5_n45e2"]
+[ext_resource type="Texture2D" uid="uid://cgctmks7dc38" path="res://Assets/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/Soldier/Soldier.png" id="6_opfnp"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_n45e2"]
 load_path = "res://.godot/imported/speaker.png-02b69c5405fca3f42cf20db29b761fe0.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cp0ys"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(0, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yhxw7"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(100, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trj04"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(200, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16hvj"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(300, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vr1f0"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(400, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t1dhk"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(500, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5egv6"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(600, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vtepg"]
+atlas = ExtResource("6_opfnp")
+region = Rect2(700, 100, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8dnnj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cp0ys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yhxw7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trj04")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16hvj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vr1f0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t1dhk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5egv6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vtepg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
 
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_ce3w2")
@@ -39,10 +104,10 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -144.0
-offset_top = -88.0
-offset_right = -21.0
-offset_bottom = 96.0
+offset_left = -226.0
+offset_top = -85.0
+offset_right = -42.0
+offset_bottom = 78.0
 grow_horizontal = 0
 grow_vertical = 2
 alignment = 1
@@ -80,9 +145,31 @@ offset_bottom = 720.0
 theme = ExtResource("1_28flt")
 
 [node name="Logo" type="Sprite2D" parent="."]
-position = Vector2(-87, -8)
-scale = Vector2(0.177093, 0.163621)
+position = Vector2(-114, -7)
+scale = Vector2(0.216476, 0.198998)
 texture = ExtResource("2_48xlc")
+
+[node name="Solider" type="AnimatedSprite2D" parent="."]
+position = Vector2(10, -24)
+scale = Vector2(2.02, 1.89)
+sprite_frames = SubResource("SpriteFrames_8dnnj")
+autoplay = "default"
+
+[node name="Solider2" type="AnimatedSprite2D" parent="."]
+position = Vector2(10, 23)
+scale = Vector2(2.0802, 1.88605)
+sprite_frames = SubResource("SpriteFrames_8dnnj")
+autoplay = "default"
+frame = 2
+frame_progress = 0.464446
+
+[node name="Solider3" type="AnimatedSprite2D" parent="."]
+position = Vector2(-6.00001, 23)
+scale = Vector2(2.14219, 1.88211)
+sprite_frames = SubResource("SpriteFrames_8dnnj")
+autoplay = "default"
+frame = 6
+frame_progress = 0.633636
 
 [connection signal="pressed" from="NinePatchRect/VBoxContainer/1v1" to="." method="_on_v_1_pressed"]
 [connection signal="pressed" from="NinePatchRect/VBoxContainer/2v2" to="." method="_on_v_2_pressed"]
