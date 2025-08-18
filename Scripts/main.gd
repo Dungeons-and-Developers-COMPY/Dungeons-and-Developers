@@ -22,6 +22,7 @@ var question_index: int = 0
 
 var shutdown_check_timer = 0.0
 var game_started = false
+var keep_alive_timer = 0.0
 
 #region built-in functions
 
@@ -61,6 +62,11 @@ func _process(delta: float) -> void:
 				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 				await question_handler.shutdown
 				get_tree().quit()
+	else:
+		keep_alive_timer += delta
+		if keep_alive_timer >= 3.0:
+			keep_alive_timer = 0.0
+			rpc_id(1, "keep_alive", multiplayer.get_unique_id())
 
 #endregion
 
@@ -291,6 +297,10 @@ func announce_winner(peer_id: int):
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
+
+@rpc("any_peer", "call_remote", "reliable")
+func keep_alive(peer_id: int):
+	print("Keep alive received by peer: " + str(peer_id))
 
 #endregion
 
