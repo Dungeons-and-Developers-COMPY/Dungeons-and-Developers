@@ -143,7 +143,7 @@ func connect_to_server(ip: String, port: int):
 	
 	# connect to the actual game server using discovered IP/port
 	#var url = "wss://%s:%d" % [ip, port] 
-	var url = "wss://dungeonsanddevelopers.cs.uct.ac.za/ws/"
+	var url = "wss://dungeonsanddevelopers.cs.uct.ac.za/ws/" + str(port)
 	print("Connecting to game server: ", url)
 	
 	var result = peer.create_client(url)
@@ -208,7 +208,7 @@ func get_current_server_info():
 
 #region server functions
 
-func start_1v1_server(starting_port: int = 12345, max_servers: int = 5):
+func start_1v1_server(starting_port: int = 12341, max_servers: int = 5):
 	print("Starting 1v1 server...")
 	for i in range(max_servers):
 		var port = starting_port + i
