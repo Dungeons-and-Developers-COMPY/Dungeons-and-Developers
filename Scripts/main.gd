@@ -7,6 +7,10 @@ extends Node2D
 @onready var end_label = $EndLabel
 @onready var question_handler = $QuestionHandler
 @onready var js_handler = $JSHandler
+@onready var menu_music_player = $MenuLoadingMusic
+@onready var monster_music_players = [$PreMonster1Music, $PostMonster1Music, $PostMonster2Music]
+@onready var victory_player = $Victory
+@onready var defeat_player = $Defeat
 
 var monster_positions = []
 var monsters = []
@@ -19,6 +23,7 @@ var is_game_over: bool = false
 var difficulties = ["Easy", "Medium", "Hard"]
 var current_question: int = 0
 var question_index: int = 0
+var monsters_slain_count = 0
 
 var shutdown_check_timer = 0.0
 var game_started = false
@@ -29,6 +34,10 @@ var keep_alive_timer = 0.0
 # called when the node enters the scene tree for the first time
 # checks if server or not and starts game 
 func _ready() -> void:
+	print("Menu music player: ", menu_music_player)
+	print("Monster music players count: ", monster_music_players.size())
+	for i in range(monster_music_players.size()):
+		print("Monster music player ", i, ": ", monster_music_players[i])
 	if is_server:
 		question_handler.login()
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
@@ -196,6 +205,20 @@ func start_game():
 	game_started = true
 	print()
 	print("Starting game...")
+	
+	if menu_music_player != null and is_instance_valid(menu_music_player):
+		menu_music_player.stop()
+		print("Menu music stopped")
+	else:
+		print("Menu music player is null or invalid")
+
+	# Safe monster music starting
+	if not monster_music_players.is_empty() and monster_music_players[0] != null and is_instance_valid(monster_music_players[0]):
+		monster_music_players[0].play()
+		print("Started first monster track")
+	else:
+		print("First monster music player is null or invalid")
+	
 	question_handler.get_all_questions()
 	await question_handler.all_received
 	
@@ -267,12 +290,20 @@ func disconnect_all_players():
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority", "call_remote", "reliable")
 func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
+		# Stop the menu music on the client.
+	if menu_music_player != null:
+		menu_music_player.stop()
+	
+	# Start the first monster track on the client.
+	if not monster_music_players.is_empty():
+		monster_music_players[0].play()
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
 
 @rpc("authority", "call_remote", "reliable")
 func disconnect_from_server():
 	MultiplayerManager.disconnect_from_server()
 	if DisplayServer.get_name() == "web":
+		await get_tree().create_timer(15.0).timeout 
 		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -291,12 +322,21 @@ func game_over(peer_id: int):
 
 @rpc("any_peer", "call_remote", "reliable")
 func announce_winner(peer_id: int):
+	# Stop any currently playing monster music to avoid conflict
+	for music_player in monster_music_players:
+		if music_player.playing:
+			music_player.stop()
+
 	if multiplayer.get_unique_id() == peer_id:
 		print("YOU WON!")
 		show_end("YOU WON!")
+		# Play the victory sound
+		victory_player.play()
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
+		# Play the defeat sound
+		defeat_player.play()
 
 @rpc("any_peer", "call_remote", "reliable")
 func keep_alive(peer_id: int):
@@ -387,7 +427,7 @@ func monster_defeated():
 	player.attack()
 	code_interface.set_moving()
 	var player_pos = player.pos
-	
+			
 	var boss = monsters[Globals.monster_positions.size()]
 	if (player_pos == Vector2i(maze.walls.exit_coord["row"], maze.walls.exit_coord["col"])):
 		if boss.has_method("die"):
@@ -404,6 +444,33 @@ func monster_defeated():
 			if monster.has_method("die"):
 				print("monster dead")
 				monster.die()
+				
+				monsters_slain_count += 1
+				# MUSIC MANAGEMENT - Stop current track and play next
+				if monsters_slain_count < monster_music_players.size():
+					# Stop the currently playing track
+					if monsters_slain_count > 0 and monsters_slain_count - 1 < monster_music_players.size():
+						var current_player = monster_music_players[monsters_slain_count - 1]
+						if current_player != null and is_instance_valid(current_player):
+							current_player.stop()
+							print("Stopped track: ", monsters_slain_count - 1)
+					
+					# Play the next track
+					var next_player = monster_music_players[monsters_slain_count]
+					if next_player != null and is_instance_valid(next_player):
+						next_player.play()
+						print("Playing monster track: ", monsters_slain_count)
+					else:
+						print("Music player at index ", monsters_slain_count, " is null")
+				else:
+					# Stop the last track if we're out of tracks
+					if monsters_slain_count > 0 and monsters_slain_count - 1 < monster_music_players.size():
+						var last_player = monster_music_players[monsters_slain_count - 1]
+						if last_player != null and is_instance_valid(last_player):
+							last_player.stop()
+							print("Stopped final track: ", monsters_slain_count - 1)
+					print("No more monster tracks available")
+				
 				
 			break
 

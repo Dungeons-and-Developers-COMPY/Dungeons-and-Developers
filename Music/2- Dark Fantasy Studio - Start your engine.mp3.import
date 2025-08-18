@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://5egbowcnqwot"
+path="res://.godot/imported/2- Dark Fantasy Studio - Start your engine.mp3-0602fbab80ec6e6edd9f5a9d6c362a2b.mp3str"
+
+[deps]
+
+source_file="res://Music/2- Dark Fantasy Studio - Start your engine.mp3"
+dest_files=["res://.godot/imported/2- Dark Fantasy Studio - Start your engine.mp3-0602fbab80ec6e6edd9f5a9d6c362a2b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

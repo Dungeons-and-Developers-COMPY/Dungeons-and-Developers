@@ -1,13 +1,51 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6os2mfxru68w"]
+[gd_scene load_steps=9 format=3 uid="uid://c6os2mfxru68w"]
 
 [ext_resource type="Script" uid="uid://c5w2g3jgv7ge6" path="res://Scripts/manager.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://hn54wuekrxdo" path="res://Scenes/game.tscn" id="1_bo1nx"]
+[ext_resource type="AudioStream" uid="uid://beanymlu1vgaa" path="res://Music/3- Dark Fantasy Studio - Laser gun.mp3" id="4_6bp64"]
+[ext_resource type="AudioStream" uid="uid://kkxxn1745jta" path="res://Music/1- Dark Fantasy Studio - Particle voyager.mp3" id="5_344ge"]
 [ext_resource type="PackedScene" uid="uid://d2fs6llkx5lnk" path="res://Scenes/main_menu.tscn" id="6_21xkr"]
+[ext_resource type="AudioStream" uid="uid://cy6tb4uusy5b2" path="res://Music/8- Dark Fantasy Studio - Speedway.mp3" id="6_ynf5e"]
+[ext_resource type="AudioStream" uid="uid://diy7eastjvts8" path="res://Music/Victory!.wav" id="7_344ge"]
+[ext_resource type="AudioStream" uid="uid://5egbowcnqwot" path="res://Music/2- Dark Fantasy Studio - Start your engine.mp3" id="7_hptm8"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
 
 [node name="Game" parent="." instance=ExtResource("1_bo1nx")]
+
+[node name="MenuLoadingMusic" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("4_6bp64")
+volume_db = -20.0
+autoplay = true
+parameters/looping = true
+
+[node name="PreMonster1Music" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("5_344ge")
+volume_db = -20.0
+parameters/looping = true
+
+[node name="PostMonster1Music" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("6_ynf5e")
+volume_db = -20.0
+parameters/looping = true
+
+[node name="PostMonster2Music" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("7_hptm8")
+volume_db = -20.636
+parameters/looping = true
+
+[node name="Victory" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("7_344ge")
+volume_db = -3.772
+
+[node name="Defeat" type="AudioStreamPlayer" parent="Game"]
+volume_db = -20.636
+
+[node name="PostMonster2Music2" type="AudioStreamPlayer" parent="Game"]
+stream = ExtResource("4_6bp64")
+volume_db = -20.636
+parameters/looping = true
 
 [node name="MainMenu" parent="." instance=ExtResource("6_21xkr")]
 position = Vector2(640, 360)
