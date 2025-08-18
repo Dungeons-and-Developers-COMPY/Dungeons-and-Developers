@@ -71,7 +71,7 @@ func _process(delta: float) -> void:
 				question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 				await question_handler.shutdown
 				get_tree().quit()
-	else:
+	elif game_started:
 		keep_alive_timer += delta
 		if keep_alive_timer >= 3.0:
 			keep_alive_timer = 0.0
@@ -161,6 +161,7 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	spawn_boss(boss_pos)
 	player.set_monster_positions(monster_positions)
 	space_players()
+	game_started = true
 
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
@@ -302,6 +303,7 @@ func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, que
 @rpc("authority", "call_remote", "reliable")
 func disconnect_from_server():
 	MultiplayerManager.disconnect_from_server()
+	game_started = false
 	if DisplayServer.get_name() == "web":
 		await get_tree().create_timer(15.0).timeout 
 		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
