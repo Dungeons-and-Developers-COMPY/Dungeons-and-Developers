@@ -137,6 +137,7 @@ icon = SubResource("AtlasTexture_7ed4r")
 icon_alignment = 1
 expand_icon = true
 
+[connection signal="text_changed" from="CodeEdit" to="." method="_on_code_edit_text_changed"]
 [connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
 [connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
 [connection signal="pressed" from="InputPanel/ConfirmButton" to="." method="_on_confirm_button_pressed"]

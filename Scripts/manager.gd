@@ -10,7 +10,14 @@ func _ready() -> void:
 	menu.show()
 	
 func start2v2():
-	pass
+	menu.hide()
+	game.show()
+	game.show_end("Connecting to 2v2 server...")
+	if OS.get_name() == "Web":
+		game.js_handler.login()
+	else:
+		game.question_handler.login()
+
 func start1v1():
 	menu.hide()
 	game.show()

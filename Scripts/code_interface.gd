@@ -4,6 +4,7 @@ signal run_button_pressed
 signal submit_button_pressed(next_step: String)
 signal test(next_step: String)
 signal new_question
+signal update_text(text: String)
 
 var code: String = ""
 var question: String = ""
@@ -96,6 +97,12 @@ func enable_new_question():
 func disable_new_question():
 	new_question_button.disabled = true
 
-
 func _on_new_question_button_pressed() -> void:
 	emit_signal("new_question")
+
+func update_code_text(text: String):
+	code_edit.text = text
+
+func _on_code_edit_text_changed() -> void:
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		emit_signal("update_text", code_edit.text)

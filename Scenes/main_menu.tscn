@@ -115,12 +115,12 @@ alignment = 1
 [node name="1v1" type="Button" parent="NinePatchRect/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_28flt")
-text = "Play 1v1"
+text = "Play"
 
 [node name="2v2" type="Button" parent="NinePatchRect/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_28flt")
-text = "Play 2v2"
+text = "Settings"
 
 [node name="HSlider" type="HSlider" parent="NinePatchRect"]
 layout_mode = 0

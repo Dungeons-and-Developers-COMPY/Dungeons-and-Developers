@@ -41,9 +41,15 @@ func _ready() -> void:
 	if is_server:
 		question_handler.login()
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
-		Globals.server_port = MultiplayerManager.start_1v1_server()
+		if Globals.is_2v2:
+			Globals.server_port = MultiplayerManager.start_2v2_server()
+		else:
+			Globals.server_port = MultiplayerManager.start_1v1_server()
 		connect_server_signals()
-		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
+		if Globals.is_2v2:
+			question_handler.register_server(Globals.server_ip, Globals.server_port, "2v2", 4)
+		else:
+			question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 	else:
 		connect_player_signals()
 		#if DisplayServer.get_name() != "web":
@@ -85,7 +91,10 @@ func login(next_step: String):
 	js_handler.login(next_step)
 
 func find_server():
-	find_avail_server("1v1")
+	if Globals.is_2v2:
+		find_avail_server("2v2")
+	else:
+		find_avail_server("1v1")
 
 func find_avail_server(type: String):
 	#question_handler.find_server(type)
@@ -123,6 +132,9 @@ func connect_player_signals():
 	question_handler.server.connect(server_found)
 	question_handler.logged_in.connect(find_server)
 	
+	if Globals.is_2v2:
+		code_interface.update_text.connect(update_teammate_text)
+	
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
 		js_handler.server.connect(server_found)
@@ -136,7 +148,11 @@ func connect_server_signals():
 	question_handler.question.connect(receive_question)
 
 # function used by clients to setup the maze
-func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
+func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit_coord, questions, boss, players):
+	connected_players = players
+	if Globals.is_2v2:
+		determine_role_and_team()
+	
 	hide_end()
 	code_interface.set_moving()
 	maze.set_maze(grid, start_coord, exit_coord)
@@ -162,6 +178,10 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	player.set_monster_positions(monster_positions)
 	space_players()
 	game_started = true
+	
+	if Globals.is_2v2:
+		if Globals.role == Globals.NAV:
+			code_interface.disable_code()
 
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
@@ -240,7 +260,7 @@ func start_game():
 	
 	for peer_id in connected_players:
 		print(Globals.questions.size())
-		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss)
+		rpc_id(peer_id, "receive_maze", maze_grid, monster_positions, monster_types, start_coord, exit_coord, Globals.questions, Globals.boss, connected_players)
 
 #endregion
 
@@ -252,10 +272,13 @@ func _on_player_connected(id: int):
 		#rpc_id(id, "reject_connection", "Server Full")
 		#return
 	print("Player connected: ", id)
-	if (connected_players.size() < 2):
+	var max_players = 2
+	if Globals.is_2v2:
+		max_players = 4
+	if (connected_players.size() < max_players):
 		connected_players.append(id)
 		question_handler.update_player_count(Globals.server_ip, Globals.server_port, connected_players.size())
-		if connected_players.size() == 2:
+		if connected_players.size() == max_players:
 			start_game()
 
 func _on_player_disconnected(id: int):
@@ -290,7 +313,7 @@ func disconnect_all_players():
 
 # rpc function called by server to pass the variables needed by clients to setup the maze
 @rpc("authority", "call_remote", "reliable")
-func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss):
+func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss, connected_players):
 		# Stop the menu music on the client.
 	if menu_music_player != null:
 		menu_music_player.stop()
@@ -298,7 +321,7 @@ func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, que
 	# Start the first monster track on the client.
 	if not monster_music_players.is_empty():
 		monster_music_players[0].play()
-	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss)
+	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss, connected_players)
 
 @rpc("authority", "call_remote", "reliable")
 func disconnect_from_server():
@@ -344,6 +367,20 @@ func announce_winner(peer_id: int):
 func keep_alive(peer_id: int):
 	print("Keep alive received by peer: " + str(peer_id))
 
+@rpc("any_peer", "call_remote", "reliable")
+func update_text(text: String):
+	code_interface.update_code_text(text)
+
+@rpc("any_peer", "call_remote", "reliable")
+func submit_teammate_code(output: String, passed: bool):
+	receive_submission_feedback(output, passed)
+
+@rpc("any_peer", "call_remote", "reliable")
+func run_teammate_code():
+	code_interface.set_code()
+	run_user_code()
+
+
 #endregion
 
 #region player functions
@@ -351,7 +388,12 @@ func keep_alive(peer_id: int):
 func opponent_moving():
 	print("received signal")
 	print(MultiplayerManager.get_other_peer())
-	rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
+	if not Globals.is_2v2:
+		rpc_id(MultiplayerManager.get_other_peer(), "update_opponent_position", player.pos)
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		var opp_ids = get_opponent_ids()
+		for id in opp_ids:
+			rpc_id(id, "update_opponent_position", player.pos)
 
 # function called when a player wins (reaches exit and defeats the boss)
 func player_won():
@@ -366,7 +408,11 @@ func stun_player():
 	code_interface.disable_code()
 
 func unstun_player():
-	code_interface.enable_code()
+	if Globals.is_2v2:
+		if Globals.role == Globals.DRIVER:
+			code_interface.enable_code()
+	else:
+		code_interface.enable_code()
 
 func check_overlap():
 	if player.pos == opponent.pos:
@@ -483,6 +529,8 @@ func monster_defeated():
 # function used by clients to execute the code entered by the user
 func run_user_code():
 	print("SIGNAL RECEIVED")
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		rpc_id(get_teammate_id(), "run_teammate_code")
 	player.execute_move(code_interface.code)
 
 func receive_question(q):
@@ -511,6 +559,8 @@ func submit_code():
 		question_handler.submit_answer(current_question, code_interface.code)
 
 func receive_submission_feedback(output: String, passed: bool):
+	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
+		rpc_id(get_teammate_id(), "submit_teammate_code", output, passed)
 	code_interface.output_to_console(output)
 	if passed:
 		player.on_monster_defeated()
@@ -569,5 +619,36 @@ func hide_end():
 	code_interface.enable_code()
 	player.should_stop = false
 	end_label.hide()
+
+func update_teammate_text(text: String):
+	rpc_id(get_teammate_id(), "update_text", text)
+
+#endregion
+
+#region 2v2 funcs
+
+func determine_role_and_team():
+	var id = multiplayer.get_unique_id()
+	for i in range(connected_players.size()):
+		if connected_players[i] == id:
+			Globals.team = i / 2
+			Globals.role = i % 2
+
+func get_teammate_id():
+	var teammate: int = 0
+	if Globals.role == 0:
+		teammate = 1 + (Globals.team * 2)
+	else:
+		teammate = 0 + (Globals.team * 2)
+		
+	return connected_players[teammate]
+
+func get_opponent_ids():
+	var ids = []
+	var teammate = get_teammate_id()
+	for id in connected_players:
+		if id != teammate and id != multiplayer.get_unique_id():
+			ids.append(id)
+	return ids
 
 #endregion
