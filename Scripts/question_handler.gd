@@ -183,6 +183,28 @@ func update_player_count(ip: String, port: int, num_players: int):
 	else:
 		print("Request sent.")
 
+func dec_player_count(ip: String, port: int):
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var data = {
+		"ip": ip,
+		"port": port
+	}
+	
+	var json_string = JSON.stringify(data)
+	var headers = ["Content-Type: application/json", "Cookie: %s" % session_cookie] 
+	
+	http.request("https://dungeonsanddevelopers.cs.uct.ac.za/server/decrement-players", headers, HTTPClient.METHOD_POST, json_string)
+	
+	var result = await http.request_completed
+	http.queue_free()
+	
+	print("Decrement player Response:")
+	print("Status Code: ", result[1])
+	print("Response Body: ", result[3].get_string_from_utf8())
+	print("Network Error: ", result[0])
+
 func find_server(type: String):
 	current_server_request = "FIND"
 	

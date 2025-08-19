@@ -25,6 +25,22 @@ var num_submissions: int = 0
 @onready var confirm_button = $InputPanel/ConfirmButton
 @onready var new_question_button = $NewQuestionButton
 
+var keyword_col : Color =  Color.from_rgba8(255, 112, 133)
+var string_col : Color =  Color.from_rgba8(255, 237, 161)
+var python_keywords = [
+	"False", "None", "True", "and", "as", "assert", "async", "await", "break", "class", 
+	"continue", "def", "del", "elif", "else", "except", "finally", "for", "from", 
+	"global", "if", "import", "in", "is","lambda", "nonlocal", "not", "or", "pass", 
+	"raise", "return", "try", "while", "with", "yield"
+]
+
+func _ready() -> void:
+	for word in python_keywords:
+		code_edit.syntax_highlighter.add_keyword_color(word, keyword_col)
+	code_edit.syntax_highlighter.add_color_region("#", "", Color(0.5, 0.5, 0.5), false)
+	code_edit.syntax_highlighter.add_color_region("\"", "\"", string_col)
+	code_edit.syntax_highlighter.add_color_region("'", "'", string_col)
+
 func set_moving():
 	question_box.text = Globals.MOVING_TEXT
 	code_edit.text = moving_code

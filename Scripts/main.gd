@@ -284,7 +284,7 @@ func _on_player_connected(id: int):
 func _on_player_disconnected(id: int):
 	#TODO: end/pause game, call decrease player count on server & remove player from server
 	connected_players.erase(id)
-	MultiplayerManager.dec_player_count(Globals.server_ip, Globals.server_port)
+	question_handler.dec_player_count(Globals.server_ip, Globals.server_port)
 	if game_started and connected_players.is_empty():
 		reset_server()
 
