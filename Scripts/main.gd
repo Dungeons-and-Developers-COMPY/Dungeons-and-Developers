@@ -44,7 +44,7 @@ func _ready() -> void:
 		if Globals.is_2v2:
 			Globals.server_port = MultiplayerManager.start_2v2_server()
 		else:
-			Globals.server_port = MultiplayerManager.start_1v1_server()
+			Globals.server_port = MultiplayerManager.start_1v1_server(12342)
 		connect_server_signals()
 		if Globals.is_2v2:
 			question_handler.register_server(Globals.server_ip, Globals.server_port, "2v2", 4)
