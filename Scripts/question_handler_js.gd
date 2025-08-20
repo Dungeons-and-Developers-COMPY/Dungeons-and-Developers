@@ -405,7 +405,7 @@ func on_submit_response(args: Array):
 
 func test_code(code: String, input):
 	var payload = {
-		"code": code,
+		"code": Marshalls.raw_to_base64(code.to_utf8_buffer()),
 		"input": input
 	}
 	var url = test_code_url
