@@ -220,6 +220,17 @@ func start_1v1_server(starting_port: int = 12341, max_servers: int = 5):
 	push_error("1v1 server could not start on any ports")
 	return -1
 
+func start_2v2_server(starting_port: int = 12343, max_servers: int = 5):
+	print("Starting 2v2 server...")
+	for i in range(max_servers):
+		var port = starting_port + i
+		var success = start_local_server(port)
+		if success:
+			print("2v2 server started successfully on port: ", port)
+			return port
+	push_error("2v2 server could not start on any ports")
+	return -1
+
 func start_local_server(port: int):
 	var peer = WebSocketMultiplayerPeer.new()
 	var result = peer.create_server(port)

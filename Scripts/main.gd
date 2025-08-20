@@ -11,6 +11,7 @@ extends Node2D
 @onready var monster_music_players = [$PreMonster1Music, $PostMonster1Music, $PostMonster2Music]
 @onready var victory_player = $Victory
 @onready var defeat_player = $Defeat
+@onready var role_label = $RoleLabel
 
 var monster_positions = []
 var monsters = []
@@ -42,7 +43,7 @@ func _ready() -> void:
 		question_handler.login()
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
 		if Globals.is_2v2:
-			Globals.server_port = MultiplayerManager.start_2v2_server()
+			Globals.server_port = MultiplayerManager.start_2v2_server(12343)
 		else:
 			Globals.server_port = MultiplayerManager.start_1v1_server(12342)
 		connect_server_signals()
@@ -55,6 +56,8 @@ func _ready() -> void:
 		#if DisplayServer.get_name() != "web":
 			#question_handler.login()
 		show_end("Waiting for player 2...")
+		if not Globals.is_2v2:
+			role_label.hide()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
@@ -473,7 +476,11 @@ func monster_attack():
 # function to kill off a monster defeated by a player
 func monster_defeated():
 	player.attack()
-	code_interface.set_moving()
+	if Globals.is_2v2:
+		if Globals.role == Globals.DRIVER:
+			code_interface.set_moving()
+	else:
+		code_interface.set_moving()
 	var player_pos = player.pos
 			
 	var boss = monsters[Globals.monster_positions.size()]
@@ -633,6 +640,10 @@ func determine_role_and_team():
 		if connected_players[i] == id:
 			Globals.team = i / 2
 			Globals.role = i % 2
+			if Globals.role == Globals.NAV:
+				role_label.text = "NAVIGATOR"
+			else:
+				role_label.text = "DRIVER"
 
 func get_teammate_id():
 	var teammate: int = 0

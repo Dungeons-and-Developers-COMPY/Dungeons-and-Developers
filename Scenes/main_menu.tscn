@@ -78,17 +78,8 @@ animations = [{
 script = ExtResource("1_ce3w2")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -256.0
-offset_top = -144.0
-offset_right = 256.0
-offset_bottom = 144.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 544.0
+offset_bottom = 272.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("3_1ehe0")
@@ -145,18 +136,18 @@ offset_bottom = 720.0
 theme = ExtResource("1_28flt")
 
 [node name="Logo" type="Sprite2D" parent="."]
-position = Vector2(-114, -7)
+position = Vector2(136, 136)
 scale = Vector2(0.216476, 0.198998)
 texture = ExtResource("2_48xlc")
 
 [node name="Solider" type="AnimatedSprite2D" parent="."]
-position = Vector2(10, -24)
+position = Vector2(296, 112)
 scale = Vector2(2.02, 1.89)
 sprite_frames = SubResource("SpriteFrames_8dnnj")
 autoplay = "default"
 
 [node name="Solider2" type="AnimatedSprite2D" parent="."]
-position = Vector2(10, 23)
+position = Vector2(299.109, 158.302)
 scale = Vector2(2.0802, 1.88605)
 sprite_frames = SubResource("SpriteFrames_8dnnj")
 autoplay = "default"
@@ -164,7 +155,7 @@ frame = 2
 frame_progress = 0.464446
 
 [node name="Solider3" type="AnimatedSprite2D" parent="."]
-position = Vector2(-6.00001, 23)
+position = Vector2(283.109, 158.302)
 scale = Vector2(2.14219, 1.88211)
 sprite_frames = SubResource("SpriteFrames_8dnnj")
 autoplay = "default"

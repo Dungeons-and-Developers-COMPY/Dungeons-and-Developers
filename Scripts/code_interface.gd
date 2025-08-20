@@ -116,6 +116,9 @@ func disable_new_question():
 func _on_new_question_button_pressed() -> void:
 	emit_signal("new_question")
 
+func set_code():
+	code = code_edit.text
+
 func update_code_text(text: String):
 	code_edit.text = text
 
