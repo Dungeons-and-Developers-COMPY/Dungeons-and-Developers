@@ -476,11 +476,7 @@ func monster_attack():
 # function to kill off a monster defeated by a player
 func monster_defeated():
 	player.attack()
-	if Globals.is_2v2:
-		if Globals.role == Globals.DRIVER:
-			code_interface.set_moving()
-	else:
-		code_interface.set_moving()
+	code_interface.set_moving()
 	var player_pos = player.pos
 			
 	var boss = monsters[Globals.monster_positions.size()]

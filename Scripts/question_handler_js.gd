@@ -307,7 +307,8 @@ func on_get_question_response(args: Array):
 
 func submit_code(question_num: int, code: String):
 	var payload = {
-		"code": code
+		"code": Marshalls.raw_to_base64(code.to_utf8_buffer())
+
 	}
 	var url = submission_url + str(question_num)
 	
@@ -386,8 +387,13 @@ func on_submit_response(args: Array):
 	if parse_result == OK:
 		print("JSON response:")
 		print(json.data)
-		var response = json.data.get("message")
 		var passed = json.data.get("success")
+		var response = ""
+		if passed:
+			response = json.data.get("message")
+		else:
+			response = json.data.get("error")
+		
 		emit_signal("submission_result", response, passed)
 	else:
 		print("Non-JSON response received:")
