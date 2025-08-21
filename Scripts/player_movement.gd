@@ -4,7 +4,7 @@ signal stopped_moving
 signal console(text: String)
 
 var target_position = null
-var speed = 100
+var speed = 150
 var arrived_threshold = 1.0
 var is_stunned = false
 

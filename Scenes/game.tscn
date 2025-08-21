@@ -18,10 +18,11 @@ script = ExtResource("1_1l0tm")
 anchor_mode = 0
 
 [node name="Maze" parent="." instance=ExtResource("3_h4fw4")]
+position = Vector2(80, 80)
 
 [node name="CodeInterface" parent="." instance=ExtResource("4_ldgsr")]
-offset_left = 640.0
-offset_right = 640.0
+offset_left = 1030.0
+offset_right = 1030.0
 
 [node name="MultiplayerManager" type="Node2D" parent="."]
 
@@ -37,10 +38,10 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Player" parent="." instance=ExtResource("5_o5yvi")]
-scale = Vector2(2, 2)
+scale = Vector2(3, 3)
 
 [node name="GhostPlayer" parent="." instance=ExtResource("6_rku1e")]
-scale = Vector2(2, 2)
+scale = Vector2(3, 3)
 
 [node name="MainMenu" parent="." instance=ExtResource("7_rfjv2")]
 visible = false
@@ -49,11 +50,3 @@ scale = Vector2(2.49, 2.49)
 
 [node name="JSHandler" type="Node2D" parent="."]
 script = ExtResource("8_v158k")
-
-[node name="RoleLabel" type="Label" parent="."]
-offset_top = 820.0
-offset_right = 640.0
-offset_bottom = 900.0
-theme_override_font_sizes/font_size = 57
-horizontal_alignment = 1
-vertical_alignment = 1

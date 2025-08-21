@@ -4,7 +4,6 @@ signal run_button_pressed
 signal submit_button_pressed(next_step: String)
 signal test(next_step: String)
 signal new_question
-signal update_text(text: String)
 
 var code: String = ""
 var question: String = ""
@@ -25,25 +24,41 @@ var num_submissions: int = 0
 @onready var confirm_button = $InputPanel/ConfirmButton
 @onready var new_question_button = $NewQuestionButton
 
-var keyword_col : Color =  Color.from_rgba8(255, 112, 133)
-var string_col : Color =  Color.from_rgba8(255, 237, 161)
+var keyword_col : Color = Color.from_rgba8(255, 112, 133)
+var control_flow_keyword_col : Color = Color(1, 0.55, 0.8)
+var type_keyword_col : Color = Color(0.26, 1, 0.76)
+var string_col : Color = Color.from_rgba8(255, 237, 161)
 var python_keywords = [
-	"False", "None", "True", "and", "as", "assert", "async", "await", "break", "class", 
-	"continue", "def", "del", "elif", "else", "except", "finally", "for", "from", 
-	"global", "if", "import", "in", "is","lambda", "nonlocal", "not", "or", "pass", 
-	"raise", "return", "try", "while", "with", "yield"
+	"False", "None", "True", "and", "as", "assert", "async", "class", 
+	"def", "del", "except", "finally", "from", "global", "import", 
+	"in", "is","lambda", "nonlocal", "not", "or",  "raise", "try",  
+	"with", "yield"
+]
+var python_control_flow_keywords = [
+	"if", "elif", "else", "for", "while", "break", 
+	"continue", "await", "return", "pass"
+]
+var python_type_keywords = [
+	"int", "float", "complex", "bool", "str", "bytes", "bytearray", 
+	"memoryview", "list", "tuple", "set", "frozenset", "dict", "type"
 ]
 
 func _ready() -> void:
 	for word in python_keywords:
 		code_edit.syntax_highlighter.add_keyword_color(word, keyword_col)
+	for word in python_control_flow_keywords:
+		code_edit.syntax_highlighter.add_keyword_color(word, control_flow_keyword_col)
+	for word in python_type_keywords:
+		code_edit.syntax_highlighter.add_keyword_color(word, type_keyword_col)
 	code_edit.syntax_highlighter.add_color_region("#", "", Color(0.5, 0.5, 0.5), false)
 	code_edit.syntax_highlighter.add_color_region("\"", "\"", string_col)
 	code_edit.syntax_highlighter.add_color_region("'", "'", string_col)
 
 func set_moving():
+	run_button.tooltip_text = "Click here to execute your movement code"
 	question_box.text = Globals.MOVING_TEXT
 	code_edit.text = moving_code
+	question_label.text = "Traverse The Maze!"
 	submit_button.hide()
 	new_question_button.hide()
 
@@ -77,6 +92,7 @@ func output_to_console(text: String):
 func show_question(title: String, promt: String):
 	num_submissions = 0
 	disable_new_question()
+	run_button.tooltip_text = "Click here to test your code"
 	moving_code = code_edit.text
 	question_label.text = "Question: " + title
 	question_box.text = promt
@@ -93,6 +109,7 @@ func defeated_monster():
 func _on_submit_button_pressed() -> void:
 	code = code_edit.text
 	emit_signal("submit_button_pressed", "SUBMIT")
+	output_to_console("Submitting code...")
 
 func show_input_panel():
 	input_panel.show()
@@ -121,7 +138,3 @@ func set_code():
 
 func update_code_text(text: String):
 	code_edit.text = text
-
-func _on_code_edit_text_changed() -> void:
-	if Globals.is_2v2 and Globals.role == Globals.DRIVER:
-		emit_signal("update_text", code_edit.text)

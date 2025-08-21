@@ -421,7 +421,7 @@ z_index = 10
 script = ExtResource("1_6wtfe")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(3, -50)
+position = Vector2(3, -60)
 sprite_frames = SubResource("SpriteFrames_sgdo7")
 animation = &"idle"
 autoplay = "idle"
