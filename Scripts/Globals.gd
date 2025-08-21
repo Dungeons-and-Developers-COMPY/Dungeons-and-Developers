@@ -41,7 +41,7 @@ static var timeout = 2.0
 static var connection_result = false
 static var connection_done = false
 
-static var is_2v2 = false
+static var is_2v2 = true
 
 static var role: int = 0 # 0 for nav, 1 for driver
 static var team: int = 0

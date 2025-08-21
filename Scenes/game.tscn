@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://hn54wuekrxdo"]
+[gd_scene load_steps=11 format=3 uid="uid://hn54wuekrxdo"]
 
 [ext_resource type="Script" uid="uid://bf5de21o43wqk" path="res://Scripts/main.gd" id="1_1l0tm"]
 [ext_resource type="PackedScene" uid="uid://b5dnemdv61kly" path="res://Scenes/question_handler.tscn" id="2_v158k"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://csxxbbltsohxw" path="res://Scenes/opponent.tscn" id="6_rku1e"]
 [ext_resource type="PackedScene" uid="uid://d2fs6llkx5lnk" path="res://Scenes/main_menu.tscn" id="7_rfjv2"]
 [ext_resource type="Script" uid="uid://ixvjpinrdnqo" path="res://Scripts/question_handler_js.gd" id="8_v158k"]
+[ext_resource type="PackedScene" uid="uid://uum8ioasonyt" path="res://Scenes/text_chat.tscn" id="9_h4fw4"]
+[ext_resource type="PackedScene" uid="uid://cx10t585wbeo2" path="res://twovoip/minimalusecase.tscn" id="10_ldgsr"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_1l0tm")
@@ -57,3 +59,9 @@ offset_bottom = 900.0
 theme_override_font_sizes/font_size = 57
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TextChat" parent="." instance=ExtResource("9_h4fw4")]
+offset_left = 1280.0
+offset_right = 1280.0
+
+[node name="VoiceChat" parent="." instance=ExtResource("10_ldgsr")]

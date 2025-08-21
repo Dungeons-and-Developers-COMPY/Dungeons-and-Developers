@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://cx10t585wbeo2"]
+
+[ext_resource type="Script" uid="uid://c5xw7urpalycu" path="res://twovoip/minimalusecase.gd" id="1_m25c5"]
+
+[sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_c8xp2"]
+
+[sub_resource type="AudioStreamOpusChunked" id="AudioStreamOpusChunked_g3jhr"]
+
+[sub_resource type="AudioStreamOpusChunked" id="AudioStreamOpusChunked_j1rd4"]
+
+[node name="VoiceChat" type="Node"]
+script = ExtResource("1_m25c5")
+
+[node name="AudioStreamMic" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamMicrophone_c8xp2")
+autoplay = true
+bus = &"MicrophoneBus"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamOpusChunked_g3jhr")
+autoplay = true
+
+[node name="AudioStreamPlayerRec" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamOpusChunked_j1rd4")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://uum8ioasonyt"]
 
-[ext_resource type="Script" uid="uid://cq0r3xscbi1wl" path="res://Scenes/text_chat.gd" id="1_o1flr"]
+[ext_resource type="Script" uid="uid://cq0r3xscbi1wl" path="res://Scripts/text_chat.gd" id="1_o1flr"]
 [ext_resource type="Theme" uid="uid://430hiudad3go" path="res://Themes/test_theme.tres" id="2_sxrxi"]
 
 [node name="TextChat" type="Control"]
@@ -15,7 +15,7 @@ script = ExtResource("1_o1flr")
 
 [node name="ChatLabel" type="Label" parent="."]
 layout_mode = 0
-offset_right = 640.0
+offset_right = 602.7
 offset_bottom = 30.0
 theme = ExtResource("2_sxrxi")
 text = "  Chat"
@@ -23,7 +23,7 @@ text = "  Chat"
 [node name="ChatBox" type="RichTextLabel" parent="."]
 layout_mode = 0
 offset_top = 28.0
-offset_right = 640.0
+offset_right = 602.7
 offset_bottom = 550.0
 theme = ExtResource("2_sxrxi")
 scroll_following = true
@@ -32,7 +32,7 @@ shortcut_keys_enabled = false
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0
 offset_top = 548.0
-offset_right = 640.0
+offset_right = 602.7
 offset_bottom = 900.0
 theme = ExtResource("2_sxrxi")
 
@@ -47,10 +47,10 @@ placeholder_text = "Type here..."
 
 [node name="SendButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 536.0
-offset_top = 30.0
-offset_right = 600.0
-offset_bottom = 78.0
+offset_left = 368.0
+offset_top = 2.0
+offset_right = 432.0
+offset_bottom = 28.0
 theme = ExtResource("2_sxrxi")
 text = "Run"
 

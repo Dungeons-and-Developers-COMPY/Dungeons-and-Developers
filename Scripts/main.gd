@@ -13,6 +13,9 @@ extends Node2D
 @onready var defeat_player = $Defeat
 @onready var role_label = $RoleLabel
 
+@onready var text_chat = $TextChat
+@onready var voice_chat = $VoiceChat
+
 var monster_positions = []
 var monsters = []
 var grid = []
@@ -137,6 +140,8 @@ func connect_player_signals():
 	
 	if Globals.is_2v2:
 		code_interface.update_text.connect(update_teammate_text)
+		text_chat.send_chat.connect(send_chat)
+		voice_chat.audio_send.connect(send_audio)
 	
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
@@ -144,6 +149,7 @@ func connect_player_signals():
 		js_handler.submission_result.connect(receive_submission_feedback)
 		js_handler.test_result.connect(receive_test_feedback)
 		js_handler.question.connect(receive_new_question)
+		
 
 func connect_server_signals():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -395,6 +401,13 @@ func run_teammate_code():
 	code_interface.set_code()
 	run_user_code()
 
+@rpc("any_peer", "call_remote", "reliable")
+func receive_chat(message: String):
+	text_chat.output_message(message)
+
+@rpc("any_peer", "call_remote", "unreliable")
+func rec_audio(opusdata : PackedByteArray):
+	voice_chat.add_data(opusdata)
 
 #endregion
 
@@ -670,4 +683,10 @@ func get_opponent_ids():
 			ids.append(id)
 	return ids
 
+func send_chat(message: String):
+	rpc_id(get_teammate_id(), "receive_chat", message)
+
+func send_audio(opusdata : PackedByteArray):
+	rpc_id(get_teammate_id(), "rec_audio", opusdata)
+	
 #endregion
