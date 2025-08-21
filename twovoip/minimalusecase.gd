@@ -7,6 +7,7 @@ var opuspacketsbuffer = [ ]
 @onready var audio_stream_player_rec: AudioStreamPlayer = $AudioStreamPlayerRec
 
 var game_started = false
+const MAX_BUFFER_PACKETS = 20
 
 signal audio_send(opusdata : PackedByteArray)
 
@@ -19,6 +20,8 @@ func _ready():
 		#opuspacketsbuffer.append(PackedByteArray(r))
 
 func add_data(opusdata : PackedByteArray):
+	while len(opuspacketsbuffer) >= MAX_BUFFER_PACKETS:
+		opuspacketsbuffer.pop_front()  # drop oldest
 	opuspacketsbuffer.append(opusdata)
 
 func _process(delta):
