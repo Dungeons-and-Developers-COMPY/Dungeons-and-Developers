@@ -329,8 +329,8 @@ func receive_maze(maze, monster_pos, monster_types, start_coord, exit_coord, que
 		menu_music_player.stop()
 	
 	# Start the first monster track on the client.
-	if not monster_music_players.is_empty():
-		monster_music_players[0].play()
+	#if not monster_music_players.is_empty():
+		#monster_music_players[0].play()
 	spawn_maze_and_monsters(maze, monster_pos, monster_types, start_coord, exit_coord, questions, boss, connected_players)
 
 @rpc("authority", "call_remote", "reliable")

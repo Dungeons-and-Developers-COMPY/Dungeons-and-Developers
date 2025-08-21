@@ -15,6 +15,10 @@ run/main_scene="uid://c6os2mfxru68w"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://Assets/icon.svg"
 
+[audio]
+
+driver/enable_input=true
+
 [autoload]
 
 MultiplayerManager="*res://Scripts/multiplayer_manager.gd"

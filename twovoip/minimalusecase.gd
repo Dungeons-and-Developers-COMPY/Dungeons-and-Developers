@@ -38,7 +38,7 @@ func _process_record(delta):
 
 func _process_playback(delta):
 	while audiostreamopuschunked.chunk_space_available() and len(opuspacketsbuffer) != 0:
-		audiostreamopuschunked.push_opus_packet(opuspacketsbuffer.pop_front(), len(prepend), 0)
+		audiostreamopuschunked.push_opus_packet(opuspacketsbuffer.pop_front(), 0, 0)
 
 var opusaudiodata = [
 	[72, 11, 228, 193, 34, 35, 97, 240],
