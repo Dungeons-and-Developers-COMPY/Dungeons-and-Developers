@@ -361,10 +361,22 @@ func announce_winner(peer_id: int):
 		# Play the victory sound
 		victory_player.play()
 	else:
-		print("YOU LOST.")
-		show_end("YOU LOST.")
-		# Play the defeat sound
-		defeat_player.play()
+		if Globals.is_2v2:
+			if peer_id == get_teammate_id():
+				print("YOU WON!")
+				show_end("YOU WON!")
+				# Play the victory sound
+				victory_player.play()
+			else:
+				print("YOU LOST.")
+				show_end("YOU LOST.")
+				# Play the defeat sound
+				defeat_player.play()
+		else:
+			print("YOU LOST.")
+			show_end("YOU LOST.")
+			# Play the defeat sound
+			defeat_player.play()
 
 @rpc("any_peer", "call_remote", "reliable")
 func keep_alive(peer_id: int):

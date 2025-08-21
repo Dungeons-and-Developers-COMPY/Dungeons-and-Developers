@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=9 format=3 uid="uid://430hiudad3go"]
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://430hiudad3go"]
 
 [ext_resource type="Texture2D" uid="uid://bbau0bhh8dqlw" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x26.png" id="1_kv3xq"]
 [ext_resource type="StyleBox" uid="uid://u2usqaqqrqph" path="res://Themes/new_style_box_flat.tres" id="2_immdk"]
@@ -22,6 +22,13 @@ texture_margin_bottom = 8.0
 region_rect = Rect2(11, 11, 26, 28)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oejs1"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_immdk"]
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -53,6 +60,7 @@ Button/styles/normal = SubResource("StyleBoxTexture_ki2my")
 Button/styles/pressed = SubResource("StyleBoxTexture_immdk")
 CodeEdit/styles/normal = ExtResource("2_immdk")
 Label/styles/normal = SubResource("StyleBoxFlat_oejs1")
+Panel/styles/panel = SubResource("StyleBoxFlat_immdk")
 RichTextLabel/styles/normal = SubResource("StyleBoxFlat_kv3xq")
 TextEdit/styles/focus = SubResource("StyleBoxEmpty_ki2my")
 TextEdit/styles/normal = ExtResource("2_immdk")
