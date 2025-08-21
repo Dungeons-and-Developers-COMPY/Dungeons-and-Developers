@@ -191,6 +191,7 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	if Globals.is_2v2:
 		if Globals.role == Globals.NAV:
 			code_interface.disable_code()
+	voice_chat.game_started = true
 
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():

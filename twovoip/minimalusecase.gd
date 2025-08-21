@@ -6,6 +6,8 @@ var prepend = PackedByteArray()
 var opuspacketsbuffer = [ ]
 @onready var audio_stream_player_rec: AudioStreamPlayer = $AudioStreamPlayerRec
 
+var game_started = false
+
 signal audio_send(opusdata : PackedByteArray)
 
 func _ready():
@@ -13,13 +15,15 @@ func _ready():
 	opuschunked = AudioServer.get_bus_effect(microphoneidx, 0)
 
 	audiostreamopuschunked = $AudioStreamPlayer.stream
-	for r in opusaudiodata:
-		opuspacketsbuffer.append(PackedByteArray(r))
+	#for r in opusaudiodata:
+		#opuspacketsbuffer.append(PackedByteArray(r))
 
 func add_data(opusdata : PackedByteArray):
 	opuspacketsbuffer.append(opusdata)
 
 func _process(delta):
+	if not game_started:
+		return
 	_process_record(delta)
 	_process_playback(delta)
 
