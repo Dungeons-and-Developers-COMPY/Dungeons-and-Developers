@@ -41,13 +41,14 @@ func _ready() -> void:
 	if is_server:
 		question_handler.login()
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
-		Globals.server_port = MultiplayerManager.start_1v1_server(12342)
+		Globals.server_port = MultiplayerManager.start_1v1_server()
 		connect_server_signals()
 		question_handler.register_server(Globals.server_ip, Globals.server_port, "1v1", 2)
 	else:
 		maze.scale = Vector2(Globals.maze_scale, Globals.maze_scale)
 		connect_player_signals()
 		show_end("Waiting for player 2...")
+		js_handler.get_username()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:

@@ -14,6 +14,8 @@ var register_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/reg
 var deregister_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/deregister"
 var find_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/find-available?type="
 var update_player_count_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-players"
+var whoami_url = "https://dungeonsanddevelopers.cs.uct.ac.za/student/update-whoami"
+
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
 
@@ -35,6 +37,7 @@ var server_callback_ref
 var submit_callback_ref
 var test_callback_ref
 var get_question_callback_ref
+var get_username_callback_ref
 var next_step: String = "FIND"
 var question_to_replace = 0
 
@@ -222,6 +225,84 @@ func on_find_server_response(args: Array):
 
 #endregion
 
+
+
+func get_username():
+	print("attempting to find server via js")
+	
+	# Create callback for server response godotGetQuestionCallback
+	get_username_callback_ref = JavaScriptBridge.create_callback(on_get_username_response)
+	var window = JavaScriptBridge.get_interface("window")
+	window.godotGetUsernameCallback = get_username_callback_ref
+	
+	var url = whoami_url
+	var js_code := """
+	console.log('Starting get question request...');
+	console.log('URL: ', '%s');
+	
+	fetch('%s', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Get question response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Get question response data:', data);
+		if (window.godotGetUsernameCallback) {
+			try {
+				window.godotGetUsernameCallback(data);
+				console.log('Get question callback called successfully');
+			} catch(e) {
+				console.error('Error calling find server callback:', e);
+			}
+		} else {
+			console.error('Get question callback not found!');
+		}
+		delete window.godotGetUsernameCallback;
+	})
+	.catch(error => {
+		console.error('Find server error:', error);
+		if (window.godotGetUsernameCallback) {
+			try {
+				window.godotGetUsernameCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in get question error callback:', e);
+			}
+		}
+		delete window.godotGetUsernameCallback;
+	});
+	""" % [url, url]
+	
+	var err = JavaScriptBridge.eval(js_code)
+	if err != null:
+		print("JavaScript execution failed: ", err)
+	else:
+		print("Find server request sent.")
+
+func on_get_username_response(args: Array):
+	print("=== GET USERNAME RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+	else:
+		print("Non-JSON response received:")
+		print("Raw response:", response_text)
+
+#region get new question
+
 func get_question(difficulty: String, question_num: int):
 	print("attempting to find server via js")
 	
@@ -298,10 +379,11 @@ func on_get_question_response(args: Array):
 		var question_num = json.data.get("question_number")
 		var res = [title, prompt, question_num]
 		emit_signal("question", res, question_to_replace)
-		
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
+
+#endregion
 
 #region submit code
 
