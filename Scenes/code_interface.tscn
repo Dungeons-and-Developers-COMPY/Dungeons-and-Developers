@@ -92,6 +92,7 @@ theme = ExtResource("1_b6vbw")
 text = "Submit"
 
 [node name="InputPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 352.0
 offset_top = 464.0

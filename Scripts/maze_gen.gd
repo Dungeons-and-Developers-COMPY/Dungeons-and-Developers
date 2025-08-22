@@ -1,5 +1,4 @@
 # https://github.com/Goldenlion5648/GodotMazeGenerationVisualizer
-
 extends TileMapLayer
 class_name MazeGen
 
@@ -51,6 +50,9 @@ var adj4 = [
 ]
 
 var grid = [] 
+
+var gold_source_id = 1
+var gold_objs = [Vector2i(3, 1), Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(0, 3), Vector2i(1, 3)]
 
 func gen_maze():
 	grid = []
@@ -132,7 +134,6 @@ func can_move_to(current: Vector2i):
 			current.x < x_dim and current.y < y_dim and\
 			not is_wall(current)
 	)
-
 
 func dfs(start: Vector2i):
 	var fringe: Array[Vector2i] = [start]
@@ -298,22 +299,30 @@ func place_wall_texture(left: bool, right: bool, up: bool, down: bool, coord: Ve
 func make_exit(x: int, y: int):
 	if x == 0:
 		delete_cell_at(Vector2i(x-1, y))
+		place_gold(x-1, y)
 		# corners
 		if y == 0:
 			delete_cell_at(Vector2i(x-1, y-1))
+			place_gold(x-1, y-1)
 		elif y == Globals.grid_size - 1:
 			delete_cell_at(Vector2i(x-1, Globals.grid_size))
+			place_gold(x-1, Globals.grid_size)
 	if x == Globals.grid_size - 1:
 		delete_cell_at(Vector2i(Globals.grid_size, y))
+		place_gold(Globals.grid_size, y)
 		# corners
 		if y == 0:
-			delete_cell_at(Vector2i( Globals.grid_size, y-1))
+			delete_cell_at(Vector2i(Globals.grid_size, y-1))
+			place_gold(Globals.grid_size, y-1)
 		elif y == Globals.grid_size - 1:
-			delete_cell_at(Vector2i( Globals.grid_size, Globals.grid_size))
+			delete_cell_at(Vector2i(Globals.grid_size, Globals.grid_size))
+			place_gold(Globals.grid_size, Globals.grid_size)
 	if y == 0:
 		delete_cell_at(Vector2i(x, y-1))
+		place_gold(x, y-1)
 	if y == Globals.grid_size - 1:
 		delete_cell_at(Vector2i(x, Globals.grid_size))
+		place_gold(x, Globals.grid_size)
 
 func print_grid():
 	var row: String = ""
@@ -323,3 +332,8 @@ func print_grid():
 		print(row)
 		row = ""
 		
+func place_gold(x: int, y: int):
+	set_cell(Vector2i(x, y), gold_source_id, get_gold_obj())
+
+func get_gold_obj():
+	return gold_objs[randi_range(0, len(gold_objs)- 1)]

@@ -18,7 +18,7 @@ script = ExtResource("1_1l0tm")
 anchor_mode = 0
 
 [node name="Maze" parent="." instance=ExtResource("3_h4fw4")]
-position = Vector2(80, 80)
+position = Vector2(188, 108)
 
 [node name="CodeInterface" parent="." instance=ExtResource("4_ldgsr")]
 offset_left = 1030.0

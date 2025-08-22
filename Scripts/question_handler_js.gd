@@ -14,7 +14,7 @@ var register_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/reg
 var deregister_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/deregister"
 var find_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/find-available?type="
 var update_player_count_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-players"
-var whoami_url = "https://dungeonsanddevelopers.cs.uct.ac.za/student/update-whoami"
+var whoami_url = "https://dungeonsanddevelopers.cs.uct.ac.za/student/whoami"
 
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
