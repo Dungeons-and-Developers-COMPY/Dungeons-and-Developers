@@ -11,6 +11,7 @@ extends Node2D
 @onready var monster_music_players = [$PreMonster1Music, $PostMonster1Music, $PostMonster2Music]
 @onready var victory_player = $Victory
 @onready var defeat_player = $Defeat
+@onready var monster_defeated_sound: AudioStreamPlayer = $MonsterDefeatedSound
 
 var monster_positions = []
 var monsters = []
@@ -95,7 +96,7 @@ func find_avail_server(type: String):
 func server_found(found: bool, message: String, ip: String, port: int):
 	if found:
 		MultiplayerManager.connect_to_server(ip, port)
-		show_end("Waiting for player 2...")
+		show_end("Waiting for player 2...", 160)
 	else:
 		pass
 
@@ -484,6 +485,8 @@ func monster_defeated():
 				
 				
 			break
+	monster_defeated_sound.play()
+
 
 #endregion
 
@@ -571,10 +574,11 @@ func execute_next_step(next_step: String):
 		"TEST":
 			test_user_code()
 
-func show_end(text):
+func show_end(text, font_size = 200):
 	code_interface.disable_code()
 	player.should_stop = true
 	end_label.text = text
+	end_label.add_theme_font_size_override("font_size", font_size)
 	end_label.show()
 	
 func hide_end():

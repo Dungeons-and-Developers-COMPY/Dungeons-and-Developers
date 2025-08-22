@@ -21,7 +21,7 @@ func gen_floor(start_coord, exit_coord):
 		#set_cell(Vector2i(Globals.grid_size, y), SOURCE_ID, right_border_atlas_coords)
 	# mark start end end tiles
 	set_cell(Vector2i(start_coord["row"],start_coord["col"]), SOURCE_ID, enter_atlas_coords)
-	set_cell(Vector2i(exit_coord["row"],exit_coord["col"]), SOURCE_ID, enter_atlas_coords)
+	#set_cell(Vector2i(exit_coord["row"],exit_coord["col"]), SOURCE_ID, enter_atlas_coords)
 	
 func randomise_tile(x: int, y: int):
 	var atlas_coords = alt_floor_atlas_coords[rng.randi_range(0, alt_floor_atlas_coords.size() - 1)]

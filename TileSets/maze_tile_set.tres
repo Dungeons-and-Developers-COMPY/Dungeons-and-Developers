@@ -1,7 +1,6 @@
-[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://b3csn3ccogf4m"]
+[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://b3csn3ccogf4m"]
 
 [ext_resource type="Texture2D" uid="uid://chqhbhixoamj2" path="res://Assets/voxelExpansion_tilesheet.png" id="1_rqs11"]
-[ext_resource type="Texture2D" uid="uid://0ti8xjrb2hey" path="res://Assets/gold.png" id="2_d2ft2"]
 [ext_resource type="Texture2D" uid="uid://c27su0r7okq4k" path="res://Assets/0x72_DungeonTilesetII_v1.7/atlas_walls_low-16x16.png" id="2_qh8br"]
 [ext_resource type="Texture2D" uid="uid://c4o3v1vf7d61a" path="res://Assets/0x72_DungeonTilesetII_v1.7/atlas_floor-16x16.png" id="3_d2ft2"]
 
@@ -73,58 +72,6 @@ texture_region_size = Vector2i(64, 64)
 12:2/0 = 0
 12:3/0 = 0
 12:4/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7i4ew"]
-texture = ExtResource("2_d2ft2")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-0:2/0 = 0
-1:2/0 = 0
-2:2/0 = 0
-3:2/0 = 0
-4:2/0 = 0
-5:2/0 = 0
-6:2/0 = 0
-7:2/0 = 0
-0:3/0 = 0
-1:3/0 = 0
-2:3/0 = 0
-3:3/0 = 0
-4:3/0 = 0
-5:3/0 = 0
-6:3/0 = 0
-7:3/0 = 0
-0:4/0 = 0
-1:4/0 = 0
-2:4/0 = 0
-3:4/0 = 0
-4:4/0 = 0
-5:4/0 = 0
-6:4/0 = 0
-7:4/0 = 0
-0:5/0 = 0
-1:5/0 = 0
-2:5/0 = 0
-3:5/0 = 0
-4:5/0 = 0
-5:5/0 = 0
-6:5/0 = 0
-7:5/0 = 0
-0:6/0 = 0
-1:6/0 = 0
-2:6/0 = 0
-3:6/0 = 0
-0:7/0 = 0
-1:7/0 = 0
-2:7/0 = 0
-3:7/0 = 0
-3:1/0 = 0
-2:1/0 = 0
-1:1/0 = 0
-0:1/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_720sd"]
 texture = ExtResource("2_qh8br")
@@ -232,4 +179,3 @@ texture = ExtResource("3_d2ft2")
 sources/0 = SubResource("TileSetAtlasSource_bbt2e")
 sources/2 = SubResource("TileSetAtlasSource_720sd")
 sources/3 = SubResource("TileSetAtlasSource_5f7w8")
-sources/1 = SubResource("TileSetAtlasSource_7i4ew")

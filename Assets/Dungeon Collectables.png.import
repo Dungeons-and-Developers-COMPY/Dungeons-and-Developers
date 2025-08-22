@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0ti8xjrb2hey"
-path="res://.godot/imported/gold.png-6609cdd9298c0b02793df939caf2ab99.ctex"
+uid="uid://f21pf0hvyqg8"
+path="res://.godot/imported/Dungeon Collectables.png-3a1c0c0dcac5f53fd43f5745e88ff07f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/gold.png"
-dest_files=["res://.godot/imported/gold.png-6609cdd9298c0b02793df939caf2ab99.ctex"]
+source_file="res://Assets/Dungeon Collectables.png"
+dest_files=["res://.godot/imported/Dungeon Collectables.png-3a1c0c0dcac5f53fd43f5745e88ff07f.ctex"]
 
 [params]
 

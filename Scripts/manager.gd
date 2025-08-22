@@ -5,23 +5,14 @@ extends Node2D
 
 func _ready() -> void:
 	menu.start1v1.connect(start1v1)
-	menu.start2v2.connect(start2v2)
 	game.hide()
 	menu.show()
 	
-func start2v2():
-	menu.hide()
-	game.show()
-	game.show_end("Connecting to 2v2 server...")
-	if OS.get_name() == "Web":
-		game.js_handler.login()
-	else:
-		game.question_handler.login()
 
 func start1v1():
 	menu.hide()
 	game.show()
-	game.show_end("Connecting to 1v1 server...")
+	game.show_end("Connecting to 1v1 server...", 160)
 	if OS.get_name() == "Web":
 		game.js_handler.login()
 	else:

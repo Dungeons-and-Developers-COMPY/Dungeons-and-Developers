@@ -21,6 +21,8 @@ signal moved
 signal recentre(player_num: int)
 
 @onready var char = $CharacterBody2D
+@onready var attack_sound: AudioStreamPlayer = $AttackSound
+@onready var stunned_sound: AudioStreamPlayer = $StunnedSound
 
 #func _process(_delta: float) -> void:
 	#if Input.is_action_just_released("attack") and should_stop == true:
@@ -190,11 +192,13 @@ func has_reached_exit():
 func stun():
 	emit_signal("stunned")
 	char.stun()
+	stunned_sound.play()
 	await get_tree().create_timer(Globals.stun_time).timeout
 	emit_signal("end_stun")
 
 func attack():
 	char.attack()
+	attack_sound.play()
 
 func adjust_positions(boss: bool = false):
 	if boss:

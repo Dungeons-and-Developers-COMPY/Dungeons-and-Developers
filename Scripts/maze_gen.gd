@@ -2,6 +2,8 @@
 extends TileMapLayer
 class_name MazeGen
 
+signal gold(x: int, y: int)
+
 var starting_pos = Vector2i()
 const main_layer = 0
 const normal_wall_atlas_coords = Vector2i(0, 1)
@@ -50,9 +52,6 @@ var adj4 = [
 ]
 
 var grid = [] 
-
-var gold_source_id = 1
-var gold_objs = [Vector2i(3, 1), Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(0, 3), Vector2i(1, 3)]
 
 func gen_maze():
 	grid = []
@@ -333,7 +332,5 @@ func print_grid():
 		row = ""
 		
 func place_gold(x: int, y: int):
-	set_cell(Vector2i(x, y), gold_source_id, get_gold_obj())
-
-func get_gold_obj():
-	return gold_objs[randi_range(0, len(gold_objs)- 1)]
+	emit_signal("gold", x, y)
+	#set_cell(Vector2i(x, y), gold_source_id, get_gold_obj())
