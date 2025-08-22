@@ -2,10 +2,14 @@ extends Node2D
 
 @onready var menu = $MainMenu
 @onready var game = $Game
+@onready var settings_panel: Panel = $Panel
+@onready var settings: Node2D = $Panel/Settings
 
 func _ready() -> void:
 	menu.start1v1.connect(start1v1)
+	settings.hide_settings.connect(hide_settings)
 	game.hide()
+	settings_panel.hide()
 	menu.show()
 	
 
@@ -17,3 +21,10 @@ func start1v1():
 		game.js_handler.login()
 	else:
 		game.question_handler.login()
+
+
+func _on_settings_button_pressed() -> void:
+	settings_panel.show()
+
+func hide_settings():
+	settings_panel.hide()

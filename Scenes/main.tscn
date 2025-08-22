@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c6os2mfxru68w"]
+[gd_scene load_steps=17 format=3 uid="uid://c6os2mfxru68w"]
 
 [ext_resource type="Script" uid="uid://c5w2g3jgv7ge6" path="res://Scripts/manager.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://hn54wuekrxdo" path="res://Scenes/game.tscn" id="1_bo1nx"]
@@ -13,10 +13,14 @@
 [ext_resource type="AudioStream" uid="uid://dqc1o2gnknu81" path="res://sfx/gem.wav" id="10_d1ilt"]
 [ext_resource type="Theme" uid="uid://uf0mr2qu6b5r" path="res://Themes/main_menu.tres" id="12_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://00aegiro6ric" path="res://Assets/1bit 16px icons part-2.png" id="13_jkdf5"]
+[ext_resource type="PackedScene" uid="uid://kt3yitl2wrla" path="res://Scenes/settings.tscn" id="14_jkdf5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wsu2k"]
 atlas = ExtResource("13_jkdf5")
 region = Rect2(320, 8, 16, 16)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wsu2k"]
+bg_color = Color(0.435192, 0.435192, 0.435192, 0.411765)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_8gbba")
@@ -86,3 +90,15 @@ theme = ExtResource("12_fdnlq")
 icon = SubResource("AtlasTexture_wsu2k")
 icon_alignment = 1
 expand_icon = true
+
+[node name="Panel" type="Panel" parent="."]
+z_index = 5
+offset_right = 1800.0
+offset_bottom = 900.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wsu2k")
+
+[node name="Settings" parent="Panel" instance=ExtResource("14_jkdf5")]
+position = Vector2(528, 56)
+scale = Vector2(2.46101, 2.46101)
+
+[connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]

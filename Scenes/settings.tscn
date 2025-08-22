@@ -1,0 +1,129 @@
+[gd_scene load_steps=6 format=3 uid="uid://kt3yitl2wrla"]
+
+[ext_resource type="Script" uid="uid://cmw8l87xmj8gk" path="res://Scripts/settings.gd" id="1_aaqfp"]
+[ext_resource type="Texture2D" uid="uid://8oxonny0xwmp" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/RectangleBox_96x96.png" id="1_lhmql"]
+[ext_resource type="Theme" uid="uid://uf0mr2qu6b5r" path="res://Themes/main_menu.tres" id="2_aaqfp"]
+[ext_resource type="Script" uid="uid://bbc3kq4i4rxul" path="res://Scenes/VolumeSlider.gd" id="3_j2dne"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6kysc"]
+load_path = "res://.godot/imported/speaker.png-02b69c5405fca3f42cf20db29b761fe0.ctex"
+
+[node name="Settings" type="Node2D"]
+script = ExtResource("1_aaqfp")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+offset_right = 272.0
+offset_bottom = 296.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_lhmql")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+
+[node name="Header" type="Label" parent="NinePatchRect"]
+layout_mode = 0
+offset_top = 19.0
+offset_right = 272.0
+offset_bottom = 35.0
+theme = ExtResource("2_aaqfp")
+theme_override_font_sizes/font_size = 16
+text = "SETTINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MasterVol" type="Label" parent="NinePatchRect"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 64.0
+offset_right = 138.0
+offset_bottom = 72.0
+theme = ExtResource("2_aaqfp")
+text = "Master Volume:"
+
+[node name="Speaker" type="Sprite2D" parent="NinePatchRect/MasterVol"]
+position = Vector2(133.25, 4.49999)
+scale = Vector2(0.0517578, 0.0488281)
+texture = SubResource("CompressedTexture2D_6kysc")
+
+[node name="HSlider" type="HSlider" parent="NinePatchRect/MasterVol"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.00204918
+anchor_top = -0.062499
+anchor_right = -0.00204918
+anchor_bottom = -0.062499
+offset_left = 150.25
+offset_top = -3.50001
+offset_right = 231.25
+offset_bottom = 12.5
+theme = ExtResource("2_aaqfp")
+max_value = 10.0
+step = 0.1
+value = 2.0
+script = ExtResource("3_j2dne")
+metadata/_edit_use_anchors_ = true
+
+[node name="MusicVol" type="Label" parent="NinePatchRect"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 96.0
+offset_right = 138.0
+offset_bottom = 104.0
+theme = ExtResource("2_aaqfp")
+text = "Music Volume:"
+
+[node name="Speaker" type="Sprite2D" parent="NinePatchRect/MusicVol"]
+position = Vector2(133.25, 4.49999)
+scale = Vector2(0.0517578, 0.0488281)
+texture = SubResource("CompressedTexture2D_6kysc")
+
+[node name="HSlider" type="HSlider" parent="NinePatchRect/MusicVol"]
+layout_mode = 0
+offset_left = 150.25
+offset_top = -3.50001
+offset_right = 231.25
+offset_bottom = 12.5
+max_value = 10.0
+step = 0.1
+value = 2.0
+script = ExtResource("3_j2dne")
+
+[node name="SFXVol" type="Label" parent="NinePatchRect"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 128.0
+offset_right = 138.0
+offset_bottom = 136.0
+theme = ExtResource("2_aaqfp")
+text = "Sound Effects:"
+
+[node name="Speaker" type="Sprite2D" parent="NinePatchRect/SFXVol"]
+position = Vector2(133.25, 4.49999)
+scale = Vector2(0.0517578, 0.0488281)
+texture = SubResource("CompressedTexture2D_6kysc")
+
+[node name="HSlider" type="HSlider" parent="NinePatchRect/SFXVol"]
+layout_mode = 0
+offset_left = 150.25
+offset_top = -3.50001
+offset_right = 231.25
+offset_bottom = 12.5
+max_value = 10.0
+step = 0.1
+value = 2.0
+script = ExtResource("3_j2dne")
+
+[node name="CloseButton" type="Button" parent="."]
+offset_left = 64.0
+offset_top = 248.0
+offset_right = 206.0
+offset_bottom = 286.0
+theme = ExtResource("2_aaqfp")
+theme_override_font_sizes/font_size = 24
+text = "DONE"
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]
