@@ -31,6 +31,7 @@ signal server(found: bool, message: String, ip: String, port: int)
 signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
 signal question(q, question_num: int)
+signal send_username(logged_in: bool, username: String)
 
 var login_callback_ref
 var server_callback_ref
@@ -38,6 +39,8 @@ var submit_callback_ref
 var test_callback_ref
 var get_question_callback_ref
 var get_username_callback_ref
+var send_time_callback_ref
+var leaderboard_callback_ref
 var next_step: String = "FIND"
 var question_to_replace = 0
 
@@ -225,8 +228,7 @@ func on_find_server_response(args: Array):
 
 #endregion
 
-
-
+#region username
 func get_username():
 	print("attempting to find server via js")
 	
@@ -297,9 +299,16 @@ func on_get_username_response(args: Array):
 	if parse_result == OK:
 		print("JSON response:")
 		print(json.data)
+		var logged_in = json.data.get("is_authenticated")
+		var username = "no_name"
+		if logged_in:
+			username = json.data.get("username")
+			emit_signal("send_username", logged_in, username)
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
+
+#endregion
 
 #region get new question
 
@@ -580,3 +589,162 @@ func on_test_response(args: Array):
 		print("Raw response:", response_text)
 
 #endregion
+
+func send_time(username: String, time):	
+	print("attempting to send time via js")
+	send_time_callback_ref = JavaScriptBridge.create_callback(on_send_time_response)
+	var window = JavaScriptBridge.get_interface("window")
+	
+	# store callback for send time godotLoginCallback
+	window.godotSendTimeCallback = send_time_callback_ref
+	print("Callback stored in window")
+	var url = ""
+	
+	var js_code := """
+	console.log('Starting login fetch...');
+	console.log('Callback available:', typeof window.godotSendTimeCallback);
+	
+	fetch('%s', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			username: '%s',
+			time: '%s'
+		}),
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Fetch response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Response data:', data);
+		console.log('About to call Godot callback...');
+		if (window.godotSendTimeCallback) {
+			try {
+				var dataToSend = typeof data === 'string' ? data : JSON.stringify(data);
+				console.log('Sending to Godot:', dataToSend);
+				window.godotSendTimeCallback(dataToSend);
+				console.log('Godot callback called successfully');
+			} catch(e) {
+				console.error('Error calling Godot callback:', e);
+			}
+		} else {
+			console.error('Godot callback not found!');
+		}
+		delete window.godotSendTimeCallback;
+	})
+	.catch(error => {
+		console.error('Login error:', error);
+		if (window.godotSendTimeCallback) {
+			try {
+				window.godotSendTimeCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in error callback:', e);
+			}
+		}
+		delete window.godotSendTimeCallback;
+	});
+	""" % [
+		url,
+		username,
+		time
+	]
+	
+	print("About to execute JavaScript...")
+	JavaScriptBridge.eval(js_code)
+	print("JavaScript executed")
+
+func on_send_time_response(args: Array):
+	print("=== GET USERNAME RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+	else:
+		print("Non-JSON response received:")
+		print("Raw response:", response_text)
+
+
+func get_leaderboard():
+	print("attempting to find server via js")
+	
+	# Create callback for server response godotGetUsernameCallback
+	leaderboard_callback_ref = JavaScriptBridge.create_callback(on_leaderboard_response)
+	var window = JavaScriptBridge.get_interface("window")
+	window.godotLeaderboardCallback = leaderboard_callback_ref
+	
+	var url = whoami_url
+	var js_code := """
+	console.log('Starting get question request...');
+	console.log('URL: ', '%s');
+	
+	fetch('%s', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		credentials: 'include'
+	})
+	.then(response => {
+		console.log('Get question response received, status:', response.status);
+		return response.text();
+	})
+	.then(data => {
+		console.log('Get question response data:', data);
+		if (window.godotLeaderboardCallback) {
+			try {
+				window.godotLeaderboardCallback(data);
+				console.log('Get question callback called successfully');
+			} catch(e) {
+				console.error('Error calling find server callback:', e);
+			}
+		} else {
+			console.error('Get question callback not found!');
+		}
+		delete window.godotLeaderboardCallback;
+	})
+	.catch(error => {
+		console.error('Find server error:', error);
+		if (window.godotLeaderboardCallback) {
+			try {
+				window.godotLeaderboardCallback('{"error": "' + error.message + '"}');
+			} catch(e) {
+				console.error('Error in get question error callback:', e);
+			}
+		}
+		delete window.godotLeaderboardCallback;
+	});
+	""" % [url, url]
+	
+	var err = JavaScriptBridge.eval(js_code)
+	if err != null:
+		print("JavaScript execution failed: ", err)
+	else:
+		print("Find server request sent.")
+
+func on_leaderboard_response(args: Array):
+	print("=== GET USERNAME RESPONSE RECEIVED ===")
+	print("Args: ", args)
+	var response_text = args[0]
+	if response_text is JavaScriptObject:
+		response_text = response_text.to_string()
+	print("Response text: ", response_text)
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	
+	if parse_result == OK:
+		print("JSON response:")
+		print(json.data)
+	else:
+		print("Non-JSON response received:")
+		print("Raw response:", response_text)

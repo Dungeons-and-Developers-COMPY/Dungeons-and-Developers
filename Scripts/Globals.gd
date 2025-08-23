@@ -41,11 +41,7 @@ static var timeout = 2.0
 static var connection_result = false
 static var connection_done = false
 
-#static var is_2v2 = false
-#
-#static var role: int = 0 # 0 for nav, 1 for driver
-#static var team: int = 0
-#static var NAV: int = 0
-#static var DRIVER: int = 1
+static var username = ""
+static var start_difficulties = ["Easy", "Medium", "Hard"]
 
 signal fringe_changed

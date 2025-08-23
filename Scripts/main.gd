@@ -29,6 +29,7 @@ var monsters_slain_count = 0
 var shutdown_check_timer = 0.0
 var game_started = false
 var keep_alive_timer = 0.0
+var time = 0.0
 
 #region built-in functions
 
@@ -77,6 +78,13 @@ func _process(delta: float) -> void:
 		if keep_alive_timer >= 3.0:
 			keep_alive_timer = 0.0
 			rpc_id(1, "keep_alive", multiplayer.get_unique_id())
+
+func _physics_process(delta: float) -> void:
+	if (is_server):
+		return
+	if game_started:
+		time += delta
+		
 #endregion
 
 #region game setup
@@ -330,9 +338,11 @@ func announce_winner(peer_id: int):
 
 	if multiplayer.get_unique_id() == peer_id:
 		print("YOU WON!")
-		show_end("YOU WON!")
 		# Play the victory sound
 		victory_player.play()
+		var final_time = time
+		show_end("YOU WON!\nTime: " + str(final_time))
+		#TODO: send to backend
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
@@ -342,19 +352,6 @@ func announce_winner(peer_id: int):
 @rpc("any_peer", "call_remote", "reliable")
 func keep_alive(peer_id: int):
 	print("Keep alive received by peer: " + str(peer_id))
-
-#@rpc("any_peer", "call_remote", "reliable")
-#func update_text(text: String):
-	#code_interface.update_code_text(text)
-
-#@rpc("any_peer", "call_remote", "reliable")
-#func submit_teammate_code(output: String, passed: bool):
-	#receive_submission_feedback(output, passed)
-#
-#@rpc("any_peer", "call_remote", "reliable")
-#func run_teammate_code():
-	#code_interface.set_code()
-	#run_user_code()
 
 #endregion
 
@@ -553,7 +550,10 @@ func get_new_question():
 	var question_num = question_index
 	var new_difficulty = difficulties[question_num]
 	if question_num > 0:
-		new_difficulty = difficulties[question_num - 1]
+		if new_difficulty == "Medium":
+			new_difficulty = "Easy"
+		elif new_difficulty == "Hard":
+			new_difficulty = "Medium"
 		difficulties[question_num] = new_difficulty
 	js_handler.get_question(difficulties[question_num], question_num)
 

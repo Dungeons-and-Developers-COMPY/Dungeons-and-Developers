@@ -8,6 +8,7 @@ extends Node2D
 func _ready() -> void:
 	menu.start1v1.connect(start1v1)
 	settings.hide_settings.connect(hide_settings)
+	game.js_handler.send_username.connect(save_username)
 	game.hide()
 	settings_panel.hide()
 	menu.show()
@@ -28,3 +29,7 @@ func _on_settings_button_pressed() -> void:
 
 func hide_settings():
 	settings_panel.hide()
+
+func save_username(logged_in: bool, username: String):
+	Globals.username = username
+	
