@@ -24,12 +24,12 @@ func _ready():
 	#for r in opusaudiodata:
 		#opuspacketsbuffer.append(PackedByteArray(r))
 		
-	##### buttons but i'm not sure about this part
-	var text_chat = get_tree().get_first_node_in_group("TextChat") # Or get_node(path)
-	if text_chat:
-		text_chat.mic_toggled.connect(_on_mic_toggled)
-		text_chat.volume_toggled.connect(_on_volume_toggled)
-	######
+	###### buttons but i'm not sure about this part
+	#var text_chat = get_tree().get_first_node_in_group("TextChat") # Or get_node(path)
+	#if text_chat:
+		#text_chat.mic_toggled.connect(_on_mic_toggled)
+		#text_chat.volume_toggled.connect(_on_volume_toggled)
+	#######
 func add_data(opusdata : PackedByteArray):
 	while len(opuspacketsbuffer) >= MAX_BUFFER_PACKETS:
 		opuspacketsbuffer.pop_front()  # drop oldest
@@ -107,12 +107,12 @@ func _process_playback(delta):
 	#while audiostreamopuschunked.chunk_space_available() and opuspacketsbuffer.size() > 0:
 		#audiostreamopuschunked.push_opus_packet(opuspacketsbuffer.pop_front(), 0, 0)
 
-###### buttons
-func _on_mic_toggled(enabled: bool):
-	$MinimalUseCase.set_mic_enabled(enabled)
-
-func _on_volume_toggled(enabled: bool):
-	$MinimalUseCase.set_volume_enabled(enabled)
+####### buttons
+#func _on_mic_toggled(enabled: bool):
+	#$MinimalUseCase.set_mic_enabled(enabled)
+#
+#func _on_volume_toggled(enabled: bool):
+	#$MinimalUseCase.set_volume_enabled(enabled)
 
 var opusaudiodata = [
 	[72, 11, 228, 193, 34, 35, 97, 240],
