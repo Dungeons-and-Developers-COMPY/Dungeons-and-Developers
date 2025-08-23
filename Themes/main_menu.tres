@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=14 format=3 uid="uid://uf0mr2qu6b5r"]
+[gd_resource type="Theme" load_steps=15 format=3 uid="uid://uf0mr2qu6b5r"]
 
 [ext_resource type="FontFile" uid="uid://dal7788ti7a33" path="res://fonts/press_start_2p/PressStart2P.ttf" id="1_sehgy"]
 [ext_resource type="Texture2D" uid="uid://bbau0bhh8dqlw" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x26.png" id="2_sehgy"]
@@ -48,6 +48,9 @@ modulate_color = Color(0.544812, 0.194345, 0.97152, 1)
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h56oa"]
 texture = ExtResource("4_10ecn")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tyoaw"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
 [resource]
 Button/font_sizes/font_size = 23
 Button/fonts/font = ExtResource("1_sehgy")
@@ -64,3 +67,8 @@ HSlider/styles/slider = SubResource("StyleBoxTexture_y0csj")
 Label/font_sizes/font_size = 8
 Label/fonts/font = ExtResource("1_sehgy")
 Panel/styles/panel = SubResource("StyleBoxTexture_h56oa")
+Tree/font_sizes/font_size = 24
+Tree/font_sizes/title_button_font_size = 32
+Tree/fonts/font = ExtResource("1_sehgy")
+Tree/fonts/title_button_font = ExtResource("1_sehgy")
+Tree/styles/panel = SubResource("StyleBoxFlat_tyoaw")

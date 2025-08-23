@@ -36,10 +36,12 @@ func hide_settings():
 
 func save_username(logged_in: bool, username: String):
 	Globals.username = username
+	menu.display_username()
 	
 func get_leaderboard():
 	game.js_handler.get_leaderboard()
 
 func show_leaderboard(list):
+	print(list) 
 	leaderboard.add_output(list)
 	leaderboard.show()

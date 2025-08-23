@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dnr2tice6j8u2"]
+[gd_scene load_steps=6 format=3 uid="uid://dnr2tice6j8u2"]
 
 [ext_resource type="Script" uid="uid://djcggcsf3rini" path="res://Scripts/leaderboard.gd" id="1_oxn4a"]
+[ext_resource type="Texture2D" uid="uid://8oxonny0xwmp" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/RectangleBox_96x96.png" id="2_0uewc"]
+[ext_resource type="FontFile" uid="uid://dal7788ti7a33" path="res://fonts/press_start_2p/PressStart2P.ttf" id="3_fjik7"]
+[ext_resource type="Theme" uid="uid://uf0mr2qu6b5r" path="res://Themes/main_menu.tres" id="3_pobhu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sw8pe"]
 bg_color = Color(0.435192, 0.435192, 0.435192, 0.411765)
@@ -14,18 +17,64 @@ offset_right = 1800.0
 offset_bottom = 900.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_sw8pe")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Panel"]
-layout_mode = 0
-offset_left = 512.0
-offset_top = 96.0
-offset_right = 1216.0
-offset_bottom = 688.0
+[node name="NinePatchRect" type="NinePatchRect" parent="Panel"]
+offset_left = 320.0
+offset_top = 8.0
+offset_right = 736.0
+offset_bottom = 329.0
+scale = Vector2(2.77196, 2.77196)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("2_0uewc")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
 
-[node name="Button" type="Button" parent="."]
-offset_left = 72.0
-offset_top = 816.0
-offset_right = 440.0
-offset_bottom = 872.0
+[node name="Tree" type="Tree" parent="Panel"]
+offset_left = 336.0
+offset_top = 24.0
+offset_right = 1456.0
+offset_bottom = 768.0
+theme = ExtResource("3_pobhu")
+columns = 3
+column_titles_visible = true
+enable_recursive_folding = false
+
+[node name="RankLabel" type="Label" parent="Panel"]
+offset_left = 328.0
+offset_top = 792.0
+offset_right = 896.0
+offset_bottom = 817.0
+theme_override_fonts/font = ExtResource("3_fjik7")
+theme_override_font_sizes/font_size = 25
+text = "Your Rank: N/A"
+horizontal_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="Panel"]
+offset_left = 896.0
+offset_top = 792.0
+offset_right = 1464.0
+offset_bottom = 817.0
+theme_override_fonts/font = ExtResource("3_fjik7")
+theme_override_font_sizes/font_size = 25
+text = "Best Time: N/A"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -108.0
+offset_top = 387.0
+offset_right = 108.0
+offset_bottom = 427.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_pobhu")
 text = "Close"
 
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Panel/Button" to="." method="_on_button_pressed"]
