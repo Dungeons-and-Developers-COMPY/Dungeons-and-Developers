@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bbdnpokyd657y"
+path="res://.godot/imported/4- Dark Fantasy Studio - Faster stronger harder.mp3-d69d3c1eab78ada6cad4cb34a81eb7dd.mp3str"
+
+[deps]
+
+source_file="res://Music/4- Dark Fantasy Studio - Faster stronger harder.mp3"
+dest_files=["res://.godot/imported/4- Dark Fantasy Studio - Faster stronger harder.mp3-d69d3c1eab78ada6cad4cb34a81eb7dd.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://beanymlu1vgaa"
+path="res://.godot/imported/3- Dark Fantasy Studio - Laser gun.mp3-77d55a3500792bfb53f5dc2467f45593.mp3str"
+
+[deps]
+
+source_file="res://Music/3- Dark Fantasy Studio - Laser gun.mp3"
+dest_files=["res://.godot/imported/3- Dark Fantasy Studio - Laser gun.mp3-77d55a3500792bfb53f5dc2467f45593.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

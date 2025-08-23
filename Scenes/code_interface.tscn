@@ -1,0 +1,144 @@
+[gd_scene load_steps=6 format=3 uid="uid://b434binq15kiq"]
+
+[ext_resource type="Theme" uid="uid://430hiudad3go" path="res://Themes/test_theme.tres" id="1_b6vbw"]
+[ext_resource type="Script" uid="uid://bc7pn5tenxx6x" path="res://Scripts/code_interface.gd" id="1_ygywk"]
+[ext_resource type="CodeHighlighter" uid="uid://cpgvfqybar270" path="res://Themes/syntaxt_highlighting.tres" id="3_6uyrl"]
+[ext_resource type="Texture2D" uid="uid://00aegiro6ric" path="res://Assets/1bit 16px icons part-2.png" id="4_exiiw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ed4r"]
+atlas = ExtResource("4_exiiw")
+region = Rect2(466, 321, 13, 13)
+
+[node name="CodeInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -640.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ygywk")
+
+[node name="QuestionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 30.0
+theme = ExtResource("1_b6vbw")
+text = "  Question"
+
+[node name="QuestionText" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 28.0
+offset_right = 640.0
+offset_bottom = 264.0
+theme = ExtResource("1_b6vbw")
+
+[node name="CodeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 262.0
+offset_right = 640.0
+offset_bottom = 292.0
+theme = ExtResource("1_b6vbw")
+text = "  Code"
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+layout_mode = 0
+offset_top = 290.0
+offset_right = 640.0
+offset_bottom = 654.0
+theme = ExtResource("1_b6vbw")
+emoji_menu_enabled = false
+caret_blink = true
+caret_multiple = false
+syntax_highlighter = ExtResource("3_6uyrl")
+highlight_all_occurrences = true
+highlight_current_line = true
+draw_tabs = true
+gutters_draw_line_numbers = true
+indent_size = 6
+indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+
+[node name="ConsoleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 652.0
+offset_right = 640.0
+offset_bottom = 682.0
+theme = ExtResource("1_b6vbw")
+text = "  Console"
+
+[node name="ConsoleText" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 680.0
+offset_right = 640.0
+offset_bottom = 900.0
+theme = ExtResource("1_b6vbw")
+scroll_following = true
+
+[node name="RunButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 654.0
+offset_right = 608.0
+offset_bottom = 680.0
+theme = ExtResource("1_b6vbw")
+text = "Run"
+
+[node name="SubmitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 392.0
+offset_top = 654.0
+offset_right = 456.0
+offset_bottom = 680.0
+theme = ExtResource("1_b6vbw")
+text = "Submit"
+
+[node name="InputPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 224.0
+offset_top = 390.0
+offset_right = 536.0
+offset_bottom = 558.0
+
+[node name="TextEdit" type="TextEdit" parent="InputPanel"]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 312.0
+offset_bottom = 168.0
+theme = ExtResource("1_b6vbw")
+
+[node name="Label" type="Label" parent="InputPanel"]
+layout_mode = 0
+offset_right = 312.0
+offset_bottom = 30.0
+theme = ExtResource("1_b6vbw")
+text = "Enter Input:"
+
+[node name="ConfirmButton" type="Button" parent="InputPanel"]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 136.0
+offset_right = 306.0
+offset_bottom = 162.0
+theme = ExtResource("1_b6vbw")
+text = "Confirm"
+
+[node name="NewQuestionButton" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 612.0
+offset_top = 3.0
+offset_right = 636.0
+offset_bottom = 27.0
+tooltip_text = "Press here to get an easier question after 3 failed attempts"
+icon = SubResource("AtlasTexture_7ed4r")
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="text_changed" from="CodeEdit" to="." method="_on_code_edit_text_changed"]
+[connection signal="pressed" from="RunButton" to="." method="_on_run_button_pressed"]
+[connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
+[connection signal="pressed" from="InputPanel/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="NewQuestionButton" to="." method="_on_new_question_button_pressed"]
