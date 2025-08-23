@@ -342,7 +342,7 @@ func announce_winner(peer_id: int):
 		victory_player.play()
 		var final_time = time
 		show_end("YOU WON!\nTime: " + str(final_time))
-		#TODO: send to backend
+		js_handler.send_time(Globals.username, final_time)
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")

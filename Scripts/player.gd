@@ -131,6 +131,8 @@ func execute_move(code: String):
 		line = line.strip_edges()
 		if line == "":
 			continue
+		if line.begins_with("#"):
+			continue
 		
 		var function_name = ""
 		var arg = 1

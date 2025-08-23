@@ -15,6 +15,8 @@ var deregister_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/d
 var find_server_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/find-available?type="
 var update_player_count_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-players"
 var whoami_url = "https://dungeonsanddevelopers.cs.uct.ac.za/student/whoami"
+var set_time_url =  "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-time"
+var leaderboard_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/leaderboard"
 
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
@@ -32,6 +34,7 @@ signal submission_result(output: String, passed: bool)
 signal test_result(output: String, passed: bool)
 signal question(q, question_num: int)
 signal send_username(logged_in: bool, username: String)
+signal leaderboard(list)
 
 var login_callback_ref
 var server_callback_ref
@@ -598,7 +601,7 @@ func send_time(username: String, time):
 	# store callback for send time godotLoginCallback
 	window.godotSendTimeCallback = send_time_callback_ref
 	print("Callback stored in window")
-	var url = ""
+	var url = set_time_url
 	
 	var js_code := """
 	console.log('Starting login fetch...');
@@ -683,7 +686,7 @@ func get_leaderboard():
 	var window = JavaScriptBridge.get_interface("window")
 	window.godotLeaderboardCallback = leaderboard_callback_ref
 	
-	var url = whoami_url
+	var url = leaderboard_url
 	var js_code := """
 	console.log('Starting get question request...');
 	console.log('URL: ', '%s');
@@ -745,6 +748,7 @@ func on_leaderboard_response(args: Array):
 	if parse_result == OK:
 		print("JSON response:")
 		print(json.data)
+		emit_signal("leaderboard", json.data)
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)

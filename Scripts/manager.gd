@@ -4,14 +4,18 @@ extends Node2D
 @onready var game = $Game
 @onready var settings_panel: Panel = $Panel
 @onready var settings: Node2D = $Panel/Settings
+@onready var leaderboard: Node2D = $Leaderboard
 
 func _ready() -> void:
 	menu.start1v1.connect(start1v1)
+	menu.show_leaderboard.connect(get_leaderboard)
 	settings.hide_settings.connect(hide_settings)
 	game.js_handler.send_username.connect(save_username)
+	game.js_handler.leaderboard.connect(show_leaderboard)
 	game.hide()
 	settings_panel.hide()
 	menu.show()
+	leaderboard.hide()
 	
 
 func start1v1():
@@ -33,3 +37,9 @@ func hide_settings():
 func save_username(logged_in: bool, username: String):
 	Globals.username = username
 	
+func get_leaderboard():
+	game.js_handler.get_leaderboard()
+
+func show_leaderboard(list):
+	leaderboard.add_output(list)
+	leaderboard.show()

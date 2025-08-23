@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c6os2mfxru68w"]
+[gd_scene load_steps=18 format=3 uid="uid://c6os2mfxru68w"]
 
 [ext_resource type="Script" uid="uid://c5w2g3jgv7ge6" path="res://Scripts/manager.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://hn54wuekrxdo" path="res://Scenes/game.tscn" id="1_bo1nx"]
@@ -14,6 +14,7 @@
 [ext_resource type="Theme" uid="uid://uf0mr2qu6b5r" path="res://Themes/main_menu.tres" id="12_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://00aegiro6ric" path="res://Assets/1bit 16px icons part-2.png" id="13_jkdf5"]
 [ext_resource type="PackedScene" uid="uid://kt3yitl2wrla" path="res://Scenes/settings.tscn" id="14_jkdf5"]
+[ext_resource type="PackedScene" uid="uid://dnr2tice6j8u2" path="res://Scenes/leaderboard.tscn" id="15_wsu2k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wsu2k"]
 atlas = ExtResource("13_jkdf5")
@@ -81,17 +82,19 @@ bus = &"SFX"
 scale = Vector2(3.31, 3.31)
 
 [node name="SettingsButton" type="Button" parent="."]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 64.0
-offset_bottom = 64.0
-scale = Vector2(3, 3)
+z_index = 4
+offset_left = 16.0
+offset_top = 824.0
+offset_right = 56.0
+offset_bottom = 864.0
+scale = Vector2(1.5, 1.5)
 theme = ExtResource("12_fdnlq")
 icon = SubResource("AtlasTexture_wsu2k")
 icon_alignment = 1
 expand_icon = true
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 z_index = 5
 offset_right = 1800.0
 offset_bottom = 900.0
@@ -100,5 +103,8 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_wsu2k")
 [node name="Settings" parent="Panel" instance=ExtResource("14_jkdf5")]
 position = Vector2(528, 56)
 scale = Vector2(2.46101, 2.46101)
+
+[node name="Leaderboard" parent="." instance=ExtResource("15_wsu2k")]
+visible = false
 
 [connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
