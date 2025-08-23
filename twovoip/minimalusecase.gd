@@ -9,6 +9,10 @@ var opuspacketsbuffer = [ ]
 var game_started = false
 const MAX_BUFFER_PACKETS = 20
 
+#######
+#var vol_enabled = true
+#var mic_enabled = true
+
 signal audio_send(opusdata : PackedByteArray)
 
 func _ready():
@@ -18,6 +22,12 @@ func _ready():
 	audiostreamopuschunked = $AudioStreamPlayer.stream
 	#for r in opusaudiodata:
 		#opuspacketsbuffer.append(PackedByteArray(r))
+	###### buttons but i'm not sure about this part
+	#var text_chat = get_tree().get_first_node_in_group("TextChat") # Or get_node(path)
+	#if text_chat:
+		#text_chat.mic_toggled.connect(_on_mic_toggled)
+		#text_chat.volume_toggled.connect(_on_volume_toggled)
+	#######
 
 func add_data(opusdata : PackedByteArray):
 	while len(opuspacketsbuffer) >= MAX_BUFFER_PACKETS:
