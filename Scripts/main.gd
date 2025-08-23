@@ -49,7 +49,7 @@ func _ready() -> void:
 		maze.scale = Vector2(Globals.maze_scale, Globals.maze_scale)
 		connect_player_signals()
 		show_end("Waiting for player 2...")
-		#js_handler.get_username()
+		js_handler.get_username()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
