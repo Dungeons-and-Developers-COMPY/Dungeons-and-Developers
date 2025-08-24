@@ -84,6 +84,18 @@ offset_bottom = 156.0
 theme = ExtResource("2_sxrxi")
 text = "Emoji"
 
+[node name="EmojiPanel" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.862
+anchor_top = 0.478
+anchor_right = 0.862
+anchor_bottom = 0.478
+offset_left = -449.964
+offset_top = -716.256
+offset_right = -409.964
+offset_bottom = -676.256
+
 [connection signal="pressed" from="Panel/SendButton" to="." method="_on_send_button_pressed"]
 [connection signal="toggled" from="Panel/MicButton" to="." method="_on_mic_button_toggled"]
 [connection signal="toggled" from="Panel/VolButton" to="." method="_on_vol_button_toggled"]
