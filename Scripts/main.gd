@@ -415,15 +415,40 @@ func run_teammate_code():
 func receive_chat(message: String):
 	text_chat.output_message(message)
 
+######
+#@rpc("any_peer", "call_remote", "unreliable")
+#func rec_audio(opusdata : PackedByteArray):
+	#if multiplayer.get_remote_sender_id() == multiplayer.get_unique_id():
+		## Drop your own audio
+		#return
+	#voice_chat.add_data(opusdata)
+	##print("rec_audio from: ", multiplayer.get_remote_sender_id(), " on client: ", multiplayer.get_unique_id()) ###
 @rpc("any_peer", "call_remote", "unreliable")
 func rec_audio(opusdata : PackedByteArray):
-	if multiplayer.get_remote_sender_id() == multiplayer.get_unique_id():
-		# Drop your own audio
+	var sender_id = multiplayer.get_remote_sender_id()
+	var my_id = multiplayer.get_unique_id()
+	
+	# Debug print to see what's happening
+	print("rec_audio from sender: ", sender_id, " on client: ", my_id)
+	
+	# Drop your own audio - this should never happen in a properly set up system
+	# but let's keep it as a safety check
+	if sender_id == my_id:
+		print("Dropping own audio - this shouldn't happen!")
 		return
-	voice_chat.add_data(opusdata)
-	#print("rec_audio from: ", multiplayer.get_remote_sender_id(), " on client: ", multiplayer.get_unique_id()) ###
-
-
+	
+	# Only process audio if we're teammates (in 2v2 mode)
+	if Globals.is_2v2:
+		var teammate_id = get_teammate_id()
+		if sender_id == teammate_id:
+			print("Receiving teammate audio from: ", sender_id)
+			voice_chat.add_data(opusdata)
+		else:
+			print("Ignoring audio from opponent: ", sender_id)
+	else:
+		# In 1v1 mode, accept audio from the other player
+		voice_chat.add_data(opusdata)
+		
 #endregion
 
 #region player functions
@@ -707,8 +732,17 @@ func send_chat(message: String):
 	rpc_id(get_teammate_id(), "receive_chat", message)
 	#print("My ID: ", multiplayer.get_unique_id(), " teammate: ", get_teammate_id()) ###
 
-
 func send_audio(opusdata : PackedByteArray):
-	rpc_id(get_teammate_id(), "rec_audio", opusdata)
+	if Globals.is_2v2:
+		var teammate_id = get_teammate_id()
+		print("Sending audio to teammate: ", teammate_id)
+		rpc_id(teammate_id, "rec_audio", opusdata)
+	else:
+		# In 1v1, send to the other player
+		var other_peer = MultiplayerManager.get_other_peer()
+		rpc_id(other_peer, "rec_audio", opusdata)
+#####
+#func send_audio(opusdata : PackedByteArray):
+	#rpc_id(get_teammate_id(), "rec_audio", opusdata)
 	
 #endregion

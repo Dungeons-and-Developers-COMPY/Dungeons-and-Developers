@@ -57,20 +57,20 @@ Message"
 
 [node name="MicButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 39.0
-offset_top = 4.0
-offset_right = 134.0
-offset_bottom = 30.0
+offset_left = 40.0
+offset_top = 2.0
+offset_right = 169.0
+offset_bottom = 34.0
 theme = ExtResource("2_sxrxi")
 toggle_mode = true
 text = "Mute Microphone"
 
 [node name="VolButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 145.0
-offset_top = 5.0
-offset_right = 240.0
-offset_bottom = 31.0
+offset_left = 184.0
+offset_top = 2.0
+offset_right = 283.0
+offset_bottom = 34.0
 theme = ExtResource("2_sxrxi")
 toggle_mode = true
 text = "Mute Volume"
