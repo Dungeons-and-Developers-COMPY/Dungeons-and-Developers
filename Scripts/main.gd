@@ -61,6 +61,7 @@ func _ready() -> void:
 		show_end("Waiting for player 2...")
 		if not Globals.is_2v2:
 			role_label.hide()
+	
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
@@ -142,7 +143,9 @@ func connect_player_signals():
 		code_interface.update_text.connect(update_teammate_text)
 		text_chat.send_chat.connect(send_chat)
 		voice_chat.audio_send.connect(send_audio)
-	
+		text_chat.mic_toggled.connect(voice_chat._on_mic_toggled)
+		text_chat.vol_toggled.connect(voice_chat._on_vol_toggled)
+
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
 		js_handler.server.connect(server_found)
@@ -408,7 +411,12 @@ func receive_chat(message: String):
 
 @rpc("any_peer", "call_remote", "unreliable")
 func rec_audio(opusdata : PackedByteArray):
+	if multiplayer.get_remote_sender_id() == multiplayer.get_unique_id():
+		# Drop your own audio
+		return
 	voice_chat.add_data(opusdata)
+	#print("rec_audio from: ", multiplayer.get_remote_sender_id(), " on client: ", multiplayer.get_unique_id()) ###
+
 
 #endregion
 
@@ -686,6 +694,8 @@ func get_opponent_ids():
 
 func send_chat(message: String):
 	rpc_id(get_teammate_id(), "receive_chat", message)
+	#print("My ID: ", multiplayer.get_unique_id(), " teammate: ", get_teammate_id()) ###
+
 
 func send_audio(opusdata : PackedByteArray):
 	rpc_id(get_teammate_id(), "rec_audio", opusdata)

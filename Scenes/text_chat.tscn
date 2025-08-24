@@ -52,7 +52,25 @@ offset_top = 2.0
 offset_right = 432.0
 offset_bottom = 28.0
 theme = ExtResource("2_sxrxi")
-text = "Run"
+text = "Send Mesage"
+
+[node name="MicButton" type="Button" parent="Panel"]
+offset_left = 39.0
+offset_top = 2.0
+offset_right = 111.0
+offset_bottom = 28.0
+theme = ExtResource("2_sxrxi")
+toggle_mode = true
+text = "Mute Microphone"
+
+[node name="VolButton" type="Button" parent="Panel"]
+offset_left = 145.0
+offset_top = 1.0
+offset_right = 240.0
+offset_bottom = 27.0
+theme = ExtResource("2_sxrxi")
+toggle_mode = true
+text = "Mute Volume"
 
 [node name="EmojiButton" type="Button" parent="Panel"]
 layout_mode = 0
@@ -61,7 +79,9 @@ offset_top = 96.0
 offset_right = 600.0
 offset_bottom = 144.0
 theme = ExtResource("2_sxrxi")
-text = "Submit"
+text = "Emoji"
 
 [connection signal="pressed" from="Panel/SendButton" to="." method="_on_send_button_pressed"]
+[connection signal="toggled" from="Panel/MicButton" to="." method="_on_mic_button_toggled"]
+[connection signal="toggled" from="Panel/VolButton" to="." method="_on_vol_button_toggled"]
 [connection signal="pressed" from="Panel/EmojiButton" to="." method="_on_emoji_button_pressed"]
