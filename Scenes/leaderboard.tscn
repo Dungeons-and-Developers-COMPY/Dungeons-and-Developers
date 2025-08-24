@@ -18,6 +18,7 @@ offset_bottom = 900.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_sw8pe")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="Panel"]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 8.0
 offset_right = 736.0
@@ -32,6 +33,7 @@ patch_margin_right = 12
 patch_margin_bottom = 12
 
 [node name="Tree" type="Tree" parent="Panel"]
+layout_mode = 0
 offset_left = 336.0
 offset_top = 24.0
 offset_right = 1456.0
@@ -42,6 +44,7 @@ column_titles_visible = true
 enable_recursive_folding = false
 
 [node name="RankLabel" type="Label" parent="Panel"]
+layout_mode = 0
 offset_left = 328.0
 offset_top = 792.0
 offset_right = 896.0
@@ -52,6 +55,7 @@ text = "Your Rank: N/A"
 horizontal_alignment = 1
 
 [node name="TimeLabel" type="Label" parent="Panel"]
+layout_mode = 0
 offset_left = 896.0
 offset_top = 792.0
 offset_right = 1464.0

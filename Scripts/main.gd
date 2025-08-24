@@ -50,7 +50,7 @@ func _ready() -> void:
 		maze.scale = Vector2(Globals.maze_scale, Globals.maze_scale)
 		connect_player_signals()
 		show_end("Waiting for player 2...")
-		js_handler.get_username()
+		#js_handler.get_username()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
@@ -129,6 +129,7 @@ func connect_player_signals():
 	question_handler.test_result.connect(receive_test_feedback)
 	question_handler.server.connect(server_found)
 	question_handler.logged_in.connect(find_server)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
@@ -313,7 +314,9 @@ func disconnect_from_server():
 	game_started = false
 	if DisplayServer.get_name() == "web":
 		await get_tree().create_timer(15.0).timeout 
-		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
+		#js_handler.go_home()
+		#JavaScriptBridge.eval("window.location.assign(window.location.origin);")
+		JavaScriptBridge.eval("window.top.location.href = '/'")
 
 @rpc("any_peer", "call_remote", "reliable")
 func update_opponent_position(pos: Vector2i):
@@ -340,7 +343,7 @@ func announce_winner(peer_id: int):
 		print("YOU WON!")
 		# Play the victory sound
 		victory_player.play()
-		var final_time = time
+		var final_time = round(time * 100.0) / 100.0
 		show_end("YOU WON!\nTime: " + str(final_time))
 		js_handler.send_time(Globals.username, final_time)
 	else:
@@ -376,10 +379,14 @@ func unstun_player():
 	code_interface.enable_code()
 
 func check_overlap():
+	if player.on_monster_coord():
+		return
 	if player.pos == opponent.pos:
 		space_players()
 
 func unspace_player(player_num: int):
+	if player.on_monster_coord():
+		return
 	if player.pos == opponent.pos:
 		if (player_num == 1):
 			player.move()
@@ -398,10 +405,10 @@ func space_players():
 
 func adjust_monster(index: int):
 	if index == Globals.num_monsters: 
-		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale)
+		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale) - 1
 		player.char.set_target_pos(x, player.char.global_position.y)
 		var monster = monsters[index]
-		monster.global_position.x = monster.global_position.x + (Globals.boss_offset * Globals.maze_scale)
+		monster.global_position.x = monster.global_position.x + (Globals.boss_offset * Globals.maze_scale) + 1
 	else:
 		var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
 		player.char.set_target_pos(x, player.char.global_position.y)
@@ -499,13 +506,13 @@ func receive_question(q):
 	print(q[0])
 	print(q[1])
 
-func show_question(question_num: int):
+func show_question(question_num: int, new_question: bool = false):
 	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
 	question_index = question_num 
 	current_question = question_data[2]
 	print("Current question set to ", current_question)
-	code_interface.show_question(question_data[0], question_data[1])
+	code_interface.show_question(question_data[0], question_data[1], question_data[2], new_question)
 
 func test_user_code():
 	if OS.get_name() == "Web":
@@ -559,11 +566,14 @@ func get_new_question():
 
 func receive_new_question(q, question_num: int):
 	Globals.questions[question_num] = q
-	show_question(question_num)
+	show_question(question_num, true)
 
 #endregion
 
 #region helper functions
+
+func _on_server_disconnected():
+	show_end("Disconnected from server! :(", 160)
 
 func execute_next_step(next_step: String):
 	match next_step:

@@ -81,7 +81,8 @@ static func find_furthest_edge_square(grid: Array, start_row: int, start_col: in
 
 # function to get the positions of where the monsters will be
 static func get_monster_positions(num_monsters: int):
-	var skip = randi_range(4,6)
+	var skip = randi_range(4, 6)
+	#var end_skip = randi_range(4, 6)
 	var trimmed_path = path_to_end.slice(skip, path_to_end.size() - skip)
 		
 	var monster_positions = []

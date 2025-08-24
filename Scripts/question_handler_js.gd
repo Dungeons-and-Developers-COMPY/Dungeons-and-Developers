@@ -17,6 +17,7 @@ var update_player_count_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server
 var whoami_url = "https://dungeonsanddevelopers.cs.uct.ac.za/student/whoami"
 var set_time_url =  "https://dungeonsanddevelopers.cs.uct.ac.za/server/update-time"
 var leaderboard_url = "https://dungeonsanddevelopers.cs.uct.ac.za/server/leaderboard"
+var home_url = "https://dungeonsanddevelopers.cs.uct.ac.za/go-home"
 
 var difficulties = ["Easy", "Medium", "Hard"]
 var is_server := OS.has_feature("dedicated_server")
@@ -232,6 +233,7 @@ func on_find_server_response(args: Array):
 #endregion
 
 #region username
+
 func get_username():
 	print("attempting to find server via js")
 	
@@ -752,3 +754,29 @@ func on_leaderboard_response(args: Array):
 	else:
 		print("Non-JSON response received:")
 		print("Raw response:", response_text)
+
+func go_home():
+	print("attempting to go home via js")
+
+	var url = home_url
+	var js_code := """
+	console.log('Starting go home request...');
+	console.log('URL: ', '%s');
+
+	fetch('%s', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		credentials: 'include'
+	})
+	.catch(error => {
+		console.error('Go home error:', error);
+	});
+	""" % [url, url]
+
+	var err = JavaScriptBridge.eval(js_code)
+	if err != null:
+		print("JavaScript execution failed: ", err)
+	else:
+		print("Go home request sent.")
