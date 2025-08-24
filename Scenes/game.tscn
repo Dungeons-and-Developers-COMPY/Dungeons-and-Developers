@@ -20,6 +20,7 @@ script = ExtResource("1_1l0tm")
 anchor_mode = 0
 
 [node name="Maze" parent="." instance=ExtResource("3_h4fw4")]
+position = Vector2(56, 186)
 
 [node name="CodeInterface" parent="." instance=ExtResource("4_ldgsr")]
 offset_left = 640.0
@@ -61,7 +62,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TextChat" parent="." instance=ExtResource("9_h4fw4")]
-offset_left = 1280.0
-offset_right = 1280.0
+offset_left = 1278.0
+offset_right = 1278.0
 
 [node name="VoiceChat" parent="." instance=ExtResource("10_ldgsr")]

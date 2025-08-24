@@ -1,9 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://kd8t7lk57n5w"]
+[gd_scene load_steps=8 format=3 uid="uid://kd8t7lk57n5w"]
 
 [ext_resource type="Script" uid="uid://cq3p810gmjquh" path="res://Scripts/maze_controller.gd" id="1_4lq1w"]
 [ext_resource type="Script" uid="uid://damwmf44fgpmx" path="res://Scripts/maze_gen.gd" id="1_31kh1"]
 [ext_resource type="TileSet" uid="uid://b3csn3ccogf4m" path="res://TileSets/maze_tile_set.tres" id="1_bbt2e"]
+[ext_resource type="Texture2D" uid="uid://caevhnwkvdisb" path="res://Assets/Dungeon Collectables.png" id="5_bjn2b"]
 [ext_resource type="Script" uid="uid://vgugvcu014fx" path="res://Scripts/floor.gd" id="5_qwv30"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5sc6u"]
+texture = ExtResource("5_bjn2b")
+texture_region_size = Vector2i(32, 32)
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_qwv30"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_5sc6u")
 
 [node name="Tile Layers" type="Node2D"]
 position = Vector2(70, 70)
@@ -18,3 +30,8 @@ script = ExtResource("5_qwv30")
 z_index = 2
 tile_set = ExtResource("1_bbt2e")
 script = ExtResource("1_31kh1")
+
+[node name="Extras" type="TileMapLayer" parent="."]
+z_index = 2
+scale = Vector2(0.5, 0.5)
+tile_set = SubResource("TileSet_qwv30")

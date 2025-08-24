@@ -48,4 +48,7 @@ static var team: int = 0
 static var NAV: int = 0
 static var DRIVER: int = 1
 
+static var username = ""
+static var start_difficulties = ["Easy", "Medium", "Hard"]
+
 signal fringe_changed

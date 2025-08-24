@@ -1,8 +1,11 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://uf0mr2qu6b5r"]
+[gd_resource type="Theme" load_steps=15 format=3 uid="uid://uf0mr2qu6b5r"]
 
-[ext_resource type="FontFile" uid="uid://dh4ytpfw1i3yj" path="res://Assets/Fantasy Wooden GUI  Free/Font/Fonts/buddychampionbold.ttf" id="1_h56oa"]
+[ext_resource type="FontFile" uid="uid://dal7788ti7a33" path="res://fonts/press_start_2p/PressStart2P.ttf" id="1_sehgy"]
 [ext_resource type="Texture2D" uid="uid://bbau0bhh8dqlw" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x26.png" id="2_sehgy"]
+[ext_resource type="Texture2D" uid="uid://bpicpyhaouvnq" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/ValueBlue_120x8.png" id="3_h56oa"]
+[ext_resource type="Texture2D" uid="uid://svwik0fxhv07" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/Sprite sheet for Basic Pack.png" id="3_tyoaw"]
 [ext_resource type="Texture2D" uid="uid://8oxonny0xwmp" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/RectangleBox_96x96.png" id="4_10ecn"]
+[ext_resource type="Texture2D" uid="uid://bgwrb2yjfby5y" path="res://Assets/Fantasy Minimal Pixel Art GUI by eta-commercial-free/UI/ValueBar_128x16.png" id="4_tyoaw"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tyoaw"]
 content_margin_top = 10.0
@@ -24,15 +27,48 @@ texture_margin_right = 5.0
 texture_margin_bottom = 5.0
 region_rect = Rect2(11, 155, 26, 28)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dc67w"]
+atlas = ExtResource("3_tyoaw")
+region = Rect2(487, 38, 18, 19)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dc67w"]
+texture = ExtResource("3_h56oa")
+modulate_color = Color(0.32549, 0.52549, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y0csj"]
+texture = ExtResource("4_tyoaw")
+texture_margin_top = 4.0
+texture_margin_bottom = 4.0
+expand_margin_left = 2.0
+expand_margin_top = 4.0
+expand_margin_right = 2.0
+expand_margin_bottom = 4.0
+modulate_color = Color(0.544812, 0.194345, 0.97152, 1)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h56oa"]
 texture = ExtResource("4_10ecn")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tyoaw"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
 [resource]
-Button/font_sizes/font_size = 35
-Button/fonts/font = ExtResource("1_h56oa")
+Button/font_sizes/font_size = 23
+Button/fonts/font = ExtResource("1_sehgy")
 Button/styles/disabled = SubResource("StyleBoxTexture_tyoaw")
 Button/styles/focus = SubResource("StyleBoxEmpty_ce3w2")
 Button/styles/hover = SubResource("StyleBoxTexture_ce3w2")
 Button/styles/normal = SubResource("StyleBoxTexture_ce3w2")
 Button/styles/pressed = SubResource("StyleBoxTexture_tyoaw")
+HSlider/icons/grabber = SubResource("AtlasTexture_dc67w")
+HSlider/icons/grabber_highlight = SubResource("AtlasTexture_dc67w")
+HSlider/styles/grabber_area = SubResource("StyleBoxTexture_dc67w")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxTexture_dc67w")
+HSlider/styles/slider = SubResource("StyleBoxTexture_y0csj")
+Label/font_sizes/font_size = 8
+Label/fonts/font = ExtResource("1_sehgy")
 Panel/styles/panel = SubResource("StyleBoxTexture_h56oa")
+Tree/font_sizes/font_size = 24
+Tree/font_sizes/title_button_font_size = 32
+Tree/fonts/font = ExtResource("1_sehgy")
+Tree/fonts/title_button_font = ExtResource("1_sehgy")
+Tree/styles/panel = SubResource("StyleBoxFlat_tyoaw")

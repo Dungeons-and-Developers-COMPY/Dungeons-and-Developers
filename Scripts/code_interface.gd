@@ -42,8 +42,10 @@ func _ready() -> void:
 	code_edit.syntax_highlighter.add_color_region("'", "'", string_col)
 
 func set_moving():
+	run_button.tooltip_text = "Click here to execute your movement code"
 	question_box.text = Globals.MOVING_TEXT
 	code_edit.text = moving_code
+	question_label.text = "Traverse The Maze!"
 	submit_button.hide()
 	new_question_button.hide()
 
@@ -74,11 +76,13 @@ func output_to_console(text: String):
 	else:
 		console.text = console.text + "\n" + text
 
-func show_question(title: String, promt: String):
+func show_question(title: String, promt: String, question_num: int, new_question: bool = false):
 	num_submissions = 0
 	disable_new_question()
-	moving_code = code_edit.text
-	question_label.text = "Question: " + title
+	run_button.tooltip_text = "Click here to test your code"
+	if not new_question:
+		moving_code = code_edit.text
+	question_label.text = "Question " + str(question_num) + ": " + title
 	question_box.text = promt
 	code_edit.text = Globals.code_format
 	submit_button.show()

@@ -12,6 +12,7 @@ extends Node2D
 @onready var victory_player = $Victory
 @onready var defeat_player = $Defeat
 @onready var role_label = $RoleLabel
+@onready var monster_defeated_sound: AudioStreamPlayer = $MonsterDefeatedSound
 
 @onready var text_chat = $TextChat
 @onready var voice_chat = $VoiceChat
@@ -61,6 +62,7 @@ func _ready() -> void:
 		show_end("Waiting for player 2...")
 		if not Globals.is_2v2:
 			role_label.hide()
+		#js_handler.get_username()
 	
 
 func _notification(what: int) -> void:
@@ -138,6 +140,7 @@ func connect_player_signals():
 	question_handler.test_result.connect(receive_test_feedback)
 	question_handler.server.connect(server_found)
 	question_handler.logged_in.connect(find_server)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
 	if Globals.is_2v2:
 		code_interface.update_text.connect(update_teammate_text)
@@ -278,6 +281,9 @@ func start_game():
 #endregion
 
 #region server functions
+
+func _on_server_disconnected():
+	show_end("Disconnected from server! :(", 160)
 
 # function that triggers when a player joins the server
 func _on_player_connected(id: int):
@@ -558,6 +564,7 @@ func monster_defeated():
 				
 				
 			break
+	monster_defeated_sound.play()
 
 #endregion
 
@@ -575,13 +582,13 @@ func receive_question(q):
 	print(q[0])
 	print(q[1])
 
-func show_question(question_num: int):
+func show_question(question_num: int, new_question: bool = false):
 	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
 	question_index = question_num 
 	current_question = question_data[2]
 	print("Current question set to ", current_question)
-	code_interface.show_question(question_data[0], question_data[1])
+	code_interface.show_question(question_data[0], question_data[1], question_data[2], new_question)
 
 func test_user_code():
 	if OS.get_name() == "Web":
@@ -625,13 +632,16 @@ func get_new_question():
 	var question_num = question_index
 	var new_difficulty = difficulties[question_num]
 	if question_num > 0:
-		new_difficulty = difficulties[question_num - 1]
+		if new_difficulty == "Medium":
+			new_difficulty = "Easy"
+		elif new_difficulty == "Hard":
+			new_difficulty = "Medium"
 		difficulties[question_num] = new_difficulty
 	js_handler.get_question(difficulties[question_num], question_num)
 
 func receive_new_question(q, question_num: int):
 	Globals.questions[question_num] = q
-	show_question(question_num)
+	show_question(question_num, true)
 
 #endregion
 
@@ -646,10 +656,11 @@ func execute_next_step(next_step: String):
 		"TEST":
 			test_user_code()
 
-func show_end(text):
+func show_end(text, font_size = 200):
 	code_interface.disable_code()
 	player.should_stop = true
 	end_label.text = text
+	end_label.add_theme_font_size_override("font_size", font_size)
 	end_label.show()
 	
 func hide_end():
