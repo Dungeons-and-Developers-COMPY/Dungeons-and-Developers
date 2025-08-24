@@ -62,7 +62,7 @@ func _ready() -> void:
 		show_end("Waiting for player 2...")
 		if not Globals.is_2v2:
 			role_label.hide()
-		#js_handler.get_username()
+		js_handler.get_username()
 	
 
 func _notification(what: int) -> void:
@@ -348,7 +348,7 @@ func disconnect_from_server():
 	game_started = false
 	if DisplayServer.get_name() == "web":
 		await get_tree().create_timer(15.0).timeout 
-		JavaScriptBridge.eval("window.location.href = 'https://dungeonsanddevelopers.cs.uct.ac.za';")
+		JavaScriptBridge.eval("window.top.location.href = '/'")
 
 @rpc("any_peer", "call_remote", "reliable")
 func update_opponent_position(pos: Vector2i):

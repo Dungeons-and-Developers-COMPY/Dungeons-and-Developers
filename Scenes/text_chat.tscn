@@ -39,64 +39,42 @@ theme = ExtResource("2_sxrxi")
 [node name="TypeEdit" type="TextEdit" parent="Panel"]
 layout_mode = 0
 offset_left = 32.0
-offset_top = 34.0
+offset_top = 41.0
 offset_right = 440.0
-offset_bottom = 326.0
+offset_bottom = 323.0
 theme = ExtResource("2_sxrxi")
 placeholder_text = "Type here..."
 
 [node name="SendButton" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 448.0
-offset_top = 37.0
-offset_right = 512.0
-offset_bottom = 93.0
+offset_top = 44.0
+offset_right = 515.0
+offset_bottom = 100.0
 theme = ExtResource("2_sxrxi")
 text = "Send 
 Message"
 
 [node name="MicButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 2.0
-offset_right = 169.0
-offset_bottom = 34.0
+offset_left = 34.0
+offset_top = 5.0
+offset_right = 163.0
+offset_bottom = 37.0
 theme = ExtResource("2_sxrxi")
 toggle_mode = true
 text = "Mute Microphone"
 
 [node name="VolButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 184.0
-offset_top = 2.0
-offset_right = 283.0
-offset_bottom = 34.0
+offset_left = 178.0
+offset_top = 5.0
+offset_right = 277.0
+offset_bottom = 37.0
 theme = ExtResource("2_sxrxi")
 toggle_mode = true
 text = "Mute Volume"
 
-[node name="EmojiButton" type="Button" parent="Panel"]
-layout_mode = 0
-offset_left = 448.0
-offset_top = 108.0
-offset_right = 512.0
-offset_bottom = 156.0
-theme = ExtResource("2_sxrxi")
-text = "Emoji"
-
-[node name="EmojiPanel" type="Panel" parent="Panel"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.862
-anchor_top = 0.478
-anchor_right = 0.862
-anchor_bottom = 0.478
-offset_left = -449.964
-offset_top = -716.256
-offset_right = -409.964
-offset_bottom = -676.256
-
 [connection signal="pressed" from="Panel/SendButton" to="." method="_on_send_button_pressed"]
 [connection signal="toggled" from="Panel/MicButton" to="." method="_on_mic_button_toggled"]
 [connection signal="toggled" from="Panel/VolButton" to="." method="_on_vol_button_toggled"]
-[connection signal="pressed" from="Panel/EmojiButton" to="." method="_on_emoji_button_pressed"]

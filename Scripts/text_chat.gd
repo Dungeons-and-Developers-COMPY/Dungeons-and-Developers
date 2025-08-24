@@ -1,8 +1,6 @@
 extends Control
 @onready var type_box = $Panel/TypeEdit
 @onready var chat_box: RichTextLabel = $ChatBox
-@onready var emoji_panel = $Panel/EmojiPanel  # Add this as a child of Panel
-@onready var emoji_button = $Panel/EmojiButton
 
 ###### buttons and shit
 signal mic_toggled(enabled: bool)
@@ -15,33 +13,33 @@ var emojis = ["😀", "😂", "😍", "🤔", "👍", "👎", "❤️", "🔥", 
 
 func _ready():
 	type_box.connect("gui_input", Callable(self, "_on_type_box_input"))
-	setup_emoji_panel()
+	#setup_emoji_panel()
 
-func setup_emoji_panel():
-	# Create emoji panel if it doesn't exist
-	if not has_node("Panel/EmojiPanel"):
-		emoji_panel = Panel.new()
-		emoji_panel.name = "EmojiPanel"
-		$Panel.add_child(emoji_panel)
-	
-	# Position the emoji panel above the type box
-	emoji_panel.position = Vector2(type_box.position.x, type_box.position.y - 200)
-	emoji_panel.size = Vector2(300, 180)
-	emoji_panel.visible = false
-	
-	# Create a grid container for emojis
-	var grid_container = GridContainer.new()
-	grid_container.columns = 5
-	grid_container.position = Vector2(10, 10)
-	emoji_panel.add_child(grid_container)
-	
-	# Add emoji buttons
-	for i in range(emojis.size()):
-		var emoji_btn = Button.new()
-		emoji_btn.text = emojis[i]
-		emoji_btn.custom_minimum_size = Vector2(40, 40)
-		emoji_btn.pressed.connect(_on_emoji_selected.bind(emojis[i]))
-		grid_container.add_child(emoji_btn)
+#func setup_emoji_panel():
+	## Create emoji panel if it doesn't exist
+	#if not has_node("Panel/EmojiPanel"):
+		#emoji_panel = Panel.new()
+		#emoji_panel.name = "EmojiPanel"
+		#$Panel.add_child(emoji_panel)
+	#
+	## Position the emoji panel above the type box
+	#emoji_panel.position = Vector2(type_box.position.x, type_box.position.y - 200)
+	#emoji_panel.size = Vector2(300, 180)
+	#emoji_panel.visible = false
+	#
+	## Create a grid container for emojis
+	#var grid_container = GridContainer.new()
+	#grid_container.columns = 5
+	#grid_container.position = Vector2(10, 10)
+	#emoji_panel.add_child(grid_container)
+	#
+	## Add emoji buttons
+	#for i in range(emojis.size()):
+		#var emoji_btn = Button.new()
+		#emoji_btn.text = emojis[i]
+		#emoji_btn.custom_minimum_size = Vector2(40, 40)
+		#emoji_btn.pressed.connect(_on_emoji_selected.bind(emojis[i]))
+		#grid_container.add_child(emoji_btn)
 
 func _on_type_box_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -99,15 +97,15 @@ func _on_send_button_pressed() -> void:
 		output_message("You: " + tex)
 		type_box.clear()
 
-func _on_emoji_button_pressed() -> void:
-	emoji_visible = !emoji_visible
-	emoji_panel.visible = emoji_visible
-	
-	# Change button appearance to indicate state
-	if emoji_visible:
-		emoji_button.text = "😀 Close"
-	else:
-		emoji_button.text = "😀"
+#func _on_emoji_button_pressed() -> void:
+	#emoji_visible = !emoji_visible
+	#emoji_panel.visible = emoji_visible
+	#
+	## Change button appearance to indicate state
+	#if emoji_visible:
+		#emoji_button.text = "😀 Close"
+	#else:
+		#emoji_button.text = "😀"
 
 func _on_emoji_selected(emoji: String):
 	# Add the selected emoji to the current text
@@ -171,13 +169,13 @@ func _on_vol_button_toggled(toggled_on: bool) -> void:
 	output_message("Volume Toggled: " + str(!toggled_on))
 
 # Handle clicking outside emoji panel to close it
-func _input(event):
-	if event is InputEventMouseButton and event.pressed and emoji_visible:
-		# Check if click was outside emoji panel
-		var emoji_rect = Rect2(emoji_panel.global_position, emoji_panel.size)
-		var emoji_btn_rect = Rect2(emoji_button.global_position, emoji_button.size)
-		
-		if not emoji_rect.has_point(event.global_position) and not emoji_btn_rect.has_point(event.global_position):
-			emoji_visible = false
-			emoji_panel.visible = false
-			emoji_button.text = "😀"
+#func _input(event):
+	#if event is InputEventMouseButton and event.pressed and emoji_visible:
+		## Check if click was outside emoji panel
+		#var emoji_rect = Rect2(emoji_panel.global_position, emoji_panel.size)
+		#var emoji_btn_rect = Rect2(emoji_button.global_position, emoji_button.size)
+		#
+		#if not emoji_rect.has_point(event.global_position) and not emoji_btn_rect.has_point(event.global_position):
+			#emoji_visible = false
+			#emoji_panel.visible = false
+			#emoji_button.text = "😀"
