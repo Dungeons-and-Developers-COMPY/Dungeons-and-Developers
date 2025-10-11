@@ -15,7 +15,7 @@ extends Node2D
 @onready var monster_defeated_sound: AudioStreamPlayer = $MonsterDefeatedSound
 
 @onready var text_chat = $TextChat
-@onready var voice_chat = $VoiceChat
+#@onready var voice_chat = $VoiceChat
 
 var monster_positions = []
 var monsters = []
@@ -44,6 +44,7 @@ func _ready() -> void:
 	for i in range(monster_music_players.size()):
 		print("Monster music player ", i, ": ", monster_music_players[i])
 	if is_server:
+		#voice_chat.queue_free()
 		question_handler.login()
 		Globals.server_ip = await MultiplayerManager.get_public_ip()
 		if Globals.is_2v2:
@@ -145,9 +146,9 @@ func connect_player_signals():
 	if Globals.is_2v2:
 		code_interface.update_text.connect(update_teammate_text)
 		text_chat.send_chat.connect(send_chat)
-		voice_chat.audio_send.connect(send_audio)
-		text_chat.mic_toggled.connect(voice_chat._on_mic_toggled)
-		text_chat.vol_toggled.connect(voice_chat._on_vol_toggled)
+		#voice_chat.audio_send.connect(send_audio)
+		#text_chat.mic_toggled.connect(voice_chat._on_mic_toggled)
+		#text_chat.vol_toggled.connect(voice_chat._on_vol_toggled)
 
 	if OS.get_name() == "Web":
 		js_handler.login_successful.connect(execute_next_step)
@@ -197,7 +198,7 @@ func spawn_maze_and_monsters(grid, monster_pos, monster_types, start_coord, exit
 	if Globals.is_2v2:
 		if Globals.role == Globals.NAV:
 			code_interface.disable_code()
-	voice_chat.game_started = true
+	#voice_chat.game_started = true
 
 # function used by clients to spawn all the monsters in
 func spawn_all_monsters():
@@ -442,12 +443,12 @@ func rec_audio(opusdata : PackedByteArray):
 		var teammate_id = get_teammate_id()
 		if sender_id == teammate_id:
 			print("Receiving teammate audio from: ", sender_id)
-			voice_chat.add_data(opusdata)
+			#voice_chat.add_data(opusdata)
 		else:
 			print("Ignoring audio from opponent: ", sender_id)
-	else:
+	#else:
 		# In 1v1 mode, accept audio from the other player
-		voice_chat.add_data(opusdata)
+		#voice_chat.add_data(opusdata)
 		
 #endregion
 

@@ -14,9 +14,13 @@ var silence_threshold = 0.01
 var vol_enabled = true
 var mic_enabled = true
 
+var is_server := OS.has_feature("dedicated_server")
+
 signal audio_send(opusdata : PackedByteArray)
 
 func _ready():
+	if is_server:
+		return
 	var microphoneidx = AudioServer.get_bus_index("MicrophoneBus")
 	opuschunked = AudioServer.get_bus_effect(microphoneidx, 0)
 	audiostreamopuschunked = $AudioStreamPlayer.stream
@@ -30,12 +34,16 @@ func add_data(opusdata : PackedByteArray):
 	opuspacketsbuffer.append(opusdata)
 
 func _process(delta):
+	if is_server:
+		return
 	if not game_started:
 		return
 	_process_record(delta)
 	_process_playback(delta)
 
 func _process_record(delta):
+	if is_server:
+		return
 	if not mic_enabled:
 		# Clear any pending chunks when mic is disabled
 		while opuschunked.chunk_available():
@@ -58,6 +66,8 @@ func _process_record(delta):
 		emit_signal("audio_send", opusdata)
 
 func _process_playback(delta):
+	if is_server:
+		return
 	if not vol_enabled:
 		# Clear buffer when volume is disabled
 		while len(opuspacketsbuffer) > 0:
