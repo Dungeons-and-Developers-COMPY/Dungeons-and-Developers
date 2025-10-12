@@ -1,3 +1,4 @@
+# uses javascript Bridges to allow client to make REST API calls to backend
 extends Node
 
 var session_cookie = ""
@@ -583,7 +584,7 @@ func on_test_response(args: Array):
 		print(json.data)
 		var response
 		var passed = json.data.get("success")
-		if passed != null:
+		if passed:
 			response = json.data.get("result")
 		else:
 			passed = false

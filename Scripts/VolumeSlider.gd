@@ -1,4 +1,4 @@
-# volume_slider.gd
+# changes the volume of the related audio bus to the slider's value
 extends HSlider
 
 @export var bus_name: String = "Master"

@@ -1,3 +1,5 @@
+# Plays monster animations when they atttack or die
+
 extends AnimatedSprite2D
 
 func die():

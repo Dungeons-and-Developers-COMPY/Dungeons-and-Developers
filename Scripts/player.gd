@@ -1,3 +1,4 @@
+# handles the player's animation and movement in the maze
 extends Node2D
 class_name Player
 
@@ -23,10 +24,6 @@ signal recentre(player_num: int)
 @onready var char = $CharacterBody2D
 @onready var attack_sound: AudioStreamPlayer = $AttackSound
 @onready var stunned_sound: AudioStreamPlayer = $StunnedSound
-
-#func _process(_delta: float) -> void:
-	#if Input.is_action_just_released("attack") and should_stop == true:
-		#on_monster_defeated()
 
 # functions to move that player can type
 func move_left(n: int = 1):

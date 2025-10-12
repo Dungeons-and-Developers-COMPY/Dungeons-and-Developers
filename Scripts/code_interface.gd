@@ -1,10 +1,16 @@
+# handles code_interface scene code. This includes submitting code to defeat monsters
+# and running code for movement. Also displays the questions and writes logs to the console
+
 extends Control
 
+#region signals
 signal run_button_pressed
 signal submit_button_pressed(next_step: String)
 signal test(next_step: String)
 signal new_question
+#endregion
 
+#region variables
 var code: String = ""
 var question: String = ""
 var console_text: String = ""
@@ -13,17 +19,7 @@ var on_monster: bool = false
 var input: String = ""
 var num_submissions: int = 0
 
-@onready var question_label = $QuestionLabel
-@onready var question_box = $QuestionText
-@onready var console = $ConsoleText
-@onready var run_button = $RunButton
-@onready var submit_button = $SubmitButton 
-@onready var code_edit = $CodeEdit
-@onready var input_panel = $InputPanel
-@onready var input_edit = $InputPanel/TextEdit
-@onready var confirm_button = $InputPanel/ConfirmButton
-@onready var new_question_button = $NewQuestionButton
-
+# syntax highlighting variables
 var keyword_col : Color = Color.from_rgba8(255, 112, 133)
 var control_flow_keyword_col : Color = Color(1, 0.55, 0.8)
 var type_keyword_col : Color = Color(0.26, 1, 0.76)
@@ -42,6 +38,21 @@ var python_type_keywords = [
 	"int", "float", "complex", "bool", "str", "bytes", "bytearray", 
 	"memoryview", "list", "tuple", "set", "frozenset", "dict", "type"
 ]
+#endregion
+
+#region node references
+@onready var question_label = $QuestionLabel
+@onready var question_box = $QuestionText
+@onready var console = $ConsoleText
+@onready var run_button = $RunButton
+@onready var submit_button = $SubmitButton 
+@onready var code_edit = $CodeEdit
+@onready var input_panel = $InputPanel
+@onready var input_edit = $InputPanel/TextEdit
+@onready var confirm_button = $InputPanel/ConfirmButton
+@onready var new_question_button = $NewQuestionButton
+#endregion
+
 
 func _ready() -> void:
 	for word in python_keywords:
@@ -89,6 +100,7 @@ func output_to_console(text: String):
 	else:
 		console.text = console.text + "\n" + text
 
+# displays the given question in the question box and sets code edit to the default function
 func show_question(title: String, promt: String, question_num: int, new_question: bool = false):
 	num_submissions = 0
 	disable_new_question()

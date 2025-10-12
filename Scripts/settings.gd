@@ -1,3 +1,4 @@
+# handles settings menu
 extends Node2D
 
 @onready var master_vol: HSlider = $NinePatchRect/MasterVol/HSlider

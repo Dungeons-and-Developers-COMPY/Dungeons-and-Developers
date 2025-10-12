@@ -1,3 +1,4 @@
+# links game, leaderboard and main menu together and handles navigation between them
 extends Node2D
 
 @onready var menu = $MainMenu

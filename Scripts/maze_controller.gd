@@ -1,3 +1,4 @@
+# manages the floor and wall tile map layers of the maze and the generation of the tiles
 extends Node2D
 
 @onready var floor = $Floor

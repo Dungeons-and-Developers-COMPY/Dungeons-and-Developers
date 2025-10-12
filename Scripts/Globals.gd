@@ -1,3 +1,5 @@
+# stores global variables needed by multiple scenes and nodes.
+
 extends Node 
 class_name Globals
 

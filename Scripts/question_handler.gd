@@ -1,3 +1,4 @@
+# handles REST API calls to backend, and processes the response for the servers
 extends Node
 
 var session_cookie = ""

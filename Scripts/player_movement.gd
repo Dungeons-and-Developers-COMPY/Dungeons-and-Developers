@@ -1,3 +1,4 @@
+# performs the actual movement of the player and opponent
 extends CharacterBody2D
 
 signal stopped_moving

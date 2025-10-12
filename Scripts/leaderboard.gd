@@ -1,3 +1,5 @@
+# code to handle leaderboard fetching and displaying. Done by Kai Connock
+
 extends Node2D
 
 @onready var tree: Tree = $Panel/Tree

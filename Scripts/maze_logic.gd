@@ -1,3 +1,5 @@
+# singleton class that supports maze generation
+
 extends Node
 class_name MazeLogic
 

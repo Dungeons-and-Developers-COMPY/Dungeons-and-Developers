@@ -1,4 +1,5 @@
-# https://github.com/Goldenlion5648/GodotMazeGenerationVisualizer
+# adapted from: https://github.com/Goldenlion5648/GodotMazeGenerationVisualizer
+# generates the maze using DFS and places the correct assets to represent the maze
 extends TileMapLayer
 class_name MazeGen
 
@@ -37,7 +38,6 @@ const DOWN  = 1 << 3  # 1000
 var spot_to_letter = {}
 var spot_to_label = {}
 var current_letter_num = 65
-#const label = preload("res://simple_label.tscn")
 var start_coord = null
 var exit_coord = null
 
@@ -53,6 +53,7 @@ var adj4 = [
 
 var grid = [] 
 
+# function to init grid and generate maze
 func gen_maze():
 	grid = []
 	for i in range(Globals.grid_size):
@@ -72,6 +73,7 @@ func gen_maze():
 	
 	return grid
 	
+# function used by client to store maze info received from server
 func set_maze(maze, start, exit):
 	grid = maze
 	start_coord = start
@@ -80,7 +82,8 @@ func set_maze(maze, start, exit):
 	x_dim = Globals.grid_size
 	
 	place_maze()
-	
+
+# places the assets of the maze
 func place_maze():
 	for y in range(Globals.grid_size):
 		for x in range(Globals.grid_size):
@@ -134,6 +137,7 @@ func can_move_to(current: Vector2i):
 			not is_wall(current)
 	)
 
+# actual DFS algorithm that generates the maze
 func dfs(start: Vector2i):
 	var fringe: Array[Vector2i] = [start]
 	var seen = {}
@@ -150,7 +154,7 @@ func dfs(start: Vector2i):
 		if current in spot_to_label:
 			for node in spot_to_label[current]:
 				node.queue_free()
-##			var existing_letter = find_child(spot_to_letter[current])
+#			var existing_letter = find_child(spot_to_letter[current])
 #			if existing_letter != null:
 #				existing_letter.queue_free()
 		if current.x % 2 == 1 and current.y % 2 == 1:

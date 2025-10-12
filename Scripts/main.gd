@@ -1,5 +1,8 @@
+# Main game script that handles player and server logic and communication between
+# scenes
 extends Node2D
 
+#region node references
 @onready var maze = $Maze
 @onready var player = $Player
 @onready var code_interface = $CodeInterface
@@ -12,6 +15,7 @@ extends Node2D
 @onready var victory_player = $Victory
 @onready var defeat_player = $Defeat
 @onready var monster_defeated_sound: AudioStreamPlayer = $MonsterDefeatedSound
+#endregion
 
 var monster_positions = []
 var monsters = []
@@ -50,13 +54,15 @@ func _ready() -> void:
 		maze.scale = Vector2(Globals.maze_scale, Globals.maze_scale)
 		connect_player_signals()
 		show_end("Waiting for player 2...")
-		#js_handler.get_username()
+		js_handler.get_username()
 
+# triggers when server tries to close
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
 		question_handler.deregister_server(Globals.server_ip, Globals.server_port)
 		await question_handler.shutdown
 
+# called during the processing step at every frame
 func _process(delta: float) -> void:
 	if Input.is_action_just_released("attack") and player.should_stop == true:
 		player.on_monster_defeated()
@@ -79,6 +85,7 @@ func _process(delta: float) -> void:
 			keep_alive_timer = 0.0
 			rpc_id(1, "keep_alive", multiplayer.get_unique_id())
 
+# same as _process but frame rate is synced to the physics
 func _physics_process(delta: float) -> void:
 	if (is_server):
 		return
@@ -108,6 +115,7 @@ func server_found(found: bool, message: String, ip: String, port: int):
 	else:
 		pass
 
+# connects signals from different nodes and scenes to this script
 func connect_player_signals():
 	code_interface.run_button_pressed.connect(run_user_code)
 	code_interface.test.connect(login)
@@ -270,12 +278,12 @@ func _on_player_connected(id: int):
 			start_game()
 
 func _on_player_disconnected(id: int):
-	#TODO: end/pause game, call decrease player count on server & remove player from server
 	connected_players.erase(id)
 	question_handler.dec_player_count(Globals.server_ip, Globals.server_port)
 	if game_started and connected_players.is_empty():
 		reset_server()
 
+# resets server when game ends so that it can be reused
 func reset_server():
 	print("Server reset")
 	monster_positions = []
@@ -334,14 +342,14 @@ func game_over(peer_id: int):
 
 @rpc("any_peer", "call_remote", "reliable")
 func announce_winner(peer_id: int):
-	# Stop any currently playing monster music to avoid conflict
+	# stop any currently playing monster music to avoid conflict
 	for music_player in monster_music_players:
 		if music_player.playing:
 			music_player.stop()
 
 	if multiplayer.get_unique_id() == peer_id:
 		print("YOU WON!")
-		# Play the victory sound
+		# play the victory sound and calculate final time for leaderboard
 		victory_player.play()
 		var final_time = round(time * 100.0) / 100.0
 		show_end("YOU WON!\nTime: " + str(final_time))
@@ -349,7 +357,7 @@ func announce_winner(peer_id: int):
 	else:
 		print("YOU LOST.")
 		show_end("YOU LOST.")
-		# Play the defeat sound
+		# play the defeat sound
 		defeat_player.play()
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -393,6 +401,7 @@ func unspace_player(player_num: int):
 		else:
 			opponent.move()
 
+# if player and opponent on the same block, they get spaced out to be next to each other instead of on top of each other
 func space_players():
 	var x = player.char.global_position.x - (Globals.player_offset * Globals.maze_scale)
 	player.char.set_target_pos(x, player.char.global_position.y)
@@ -403,6 +412,7 @@ func space_players():
 
 #region monster functions
 
+# move player and monster when they're on the same square
 func adjust_monster(index: int):
 	if index == Globals.num_monsters: 
 		var x = player.char.global_position.x - (Globals.boss_offset * Globals.maze_scale) - 1
@@ -462,16 +472,15 @@ func monster_defeated():
 				monster.die()
 				
 				monsters_slain_count += 1
-				# MUSIC MANAGEMENT - Stop current track and play next
+				# stop current track and play next
 				if monsters_slain_count < monster_music_players.size():
-					# Stop the currently playing track
 					if monsters_slain_count > 0 and monsters_slain_count - 1 < monster_music_players.size():
 						var current_player = monster_music_players[monsters_slain_count - 1]
 						if current_player != null and is_instance_valid(current_player):
 							current_player.stop()
 							print("Stopped track: ", monsters_slain_count - 1)
 					
-					# Play the next track
+					# play the next track
 					var next_player = monster_music_players[monsters_slain_count]
 					if next_player != null and is_instance_valid(next_player):
 						next_player.play()
@@ -479,7 +488,7 @@ func monster_defeated():
 					else:
 						print("Music player at index ", monsters_slain_count, " is null")
 				else:
-					# Stop the last track if we're out of tracks
+					# stop the last track if no more tracks
 					if monsters_slain_count > 0 and monsters_slain_count - 1 < monster_music_players.size():
 						var last_player = monster_music_players[monsters_slain_count - 1]
 						if last_player != null and is_instance_valid(last_player):
@@ -490,7 +499,6 @@ func monster_defeated():
 				
 			break
 	monster_defeated_sound.play()
-
 
 #endregion
 
@@ -506,6 +514,7 @@ func receive_question(q):
 	print(q[0])
 	print(q[1])
 
+# shows question in question box
 func show_question(question_num: int, new_question: bool = false):
 	code_interface.hit_monster()
 	var question_data = Globals.questions[question_num]
@@ -526,6 +535,7 @@ func submit_code():
 	else:
 		question_handler.submit_answer(current_question, code_interface.code)
 
+# receives and processes feedback from code submission
 func receive_submission_feedback(output: String, passed: bool):
 	code_interface.output_to_console("Submission Feedback Received:")
 	code_interface.output_to_console(output)
@@ -543,6 +553,7 @@ func receive_submission_feedback(output: String, passed: bool):
 		monster_attack()
 		player.stun()
 
+# receives and processes feedback from local test run
 func receive_test_feedback(output: String, passed: bool):
 	if passed:
 		code_interface.output_to_console("Compilation finished with no errors!\nOutput of function:")
@@ -553,6 +564,7 @@ func receive_test_feedback(output: String, passed: bool):
 		code_interface.output_to_console(output)     
 		code_interface.output_to_console(Globals.break_string)      
 
+# function to get new (easier) question 
 func get_new_question():
 	var question_num = question_index
 	var new_difficulty = difficulties[question_num]
@@ -584,6 +596,7 @@ func execute_next_step(next_step: String):
 		"TEST":
 			test_user_code()
 
+# shows label with information
 func show_end(text, font_size = 200):
 	code_interface.disable_code()
 	player.should_stop = true

@@ -1,3 +1,5 @@
+# handles buttons pressed on main menu, and shows player username
+
 extends Node2D
 
 signal start1v1
