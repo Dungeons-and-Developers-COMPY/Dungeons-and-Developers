@@ -38,15 +38,15 @@ Engage in one-on-one battles where wit and pace determine the victor. Beat each 
 ## Research Findings  
 A detailed research study was conducted with a survey evaluating how students engaged with different gameplay modes and question types within the game. 29 first-year Computer Science students from the University of Cape Town participated in the study. Participants completed a comprehensive survey consisting of 17 Likert-scale questions divided across several focus areas: 
 - User Engagement Scale (UES)
--- Focused Attention
--- Perceived Usability
--- Aesthetics
--- Reward
+  - Focused Attention
+  - Perceived Usability
+  - Aesthetics
+  - Reward
 - Additional Questions
--- Value
--- Understanding
--- Engagement
--- Motivation
+  - Value
+  - Understanding
+  - Engagement
+  - Motivation
 
 Overall, results were very promising. The **Value**, **Engagement**, and **Reward** metrics recorded the highest mean scores of **4.62**, **4.62**, and **4.59** respectively — indicating students found the experience highly fulfilling.  
 **Perceived Usability** had the lowest mean score of **3.76**, suggesting an area for future improvement (potentially addressing a few technical issues or confusion around initial game mechanics).  
