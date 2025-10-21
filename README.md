@@ -51,16 +51,15 @@ Participants reported having higher motivation to solve programming problems in 
   <img src="ReadmeImages/Graph1.png" alt="Graph of UES Results" height="300"/>
   <img src="ReadmeImages/Graph2.png" alt="Graph of Additional Questions Results" height="300"/>
 </p>
-| UES Metric            | Average Score|
-|-----------------------|--------------|
+
+| UES Metric           | Average Score |
+|----------------------|--------------|
 | Focused Attention     | 3.94         |
 | Perceived Usability   | 3.76         |
 | Aesthetics            | 4.28         |
 | Reward                | 4.59         |
-| Value                 | 4.62         |
-| Understanding         | 4.38         |
-| Engagement            | 4.62         |
-| Motivation            | 4.48         |
+| Learning              | 4.50         |
+| Motivation            | 4.55         |
 
 ### User‑suggested Improvements  
 - Shorten move commands for faster gameplay.  
