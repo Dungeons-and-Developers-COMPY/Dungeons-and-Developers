@@ -47,7 +47,7 @@ Overall, results were very promising. The **Value**, **Engagement**, and **Rewar
 Participants reported having higher motivation to solve programming problems in the game than in traditional assignments, thereby affirming the game’s core educational goal.
 
 ### 1v1 Mode Survey Results 
-<p align="center">
+<p align="left">
   <img src="ReadmeImages/Graph1.png" alt="Graph of UES Results" height="300"/>
   <img src="ReadmeImages/Graph2.png" alt="Graph of Additional Questions Results" height="300"/>
 </p>
