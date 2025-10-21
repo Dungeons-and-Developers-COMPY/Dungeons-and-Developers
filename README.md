@@ -58,8 +58,10 @@ Participants reported having higher motivation to solve programming problems in 
 | Perceived Usability   | 3.76         |
 | Aesthetics            | 4.28         |
 | Reward                | 4.59         |
-| Learning              | 4.50         |
-| Motivation            | 4.55         |
+| Value                 | 4.62         |
+| Understanding         | 4.38         |
+| Engagement            | 4.62         |
+| Motivation            | 4.48         |
 
 ### User‑suggested Improvements  
 - Shorten move commands for faster gameplay.  
