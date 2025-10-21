@@ -1,16 +1,16 @@
-# Mahir Moodaley  
+# Dungeons and Developers 
 **1v1 Game Designer & Developer**
 
 ## Project: 1v1 Gamemode  
-Navigate a procedurally‑generated maze.  
-Defeat monsters using Python coding challenges.  
-Compete against one other player.  
-Reach the exit first to win!  
-Simple code commands to traverse the maze.  
-Opponent’s position updates in real‑time.  
-Robust code interface with syntax highlighting and detailed feedback.  
-Competitive integrity ensured by identical mazes and initial questions.  
-Players get stunned for incorrect submissions or hitting a wall.
+- Navigate a procedurally‑generated maze.  
+- Defeat monsters using Python coding challenges.  
+- Compete against one other player.  
+- Reach the exit first to win!  
+- Simple code commands to traverse the maze.  
+- Opponent’s position updates in real‑time.  
+- Robust code interface with syntax highlighting and detailed feedback.  
+- Competitive integrity ensured by identical mazes and initial questions.  
+- Players get stunned for incorrect submissions or hitting a wall.
 
 ## Architecture  
 
@@ -52,7 +52,7 @@ Download link: (see repository assets)
 _**Investigating The Use of Games and Gamification in Computer Science Education**_  
 Download link: (see repository assets)  
 
-## University & Department  
+## University 
 University of Cape Town (UCT)  
 Department of Computer Science  
 Website: https://sit.uct.ac.za  
