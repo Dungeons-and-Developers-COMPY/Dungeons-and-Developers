@@ -22,12 +22,18 @@ Engage in one-on-one battles where wit and pace determine the victor. Beat each 
 ### Server  
 - Hosts a single game at a time.  
 - Handles network connections, maze and monster generation, and position synchronizations.  
-- Automatically resets itself after the game ends.  
+- Automatically resets itself after the game ends.
+<p align="left">
+  <img src="ReadmeImages/Server.png" alt="Server State Diagram" height="200"/>
+</p>
 
 ### Client  
 - Handles maze movement, animations, and music.  
 - Submits code to the backend for running and testing.  
-- Sends updated position to the opponent.  
+- Sends updated position to the opponent.
+<p align="left">
+  <img src="ReadmeImages/Client.png" alt="Client State Diagram" height="200"/>
+</p>
 
 ## Research Findings  
 A detailed research study was conducted with a survey evaluating how students engaged with different gameplay modes and question types within the game. 29 first-year Computer Science students from the University of Cape Town participated in the study. Participants completed a comprehensive survey consisting of 17 Likert-scale questions divided across several focus areas: 
