@@ -3,6 +3,9 @@
 
 ## 1v1 Gamemode  
 Engage in one-on-one battles where wit and pace determine the victor. Beat each monster (easy, medium, and hard question) in the maze and claim the treasures that await at the end.
+<p align="center">
+  <img src="ReadmeImages/UI.png" alt="UI" width="100%"/>
+</p>
 
 - Navigate a **procedurally‑generated maze**.  
 - Defeat **monsters** using **Python** coding challenges.  
@@ -27,13 +30,28 @@ Engage in one-on-one battles where wit and pace determine the victor. Beat each 
 - Sends updated position to the opponent.  
 
 ## Research Findings  
-A detailed research study was conducted with a survey evaluating how students engaged with different gameplay modes and question types within the game. 29 first-year Computer Science students from the University of Cape Town participated in the study. Participants completed a comprehensive survey consisting of 17 Likert-scale questions divided across several focus areas: **Focused Attention, Perceived Usability, Aesthetics, Reward, Value, Understanding, Engagement, Motivation**.
+A detailed research study was conducted with a survey evaluating how students engaged with different gameplay modes and question types within the game. 29 first-year Computer Science students from the University of Cape Town participated in the study. Participants completed a comprehensive survey consisting of 17 Likert-scale questions divided across several focus areas: 
+- User Engagement Scale (UES)
+-- Focused Attention
+-- Perceived Usability
+-- Aesthetics
+-- Reward
+- Additional Questions
+-- Value
+-- Understanding
+-- Engagement
+-- Motivation
 
 Overall, results were very promising. The **Value**, **Engagement**, and **Reward** metrics recorded the highest mean scores of **4.62**, **4.62**, and **4.59** respectively — indicating students found the experience highly fulfilling.  
 **Perceived Usability** had the lowest mean score of **3.76**, suggesting an area for future improvement (potentially addressing a few technical issues or confusion around initial game mechanics).  
 Participants reported having higher motivation to solve programming problems in the game than in traditional assignments, thereby affirming the game’s core educational goal.
 
-### 1v1 Mode Survey Results  
+### 1v1 Mode Survey Results 
+<p align="center">
+  <img src="ReadmeImages/Graph1.png" alt="Graph of UES Results" width="45%"/>
+  <img src="images/Graph2.png" alt="Graph of Additional Questions Results" width="45%"/>
+</p>
+
 | UES Metric           | Average Score |
 |----------------------|--------------|
 | Focused Attention     | 3.94         |
