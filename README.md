@@ -49,7 +49,7 @@ Participants reported having higher motivation to solve programming problems in 
 ### 1v1 Mode Survey Results 
 <p align="center">
   <img src="ReadmeImages/Graph1.png" alt="Graph of UES Results" width="45%"/>
-  <img src="images/Graph2.png" alt="Graph of Additional Questions Results" width="45%"/>
+  <img src="ReadmeImages/Graph2.png" alt="Graph of Additional Questions Results" width="45%"/>
 </p>
 
 | UES Metric           | Average Score |
