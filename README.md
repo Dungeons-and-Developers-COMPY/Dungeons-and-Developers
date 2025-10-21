@@ -1,16 +1,18 @@
 # Dungeons and Developers 
-**1v1 Game Designer & Developer**
+**Real-Time, Competitive Programming Game designed to test its effect on motivation and engagement for 1st year Comp Sci students. UCT Honours in Computer Science Project**
 
-## Project: 1v1 Gamemode  
-- Navigate a procedurally‑generated maze.  
-- Defeat monsters using Python coding challenges.  
-- Compete against one other player.  
-- Reach the exit first to win!  
-- Simple code commands to traverse the maze.  
-- Opponent’s position updates in real‑time.  
-- Robust code interface with syntax highlighting and detailed feedback.  
-- Competitive integrity ensured by identical mazes and initial questions.  
-- Players get stunned for incorrect submissions or hitting a wall.
+## 1v1 Gamemode  
+Engage in one-on-one battles where wit and pace determine the victor. Beat each monster (easy, medium, and hard question) in the maze and claim the treasures that await at the end.
+
+- Navigate a **procedurally‑generated maze**.  
+- Defeat **monsters** using **Python** coding challenges.  
+- Compete against **one other player**.  
+- **Reach the exit first to win!**  
+- Simple code commands to **traverse the maze**.  
+- Opponent’s position updates in **real‑time**.  
+- **Robust code interface** with syntax highlighting and detailed feedback.  
+- Competitive integrity ensured by **identical mazes and initial questions**.  
+- Players get **stunned** for incorrect submissions or hitting a wall.
 
 ## Architecture  
 
@@ -25,8 +27,10 @@
 - Sends updated position to the opponent.  
 
 ## Research Findings  
-Overall, results were very promising. The Value, Engagement, and Reward metrics recorded the highest mean scores of 4.62, 4.62, and 4.59 respectively — indicating students found the experience highly fulfilling.  
-Perceived Usability had the lowest mean score of 3.76, suggesting an area for future improvement (potentially addressing a few technical issues or confusion around initial game mechanics).  
+A detailed research study was conducted with a survey evaluating how students engaged with different gameplay modes and question types within the game. 29 first-year Computer Science students from the University of Cape Town participated in the study. Participants completed a comprehensive survey consisting of 17 Likert-scale questions divided across several focus areas: **Focused Attention, Perceived Usability, Aesthetics, Reward, Value, Understanding, Engagement, Motivation**.
+
+Overall, results were very promising. The **Value**, **Engagement**, and **Reward** metrics recorded the highest mean scores of **4.62**, **4.62**, and **4.59** respectively — indicating students found the experience highly fulfilling.  
+**Perceived Usability** had the lowest mean score of **3.76**, suggesting an area for future improvement (potentially addressing a few technical issues or confusion around initial game mechanics).  
 Participants reported having higher motivation to solve programming problems in the game than in traditional assignments, thereby affirming the game’s core educational goal.
 
 ### 1v1 Mode Survey Results  
