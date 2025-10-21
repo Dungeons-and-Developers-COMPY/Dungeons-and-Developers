@@ -24,7 +24,7 @@ Engage in one-on-one battles where wit and pace determine the victor. Beat each 
 - Handles network connections, maze and monster generation, and position synchronizations.  
 - Automatically resets itself after the game ends.
 <p align="left">
-  <img src="ReadmeImages/Server.png" alt="Server State Diagram" height="300"/>
+  <img src="ReadmeImages/Server.png" alt="Server State Diagram" height="500"/>
 </p>
 
 ### Client  
@@ -32,7 +32,7 @@ Engage in one-on-one battles where wit and pace determine the victor. Beat each 
 - Submits code to the backend for running and testing.  
 - Sends updated position to the opponent.
 <p align="left">
-  <img src="ReadmeImages/Client.png" alt="Client State Diagram" height="300"/>
+  <img src="ReadmeImages/Client.png" alt="Client State Diagram" height="500"/>
 </p>
 
 ## Research Findings  
