@@ -51,32 +51,6 @@ Participants reported having higher motivation to solve programming problems in 
   <img src="ReadmeImages/Graph1.png" alt="Graph of UES Results" height="300"/>
   <img src="ReadmeImages/Graph2.png" alt="Graph of Additional Questions Results" height="300"/>
 </p>
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="ReadmeImages/Graph1.png" height="300" style="vertical-align: middle; margin-right: 10px;">
-      <img src="ReadmeImages/Graph2.png" height="300" style="vertical-align: middle;">
-      <br><em>Gameplay and Code Editor Views</em>
-    </td>
-    <td width="50%">
-      
-      <table>
-        <tr><th>UES Metric</th><th>Average Score</th></tr>
-        <tr><td>Focused Attention</td><td>3.94</td></tr>
-        <tr><td>Perceived Usability</td><td>3.76</td></tr>
-        <tr><td>Aesthetics</td><td>4.28</td></tr>
-        <tr><td>Reward</td><td>4.59</td></tr>
-        <tr><td>Value</td><td>4.62</td></tr>
-        <tr><td>Understanding</td><td>4.38</td></tr>
-        <tr><td>Engagement</td><td>4.62</td></tr>
-        <tr><td>Motivation</td><td>4.48</td></tr>
-      </table>
-
-    </td>
-  </tr>
-</table>
-
 | UES Metric            | Average Score|
 |-----------------------|--------------|
 | Focused Attention     | 3.94         |
