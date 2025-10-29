@@ -8,15 +8,15 @@
 </p>
 
 <table align="center">
-  <tr><td align="center">• Navigate a <b>procedurally-generated maze</b>.</td></tr>
-  <tr><td align="center">• Defeat <b>monsters</b> using <b>Python</b> coding challenges.</td></tr>
-  <tr><td align="center">• Compete against <b>one other player</b>.</td></tr>
-  <tr><td align="center"><b>• Reach the exit first to win!</b></td></tr>
-  <tr><td align="center">• Simple code commands to <b>traverse the maze</b>.</td></tr>
-  <tr><td align="center">• Opponent’s position updates in <b>real-time</b>.</td></tr>
-  <tr><td align="center"><b>• Robust code interface</b> with syntax highlighting and detailed feedback.</td></tr>
-  <tr><td align="center">• Competitive integrity ensured by <b>identical mazes and initial questions</b>.</td></tr>
-  <tr><td align="center">• Players get <b>stunned</b> for incorrect submissions or hitting a wall.</td></tr>
+  <tr><td align="left">• Navigate a <b>procedurally-generated maze</b>.</td></tr>
+  <tr><td align="left">• Defeat <b>monsters</b> using <b>Python</b> coding challenges.</td></tr>
+  <tr><td align="left">• Compete against <b>one other player</b>.</td></tr>
+  <tr><td align="left"><b>• Reach the exit first to win!</b></td></tr>
+  <tr><td align="left">• Simple code commands to <b>traverse the maze</b>.</td></tr>
+  <tr><td align="left">• Opponent’s position updates in <b>real-time</b>.</td></tr>
+  <tr><td align="left"><b>• Robust code interface</b> with syntax highlighting and detailed feedback.</td></tr>
+  <tr><td align="left">• Competitive integrity ensured by <b>identical mazes and initial questions</b>.</td></tr>
+  <tr><td align="left">• Players get <b>stunned</b> for incorrect submissions or hitting a wall.</td></tr>
 </table>
 
 <h3 align="center">
@@ -103,10 +103,12 @@ Participants reported having higher motivation to solve programming problems in 
 
 <h2 align="center">Team Members</h2>
 
-This was a group project. The contributions of the other team members are listed below.
+<p align="center">This was a group project. The contributions of the other team members are listed below.</p>
 
-- [Ibrahim Abdou](https://github.com/IbrahAbd): Backend, Database, and Question Generation & Submission System
-- [Kai Connock](https://github.com/kcurious): 2v2 Version of the Game
+<table align="center">
+  <tr><td align="left"><a href="https://github.com/IbrahAbd">Ibrahim Abdou</a>: Backend, Database, and Question Generation & Submission System</td></tr> 
+  <tr><td align="left"><a href="https://github.com/kcurious">Kai Connock</a>: 2v2 Version of the Game</td></tr> 
+</table>
 
 <h2 align="center">University University of Cape Town (UCT) </h2>
 <p align="center">Department of Computer Science</p>
