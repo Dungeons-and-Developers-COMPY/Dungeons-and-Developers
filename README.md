@@ -110,7 +110,7 @@ Participants reported having higher motivation to solve programming problems in 
   <tr><td align="left"><a href="https://github.com/kcurious">Kai Connock</a>: 2v2 Version of the Game</td></tr> 
 </table>
 
-<h2 align="center">University University of Cape Town (UCT) </h2>
+<h2 align="center">University of Cape Town (UCT) </h2>
 <p align="center">Department of Computer Science</p>
 <p align="center">Website: https://sit.uct.ac.za</p>
 <p align="center">Email: dept@cs.uct.ac.za</p> 
